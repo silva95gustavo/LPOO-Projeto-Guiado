@@ -49,7 +49,7 @@ public class Jogo {
 
 		while(map_side < Labirinto.MIN_REC_SIDE)
 		{
-			System.out.print("\nGiven value is greater than " + Labirinto.MIN_REC_SIDE + ".\nPlease insert new value : ");
+			System.out.print("\nGiven value is less than " + Labirinto.MIN_REC_SIDE + ".\nPlease insert new value : ");
 			map_side = s.nextInt();
 		}
 
@@ -297,7 +297,6 @@ public class Jogo {
 		generatePosHeroi();
 		generatePosEspada(min_dist);
 		generatePosDragao(min_dist);
-
 	}
 
 	private static void generatePosHeroi() {

@@ -107,13 +107,13 @@ public class Labirinto {
 		}
 		else if (saidaX == matrixSide - 1)
 		{
-			start_x = matrixSide - ((side % 2 == 0) ? 3 : 2);
+			start_x = matrixSide - ((matrixSide % 2 == 0) ? 3 : 2);
 			start_y = saidaY;
 		}
 		else
 		{
 			start_x = saidaX;
-			start_y = matrixSide - ((side % 2 == 0) ? 3 : 2);
+			start_y = matrixSide - ((matrixSide % 2 == 0) ? 3 : 2);
 		}
 		matrix[start_y][start_x] = ' ';
 		
