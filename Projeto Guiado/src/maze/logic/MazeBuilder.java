@@ -51,6 +51,8 @@ public class MazeBuilder {
 		generateMapWalls(start_x, start_y);
 
 		generateMapFixEven();
+		
+		removeSomePaths();
 	}
 
 	private void fillMatrix(char fill) {
@@ -172,4 +174,36 @@ public class MazeBuilder {
 				exit.setY(exit.getY() + 1);
 		}
 	}
+	
+	private void removeSomePaths()
+	{
+		Random rand = new Random();
+		int x, y;
+		int attempts = 20;
+		
+		while(attempts-- > 0)
+		{
+			x = rand.nextInt(matrix.length-2) + 1;
+			y = rand.nextInt(matrix.length-2) + 1;
+			
+			if(isValidForRemoval(x, y))
+				matrix[y][x] = ' ';
+		}
+	}
+	
+	private boolean isValidForRemoval(int x, int y)
+	{
+		if(matrix[y][x] == Maze.wallChar)
+		{
+			if(matrix[y+1][x] == Maze.wallChar && matrix[y-1][x] == Maze.wallChar && matrix[y][x-1] == ' ' && matrix[y][x+1] == ' ')
+				return true;
+			
+			if(matrix[y+1][x] == ' ' && matrix[y-1][x] == ' ' && matrix[y][x-1] == Maze.wallChar && matrix[y][x+1] == Maze.wallChar)
+				return true;
+		}
+		
+		
+		return false;
+	}
+	
 }
