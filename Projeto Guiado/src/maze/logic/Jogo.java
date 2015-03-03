@@ -1,3 +1,4 @@
+package maze.logic;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -5,7 +6,7 @@ import java.util.Scanner;
 public class Jogo {
 
 	////////////////////////////////
-	///////   Atributes   //////////
+	////////   Attributes   ////////
 	////////////////////////////////
 	
 
@@ -31,42 +32,23 @@ public class Jogo {
 	
 
 	////////////////////////////////
-	///////   Functions   //////////
+	////////   Functions   /////////
 	////////////////////////////////
 	
-	
-	public static void main(String[] args) {
-
+	public Jogo(int side)
+	{
 		heroi_armado = false;
 		dragao = true;
 
-		s = new Scanner(System.in);
-
-
-		System.out.print("For this game, you can choose the dimmensions of the game map. The minimum size is 8,\nsince smaller sizes would make the game impossible to finish.\n");
-		System.out.print("Please indicate the map size (minimum " + Labirinto.MIN_REC_SIDE + ") : ");
-		int map_side = s.nextInt();
-
-		while(map_side < Labirinto.MIN_REC_SIDE)
-		{
-			System.out.print("\nGiven value is less than " + Labirinto.MIN_REC_SIDE + ".\nPlease insert new value : ");
-			map_side = s.nextInt();
-		}
-
-		int minElemDist = (int) (map_side/ELEM_DIST_FACTOR);
+		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
 
-		map = new Labirinto(map_side);
+		map = new Labirinto(side);
 		generateMapElements(minElemDist);
-
-		do{
-			drawMap();
-		}while(turn());
-		 
-		s.close();
 	}
 
-	private static void drawMap()
+	
+	public void drawMap()
 	{
 		boolean saida = !dragao;
 		
@@ -117,84 +99,10 @@ public class Jogo {
 		}
 		
 		map.drawMatrix(coords, chars, saida);
-		
-		
-		
-		
-		
-		
-		
-
-		/*if(espada_x == dragao_x && espada_y == dragao_y)
-		{
-			coords = new int[4];
-			chars = new char[2];
-			
-			coords[0] = heroi_x;
-			coords[1] = heroi_y;
-			if(heroi_armado)
-				chars[0] = heroi_armado_char;
-			else
-				chars[0] = heroi_char;
-			
-			coords[2] = espada_x;
-			coords[3] = espada_y;
-			chars[1] = dragao_espada_char;
-		}
-		else
-		{
-			coords = new int[6];
-			chars = new char[3];
-			
-			coords[0] = heroi_x;
-			coords[1] = heroi_y;
-			if(heroi_armado)
-				chars[0] = heroi_armado_char;
-			else
-				chars[0] = heroi_char;
-			
-			coords[2] = espada_x;
-			coords[3] = espada_y;
-			chars[1] = dragao_espada_char;
-		}
-		
-		
-		
-		/*for(int i = 0; i < MAP_SIDE; i++)
-		{
-			for(int j = 0; j < MAP_SIDE; j++)
-			{
-				if(j==heroi_x && i==heroi_y)
-				{
-					if(heroi_armado)
-						System.out.print(heroi_armado_char);
-					else
-						System.out.print(heroi_char);						
-				}
-				else if (j == saida_x && i == saida_y && !dragao)
-					System.out.print(saida_char);
-				else if(j == espada_x && i == espada_y && !heroi_armado)
-				{
-					if(j == dragao_x && i == dragao_y && dragao)
-						System.out.print(dragao_espada_char);
-					else
-						System.out.print(espada_char);
-				}
-				else if (j == dragao_x && i == dragao_y && dragao)
-					System.out.print(dragao_char);
-				else				
-					System.out.print(matrix[i][j]);
-
-				System.out.print(' ');
-			}
-			System.out.print('\n');
-		}*/
 	}
 
-	private static boolean turn()
+	public boolean turn(String key)
 	{
-		String key = s.next();
-
 		if(key.toUpperCase().equals("A"))
 			moverHeroi(heroi_x-1, heroi_y);
 		else if(key.toUpperCase().equals("W"))
