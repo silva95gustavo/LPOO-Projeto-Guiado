@@ -1,9 +1,8 @@
 package maze.logic;
+
 import java.util.Random;
 
-
-public class Maze {
-	
+public class MazeBuilder {
 	public static final int MIN_REC_SIDE = 8;
 	private static final char paredeChar = 'X';
 	private static final char saidaChar = 'S';
@@ -12,86 +11,17 @@ public class Maze {
 	public char[][] matrix;
 	public int saidaX, saidaY;
 	
-	public Maze(char[][] matrix, int saidaX, int saidaY) {
-		this.matrix = matrix;
+	public MazeBuilder(int side)
+	{
+		matrix = new char[side][side];
 	}
 	
-	public Maze(int matrix_side)
-	{
-		matrixSide = matrix_side;
+	public Maze build() {
 		generateMatrix();
+		return new Maze(matrix, saidaX, saidaY);
 	}
 	
-	public void drawMatrix(int[] coords, char[] chars, boolean saida)
-	{
-		boolean printed = false;
-		
-		for(int i = 0; i < matrixSide; i++)
-		{
-			for(int j = 0; j < matrixSide; j++)
-			{
-				for(int coord = 0; coord < chars.length; coord++)
-				{
-					if(j==coords[2*coord] && i == coords[2*coord + 1])
-					{
-						printed=true;
-						System.out.print(chars[coord]);
-						break;
-					}
-				}
-				
-				if(!printed)
-				{
-					if (j == saidaX && i == saidaY && saida)
-						System.out.print(saidaChar);
-					else
-						System.out.print(matrix[i][j]);						
-				}
-				
-				printed = false;
-				System.out.print(' ');
-			}
-			System.out.print('\n');
-		}
-	}
-	
-	public char matrixCoords(int x, int y)
-	{
-		return matrix[y][x];
-	}
-
-	public boolean isParede(int x, int y)
-	{
-		return matrixCoords(x, y) == paredeChar;
-	}
-	
-	public boolean isSaida(int x, int y)
-	{
-		return matrixCoords(x, y) == saidaChar;
-	}
-	
-	public static int coordDistSquare(int x1, int y1, int x2, int y2)
-	{
-		return (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1);
-	}
-	
-	public static boolean areAdjacent(int x1, int y1, int x2, int y2)
-	{
-		if(x1 == x2)
-		{
-			if(Math.abs(y2-y1)==1)
-				return true;
-		}
-		else if(y1 == y2)
-		{
-			if(Math.abs(x2-x1)==1)
-				return true;
-		}
-
-		return false;
-	}
-	
- 	private void generateMatrix()
+	private void generateMatrix()
 	{
 		matrix = new char[matrixSide][matrixSide];
 		fillMatrix(paredeChar);
@@ -244,6 +174,4 @@ public class Maze {
 				saidaY++;
 		}
 	}
-	
-	
 }
