@@ -20,6 +20,14 @@ public class Maze {
 		return matrix.length;
 	}
 	
+	public Exit getExit() {
+		return exit;
+	}
+	
+	public void setExitVisible(boolean visible) {
+		exit.setVisible(visible);
+	}
+	
 	public void drawMatrix(int[] coords, char[] chars)
 	{
 		boolean printed = false;
@@ -65,7 +73,7 @@ public class Maze {
 	
 	public boolean isExit(int x, int y)
 	{
-		return matrixCoords(x, y) == exitChar;
+		return x == exit.getX() && y == exit.getY();
 	}
 	
 	public static int coordDistSquare(int x1, int y1, int x2, int y2)

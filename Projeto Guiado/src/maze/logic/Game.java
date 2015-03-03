@@ -4,12 +4,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
+	
 
 	////////////////////////////////
 	////////   Attributes   ////////
 	////////////////////////////////
 	
-
 	private static final int ELEM_DIST_FACTOR = 2;			// Fator usado para determinar a dist. mínima entre elementos
 
 	private static final char dragao_char = 'D';			// Símbolo representativo do dragão
@@ -24,12 +24,8 @@ public class Game {
 	private static boolean heroi_armado;			// True se o heroi já está armado
 	private static boolean dragao;					// True se o dragão está vivo
 
-	private static Scanner s;						// Used to read from the console throughout the program
-
 	private static Maze map;					// Represents the game map
 
-	
-	
 
 	////////////////////////////////
 	////////   Functions   /////////
@@ -188,7 +184,11 @@ public class Game {
 		if(Maze.areAdjacent(heroi_x, heroi_y, dragao_x, dragao_y) && dragao)
 		{
 			if(heroi_armado)
+			{
+				// Dragão morreu
 				dragao = false;
+				map.setExitVisible(true);
+			}
 			else
 				return false;
 		}

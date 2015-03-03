@@ -64,25 +64,27 @@ public class MazeBuilder {
 	private void generateMapExit() {
 		Random r = new Random();
 		int n = 2 * r.nextInt(matrix.length / 2 - 2) + 1;
+		int x = 0, y = 0;
 		switch(r.nextInt(4))
 		{
 		case 0:
-			exit.setY(0);
-			exit.setX(n);
+			y = 0;
+			x = n;
 			break;
 		case 1:
-			exit.setY(matrix.length - 1);
-			exit.setX(n);
+			y = matrix.length - 1;
+			x = n;
 			break;
 		case 2:
-			exit.setX(0);
-			exit.setY(n);
+			x = 0;
+			y = n;
 			break;
 		case 3:
-			exit.setX(matrix.length - 1);
-			exit.setY(n);
+			x = matrix.length - 1;
+			y = n;
 			break;
 		}
+		exit = new Exit(x, y);
 	}
 	
 	private void generateMapWalls(int x, int y) {

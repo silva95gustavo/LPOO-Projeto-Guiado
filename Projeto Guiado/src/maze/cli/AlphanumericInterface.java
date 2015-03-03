@@ -7,6 +7,7 @@ import maze.logic.MazeBuilder;
 
 public class AlphanumericInterface {
 	private Scanner s;
+	
 	public void start()
 	{
 		s = new Scanner(System.in);
