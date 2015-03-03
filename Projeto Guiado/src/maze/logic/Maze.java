@@ -2,7 +2,7 @@ package maze.logic;
 import java.util.Random;
 
 
-public class Labirinto {
+public class Maze {
 	
 	public static final int MIN_REC_SIDE = 8;
 	private static final char paredeChar = 'X';
@@ -12,7 +12,7 @@ public class Labirinto {
 	public char[][] matrix;
 	public int saidaX, saidaY;
 	
-	public Labirinto(int matrix_side)
+	public Maze(int matrix_side)
 	{
 		matrixSide = matrix_side;
 		generateMatrix();

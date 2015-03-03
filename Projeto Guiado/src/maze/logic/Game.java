@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Jogo {
+public class Game {
 
 	////////////////////////////////
 	////////   Attributes   ////////
@@ -26,7 +26,7 @@ public class Jogo {
 
 	private static Scanner s;						// Used to read from the console throughout the program
 
-	private static Labirinto map;					// Represents the game map
+	private static Maze map;					// Represents the game map
 
 	
 	
@@ -35,7 +35,7 @@ public class Jogo {
 	////////   Functions   /////////
 	////////////////////////////////
 	
-	public Jogo(int side)
+	public Game(int side)
 	{
 		heroi_armado = false;
 		dragao = true;
@@ -43,7 +43,7 @@ public class Jogo {
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
 
-		map = new Labirinto(side);
+		map = new Maze(side);
 		generateMapElements(minElemDist);
 	}
 
@@ -190,7 +190,7 @@ public class Jogo {
 
 	private static boolean combateDragao()
 	{
-		if(Labirinto.areAdjacent(heroi_x, heroi_y, dragao_x, dragao_y) && dragao)
+		if(Maze.areAdjacent(heroi_x, heroi_y, dragao_x, dragao_y) && dragao)
 		{
 			if(heroi_armado)
 				dragao = false;
@@ -231,7 +231,7 @@ public class Jogo {
 		{
 			randX = rand.nextInt(map.matrixSide-2) + 1;
 			randY= rand.nextInt(map.matrixSide-2) + 1;			
-		} while(map.isParede(randX, randY) || Labirinto.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
+		} while(map.isParede(randX, randY) || Maze.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
 
 		espada_x = randX;
 		espada_y = randY;
@@ -246,7 +246,7 @@ public class Jogo {
 		{
 			randX = rand.nextInt(map.matrixSide-2) + 1;
 			randY= rand.nextInt(map.matrixSide-2) + 1;			
-		} while(map.isParede(randX, randY) || Labirinto.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
+		} while(map.isParede(randX, randY) || Maze.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
 
 		dragao_x = randX;
 		dragao_y = randY;
