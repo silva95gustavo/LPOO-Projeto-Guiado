@@ -6,7 +6,7 @@ public class MazeBuilder {
 	public static final int MIN_REC_SIDE = 8;
 	
 	public char[][] matrix;
-	public int saidaX, saidaY;
+	public Exit exit;
 	
 	public MazeBuilder(int side)
 	{
@@ -15,35 +15,35 @@ public class MazeBuilder {
 	
 	public Maze build() {
 		generateMatrix();
-		return new Maze(matrix, saidaX, saidaY);
+		return new Maze(matrix, exit);
 	}
 	
 	private void generateMatrix()
 	{
-		fillMatrix(Maze.paredeChar);
+		fillMatrix(Maze.wallChar);
 		
 		generateMapExit();
 		
 		int start_x, start_y;
 		
-		if (saidaX == 0)
+		if (exit.getX() == 0)
 		{
 			start_x = 1;
-			start_y = saidaY;
+			start_y = exit.getY();
 		}
-		else if (saidaY == 0)
+		else if (exit.getY() == 0)
 		{
-			start_x = saidaX;
+			start_x = exit.getX();
 			start_y = 1;
 		}
-		else if (saidaX == matrix.length - 1)
+		else if (exit.getX() == matrix.length - 1)
 		{
 			start_x = matrix.length - ((matrix.length % 2 == 0) ? 3 : 2);
-			start_y = saidaY;
+			start_y = exit.getY();
 		}
 		else
 		{
-			start_x = saidaX;
+			start_x = exit.getX();
 			start_y = matrix.length - ((matrix.length % 2 == 0) ? 3 : 2);
 		}
 		matrix[start_y][start_x] = ' ';
@@ -67,20 +67,20 @@ public class MazeBuilder {
 		switch(r.nextInt(4))
 		{
 		case 0:
-			saidaY = 0;
-			saidaX = n;
+			exit.setY(0);
+			exit.setX(n);
 			break;
 		case 1:
-			saidaY = matrix.length - 1;
-			saidaX = n;
+			exit.setY(matrix.length - 1);
+			exit.setX(n);
 			break;
 		case 2:
-			saidaX = 0;
-			saidaY = n;
+			exit.setX(0);
+			exit.setY(n);
 			break;
 		case 3:
-			saidaX = matrix.length - 1;
-			saidaY = n;
+			exit.setX(matrix.length - 1);
+			exit.setY(n);
 			break;
 		}
 	}
@@ -111,7 +111,7 @@ public class MazeBuilder {
 	}
 	
 	private boolean removeMapWall(int x, int y, int new_x, int new_y) {
-		if (new_x > 0 && new_x < matrix.length - 1 && new_y > 0 && new_y < matrix.length - 1 && matrix[new_y][new_x] == Maze.paredeChar)
+		if (new_x > 0 && new_x < matrix.length - 1 && new_y > 0 && new_y < matrix.length - 1 && matrix[new_y][new_x] == Maze.wallChar)
 		{
 			matrix[new_y][new_x] = ' ';
 			matrix[(new_y + y) / 2][(new_x + x) / 2] = ' ';
@@ -147,12 +147,12 @@ public class MazeBuilder {
 			}
 			for (int y = 0; y < matrix.length; y++) {
 				if (matrix[y][n - 1] != matrix[y][n + 1])
-					matrix[y][n] = Maze.paredeChar;
+					matrix[y][n] = Maze.wallChar;
 			}
 
 			// Correct exit position
-			if (saidaX < matrix.length - 1 && n <= saidaX)
-				saidaX++;
+			if (exit.getX() < matrix.length - 1 && n <= exit.getX())
+				exit.setX(exit.getX() + 1);
 
 			// Duplicate line
 			n = r.nextInt(matrix.length - 4) + 2;
@@ -163,11 +163,11 @@ public class MazeBuilder {
 			}
 			for (int x = 0; x < matrix.length; x++) {
 				if (matrix[n - 1][x] != matrix[n + 1][x])
-					matrix[n][x] = Maze.paredeChar;
+					matrix[n][x] = Maze.wallChar;
 			}
 			// Correct exit position
-			if (saidaY < matrix.length - 1 && n <= saidaY)
-				saidaY++;
+			if (exit.getY() < matrix.length - 1 && n <= exit.getY())
+				exit.setY(exit.getY() + 1);
 		}
 	}
 }

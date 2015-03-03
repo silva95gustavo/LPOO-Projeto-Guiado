@@ -48,8 +48,6 @@ public class Game {
 
 	public void drawMap()
 	{
-		boolean saida = !dragao;
-		
 		int[] coords = new int[6];
 		Arrays.fill(coords, -1);
 		char[] chars = new char[3];
@@ -95,7 +93,7 @@ public class Game {
 				i++;
 			}
 		}
-		map.drawMatrix(coords, chars, saida);
+		map.drawMatrix(coords, chars);
 	}
 
 	public boolean turn(String key)
@@ -109,7 +107,7 @@ public class Game {
 		else if(key.toUpperCase().equals("D"))
 			moverHeroi(heroi_x+1, heroi_y);
 		
-		if(map.isSaida(heroi_x, heroi_y)) 
+		if(map.isExit(heroi_x, heroi_y)) 
 		{
 			System.out.print("\n\n Congratulations! You escaped the maze!\n\n");
 			return false;
@@ -166,7 +164,7 @@ public class Game {
 	}
 
 	private static boolean moverDragao(int x, int y) {
-		if (!map.isParede(x, y))
+		if (!map.isWall(x, y))
 		{
 			dragao_x = x;
 			dragao_y = y;
@@ -176,7 +174,7 @@ public class Game {
 	}
 
 	private static boolean moverHeroi(int x, int y) {
-		if(!map.isParede(x, y) || (map.isSaida(x,  y) && !dragao))
+		if(!map.isWall(x, y) || (map.isExit(x,  y) && !dragao))
 		{
 			heroi_x=x;
 			heroi_y=y;
@@ -211,9 +209,9 @@ public class Game {
 
 		do
 		{
-			randX = rand.nextInt(map.matrix.length-2) + 1;
-			randY = rand.nextInt(map.matrix.length-2) + 1;			
-		} while(map.isParede(randX, randY) || randX >= map.matrix.length || randY >= map.matrix.length);
+			randX = rand.nextInt(map.getSide()-2) + 1;
+			randY = rand.nextInt(map.getSide()-2) + 1;			
+		} while(map.isWall(randX, randY) || randX >= map.getSide() || randY >= map.getSide());
 
 		heroi_x = randX;
 		heroi_y = randY;
@@ -226,9 +224,9 @@ public class Game {
 
 		do
 		{
-			randX = rand.nextInt(map.matrix.length-2) + 1;
-			randY= rand.nextInt(map.matrix.length-2) + 1;			
-		} while(map.isParede(randX, randY) || Maze.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
+			randX = rand.nextInt(map.getSide()-2) + 1;
+			randY= rand.nextInt(map.getSide()-2) + 1;			
+		} while(map.isWall(randX, randY) || Maze.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
 
 		espada_x = randX;
 		espada_y = randY;
@@ -241,9 +239,9 @@ public class Game {
 
 		do
 		{
-			randX = rand.nextInt(map.matrix.length-2) + 1;
-			randY= rand.nextInt(map.matrix.length-2) + 1;			
-		} while(map.isParede(randX, randY) || Maze.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
+			randX = rand.nextInt(map.getSide()-2) + 1;
+			randY= rand.nextInt(map.getSide()-2) + 1;			
+		} while(map.isWall(randX, randY) || Maze.coordDistSquare(randX, randY, heroi_x, heroi_y) < min_dist);
 
 		dragao_x = randX;
 		dragao_y = randY;

@@ -1,19 +1,26 @@
 package maze.logic;
-import java.util.Random;
-
 
 public class Maze {
-	public static final char paredeChar = 'X';
-	public static final char saidaChar = 'S';
+	public static final char wallChar = 'X';
+	public static final char exitChar = 'S';
 	
-	public char[][] matrix;
-	public int saidaX, saidaY;
+	private char[][] matrix;
+	private Exit exit;
 	
-	public Maze(char[][] matrix, int saidaX, int saidaY) {
+	public Maze(char[][] matrix, Exit exit) {
 		this.matrix = matrix;
+		this.exit = exit;
 	}
 
-	public void drawMatrix(int[] coords, char[] chars, boolean saida)
+	public char[][] getMatrix() {
+		return matrix;
+	}
+	
+	public int getSide() {
+		return matrix.length;
+	}
+	
+	public void drawMatrix(int[] coords, char[] chars)
 	{
 		boolean printed = false;
 		
@@ -33,8 +40,8 @@ public class Maze {
 				
 				if(!printed)
 				{
-					if (j == saidaX && i == saidaY && saida)
-						System.out.print(saidaChar);
+					if (j == exit.getX() && i == exit.getY() && exit.isVisible())
+						System.out.print(exitChar);
 					else
 						System.out.print(matrix[i][j]);						
 				}
@@ -51,14 +58,14 @@ public class Maze {
 		return matrix[y][x];
 	}
 
-	public boolean isParede(int x, int y)
+	public boolean isWall(int x, int y)
 	{
-		return matrixCoords(x, y) == paredeChar;
+		return matrixCoords(x, y) == wallChar;
 	}
 	
-	public boolean isSaida(int x, int y)
+	public boolean isExit(int x, int y)
 	{
-		return matrixCoords(x, y) == saidaChar;
+		return matrixCoords(x, y) == exitChar;
 	}
 	
 	public static int coordDistSquare(int x1, int y1, int x2, int y2)
@@ -81,124 +88,5 @@ public class Maze {
 
 		return false;
 	}
-	
-	private void fillMatrix(char fill) {
-		for (int y = 0; y < matrix.length; y++) {
-			for (int x = 0; x < matrix.length; x++) {
-				matrix[x][y] = fill;
-			}
-		}
-	}
 
-	private void generateMapExit() {
-		Random r = new Random();
-		int n = 2 * r.nextInt(matrix.length / 2 - 2) + 1;
-		switch(r.nextInt(4))
-		{
-		case 0:
-			saidaY = 0;
-			saidaX = n;
-			break;
-		case 1:
-			saidaY = matrix.length - 1;
-			saidaX = n;
-			break;
-		case 2:
-			saidaX = 0;
-			saidaY = n;
-			break;
-		case 3:
-			saidaX = matrix.length - 1;
-			saidaY = n;
-			break;
-		}
-	}
-	
-	private void generateMapWalls(int x, int y) {
-		int[] directions = {0, 1, 2, 3};
-		directions = randomizeArray(directions);
-		for (int i = 0; i < directions.length; i++) {
-			switch (directions[i]) {
-			case 0: // cima
-				if (removeMapWall(x, y, x, y - 2))
-					generateMapWalls(x, y - 2);
-				break;
-			case 1: // baixo
-				if (removeMapWall(x, y, x, y + 2))
-					generateMapWalls(x, y + 2);
-				break;
-			case 2: // esquerda
-				if (removeMapWall(x, y, x - 2, y))
-					generateMapWalls(x - 2, y);
-				break;
-			case 3: // direita
-				if (removeMapWall(x, y, x + 2, y))
-					generateMapWalls(x + 2, y);
-				break;
-			}
-		}
-	}
-	
-	private boolean removeMapWall(int x, int y, int new_x, int new_y) {
-		if (new_x > 0 && new_x < matrix.length - 1 && new_y > 0 && new_y < matrix.length - 1 && matrix[new_y][new_x] == paredeChar)
-		{
-			matrix[new_y][new_x] = ' ';
-			matrix[(new_y + y) / 2][(new_x + x) / 2] = ' ';
-			return true;
-		}
-		return false;
-	}
-	
-	private static int[] randomizeArray(int[] array) {
-		Random r = new Random();
-		for (int i = 0; i < array.length; i++) {
-			int n = r.nextInt(array.length);
-			int val = array[i];
-			array[i] = array[n];
-			array[n] = val;
-		}
-		return array;
-	}
-	
-	private void generateMapFixEven() {
-		// Fix for even side
-		if (matrix.length % 2 == 0)
-		{
-			Random r = new Random();
-			int n;
-
-			// Duplicate column
-			n = r.nextInt(matrix.length - 4) + 2;
-			for (int x = matrix.length - 2; x > n; x--) {
-				for (int y = 0; y < matrix.length; y++) {
-					matrix[y][x] = matrix[y][x - 1];
-				}
-			}
-			for (int y = 0; y < matrix.length; y++) {
-				if (matrix[y][n - 1] != matrix[y][n + 1])
-					matrix[y][n] = paredeChar;
-			}
-
-			// Correct exit position
-			if (saidaX < matrix.length - 1 && n <= saidaX)
-				saidaX++;
-
-			// Duplicate line
-			n = r.nextInt(matrix.length - 4) + 2;
-			for (int y = matrix.length - 2; y > n; y--) {
-				for (int x = 0; x < matrix.length; x++) {
-					matrix[y][x] = matrix[y - 1][x];
-				}
-			}
-			for (int x = 0; x < matrix.length; x++) {
-				if (matrix[n - 1][x] != matrix[n + 1][x])
-					matrix[n][x] = paredeChar;
-			}
-			// Correct exit position
-			if (saidaY < matrix.length - 1 && n <= saidaY)
-				saidaY++;
-		}
-	}
-	
-	
 }
