@@ -10,13 +10,7 @@ public class Game {
 	////////////////////////////////
 	
 	private static final int ELEM_DIST_FACTOR = 2;			// Fator usado para determinar a dist. mínima entre elementos
-
-	private static final char dragao_char = 'D';			// Símbolo representativo do dragão
-	private static final char espada_char = 'E';			// Símbolo da espada
-	private static final char dragao_espada_char = 'F';		// Símbolo a representar quando dragão e espada estão coincidentes
-	private static final char heroi_char = 'H';				// Símbolo do herói sem espada
-	private static final char heroi_armado_char = 'A';		// Símbolo do herói com espada
-
+	
 	private Maze map;						// Represents the game map
 
 	private Hero hero;
@@ -38,56 +32,6 @@ public class Game {
 	public GameData getGameData()
 	{
 		return new GameData(map, hero, sword, dragons);
-	}
-	
-	public void drawMap()
-	{
-		int[] coords = new int[6];
-		Arrays.fill(coords, -1);
-		char[] chars = new char[3];
-		Arrays.fill(chars, ' ');
-		
-		
-		coords[0] = hero.getX();
-		coords[1] = hero.getY();
-		if(hero.isArmed())
-			chars[0] = heroi_armado_char;
-		else
-			chars[0] = heroi_char;
-		
-		int i = 1;
-		
-		// TODO: Suporte multi-dragões
-		if(sword.getX() == dragons[0].getX() && sword.getY() == dragons[0].getY())
-		{
-			coords[2*i] = sword.getX();
-			coords[2*i+1] = sword.getY();
-			
-			if(!hero.isArmed())
-				chars[i] = dragao_espada_char;
-			else
-				chars[i] = dragao_char;
-			i++;
-		}
-		else
-		{
-			if(!hero.isArmed())
-			{
-				coords[2*i] = sword.getX();
-				coords[2*i + 1] = sword.getY();
-				chars[i] = espada_char;
-				i++;
-			}
-			
-			if(dragons[0].isAlive())
-			{
-				coords[2*i] = dragons[0].getX();
-				coords[2*i + 1] = dragons[0].getY();
-				chars[i] = dragao_char;
-				i++;
-			}
-		}
-		map.drawMatrix(coords, chars);
 	}
 
 	public boolean turn(String key)
