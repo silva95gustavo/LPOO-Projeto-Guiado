@@ -3,7 +3,8 @@ package maze.logic;
 public class Dragon extends Element{
 	private boolean alive = true;
 	private boolean sleeping = false;
-	private int mode = 0;		// 0 - Stopped, 1 - Moving random, 2 - Moving & sleeping
+	public static enum Dragon_mode {DGN_STILL, DGN_RAND, DGN_RAND_SLP};
+	private Dragon_mode mode = Dragon_mode.DGN_STILL;
 	
 	public static final int DRAGON_STOP_MODE = 0;
 	public static final int DRAGON_MOVE_MODE = 0;
@@ -17,7 +18,7 @@ public class Dragon extends Element{
 		super(x, y);
 	}
 	
-	public Dragon(int x, int y, int mode) {
+	public Dragon(int x, int y, Dragon_mode mode) {
 		super(x, y);
 		this.mode = mode;
 	}
@@ -38,11 +39,11 @@ public class Dragon extends Element{
 		this.sleeping = sleeping;
 	}
 
-	public int getMode() {
+	public Dragon_mode getMode() {
 		return mode;
 	}
 
-	public void setMode(int mode) {
+	public void setMode(Dragon_mode mode) {
 		this.mode = mode;
 	}
 	

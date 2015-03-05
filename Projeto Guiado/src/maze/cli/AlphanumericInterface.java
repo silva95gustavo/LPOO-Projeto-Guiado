@@ -56,15 +56,29 @@ public class AlphanumericInterface {
 		}
 		
 		System.out.print("\nPlease indicate the dragon mode (0-still, 1-moving, 2-moving & sleeping) : ");
-		int dragon_mode = s.nextInt();
+		int dragon_mode_int = s.nextInt();
+		Dragon.Dragon_mode drag_mode = Dragon.Dragon_mode.DGN_STILL;
 		
-		while(dragon_mode > 3 && dragon_mode < 0)
+		while(dragon_mode_int > 3 && dragon_mode_int < 0)
 		{
 			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
-			dragon_mode = s.nextInt();
+			dragon_mode_int = s.nextInt();
+		}
+		
+		switch(dragon_mode_int)
+		{
+		case 0:
+			drag_mode = Dragon.Dragon_mode.DGN_STILL;
+			break;
+		case 1:
+			drag_mode = Dragon.Dragon_mode.DGN_RAND;
+			break;
+		case 2:
+			drag_mode = Dragon.Dragon_mode.DGN_RAND_SLP;
+			break;
 		}
 
-		return new Game(map_side, dragon_number, dragon_mode);
+		return new Game(map_side, dragon_number, drag_mode);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)

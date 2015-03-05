@@ -28,7 +28,7 @@ public class Game {
 		generateMapElements(minElemDist);
 	}
 	
-	public Game(int side, int dragon_mode)
+	public Game(int side, Dragon.Dragon_mode dragon_mode)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
@@ -39,7 +39,7 @@ public class Game {
 			dragons[i].setMode(dragon_mode);
 	}
 	
-	public Game(int side,int dragon_number, int dragon_mode)
+	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
@@ -106,12 +106,12 @@ public class Game {
 	private void turnDragao(int index)
 	{
 		switch(dragons[index].getMode()){
-		case 0:
+		case DGN_STILL:
 			return;
-		case 1:
+		case DGN_RAND:
 			moverDragaoRandom(index);
 			return;
-		case 2:
+		case DGN_RAND_SLP:
 			if(dragons[index].isSleeping())
 			{
 				if(probability(8))
