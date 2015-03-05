@@ -6,10 +6,6 @@ public class Dragon extends Element{
 	public static enum Dragon_mode {DGN_STILL, DGN_RAND, DGN_RAND_SLP};
 	private Dragon_mode mode = Dragon_mode.DGN_STILL;
 	
-	public static final int DRAGON_STOP_MODE = 0;
-	public static final int DRAGON_MOVE_MODE = 0;
-	public static final int DRAGON_MV_SLP_MODE = 0;
-	
 	public Dragon() {
 		super(0, 0);
 	}
