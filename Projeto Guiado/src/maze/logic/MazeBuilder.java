@@ -3,6 +3,8 @@ package maze.logic;
 import java.util.Random;
 
 public class MazeBuilder {	
+	private static final double MULTIPLE_PATHS_FACTOR = 0.25;
+
 	public static final int MIN_REC_SIDE = 8;
 	
 	public char[][] matrix;
@@ -179,9 +181,8 @@ public class MazeBuilder {
 	{
 		Random rand = new Random();
 		int x, y;
-		int attempts = 20;
-		
-		while(attempts-- > 0)
+
+		for (int attempt = 0; attempt < Math.pow(matrix.length, 2) * MULTIPLE_PATHS_FACTOR; attempt++)
 		{
 			x = rand.nextInt(matrix.length-2) + 1;
 			y = rand.nextInt(matrix.length-2) + 1;

@@ -1,6 +1,5 @@
 package maze.cli;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 import maze.logic.Dragon;
@@ -12,11 +11,13 @@ import maze.logic.MazeBuilder;
 import maze.logic.Sword;
 
 public class AlphanumericInterface {
-	private static final char dragon_char = 'D';			// Símbolo representativo do dragão
-	private static final char sword_char = 'E';			// Símbolo da espada
-	private static final char dragon_sword_char = 'F';		// Símbolo a representar quando dragão e espada estão coincidentes
-	private static final char hero_char = 'H';				// Símbolo do herói sem espada
-	private static final char armed_hero_char = 'A';		// Símbolo do herói com espada
+	private static final char dragon_char = 'D';				// Símbolo representativo do dragão
+	private static final char dragon_sleeping_char = 'd';
+	private static final char sword_char = 'E';					// Símbolo da espada
+	private static final char dragon_sword_char = 'F';			// Símbolo a representar quando dragão e espada estão coincidentes
+	private static final char dragon_sleeping_sword_char = 'f';
+	private static final char hero_char = 'H';					// Símbolo do herói sem espada
+	private static final char armed_hero_char = 'A';			// Símbolo do herói com espada
 	private static final char wall_char = 'X';
 	private static final char exit_char = 'S';
 	
@@ -76,7 +77,12 @@ public class AlphanumericInterface {
 		for (int i = 0; i < dragons.length; i++)
 		{
 			if (dragons[i].isAlive())
-				matrix[dragons[i].getY()][dragons[i].getX()] = dragon_char;
+			{
+				if (dragons[i].isSleeping())
+					matrix[dragons[i].getY()][dragons[i].getX()] = dragon_sleeping_char;
+				else
+					matrix[dragons[i].getY()][dragons[i].getX()] = dragon_char;
+			}
 		}
 
 		// Sword
@@ -84,6 +90,8 @@ public class AlphanumericInterface {
 		{
 			if (matrix[sword.getY()][sword.getX()] == dragon_char)
 				matrix[sword.getY()][sword.getX()] = dragon_sword_char;
+			else if (matrix[sword.getY()][sword.getX()] == dragon_sleeping_char)
+				matrix[sword.getY()][sword.getX()] = dragon_sleeping_sword_char;
 			else
 				matrix[sword.getY()][sword.getX()] = sword_char;
 		}
