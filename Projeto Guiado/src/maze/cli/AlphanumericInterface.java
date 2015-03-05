@@ -45,8 +45,26 @@ public class AlphanumericInterface {
 			System.out.print("\nGiven value is less than " + MazeBuilder.MIN_REC_SIDE + ".\nPlease insert new value : ");
 			map_side = s.nextInt();
 		}
+		
+		System.out.print("\nPlease indicate the number of dragons (max 5) : ");
+		int dragon_number = s.nextInt();
+		
+		while(dragon_number > 5 && dragon_number < 1)
+		{
+			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
+			dragon_number = s.nextInt();
+		}
+		
+		System.out.print("\nPlease indicate the dragon mode (0-still, 1-moving, 2-moving & sleeping) : ");
+		int dragon_mode = s.nextInt();
+		
+		while(dragon_mode > 3 && dragon_mode < 0)
+		{
+			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
+			dragon_mode = s.nextInt();
+		}
 
-		return new Game(map_side);
+		return new Game(map_side, dragon_number, dragon_mode);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)
