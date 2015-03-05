@@ -51,7 +51,10 @@ public class Game {
 		}
 
 		if(hero.getX() == sword.getX() && hero.getY() == sword.getY())
+		{
+			sword.setDropped(false);
 			hero.setArmed(true);
+		}
 
 		if(combateDragao())
 		{
