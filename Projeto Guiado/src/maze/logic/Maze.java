@@ -28,6 +28,11 @@ public class Maze {
 		exit.setVisible(visible);
 	}
 	
+	public boolean isEmptyCell(int x, int y)
+	{
+		return matrixCoords(x, y) == ' ';
+	}
+	
 	public void drawMatrix(int[] coords, char[] chars)
 	{
 		boolean printed = false;

@@ -9,6 +9,8 @@ import maze.logic.Hero;
 import maze.logic.Maze;
 import maze.logic.MazeBuilder;
 import maze.logic.Sword;
+import maze.logic.Dart;
+import maze.logic.Shield;
 
 public class AlphanumericInterface {
 	private static final char dragon_char = 'D';				// Símbolo representativo do dragão
@@ -20,14 +22,16 @@ public class AlphanumericInterface {
 	private static final char armed_hero_char = 'A';			// Símbolo do herói com espada
 	private static final char wall_char = 'X';
 	private static final char exit_char = 'S';
-	
+	private static final char dart_char = '>';
+	private static final char shield_shar = 'C';
+
 	private Scanner s;
-	
+
 	public void start()
 	{
 		s = new Scanner(System.in);
 		Game game = createGame();
-		
+
 		do{
 			drawGame(game.getGameData());
 		} while(game.turn(s.next()));
@@ -36,6 +40,7 @@ public class AlphanumericInterface {
 
 	private Game createGame()
 	{
+		System.out.println("Controls : WASD to move hero, IJKL to fire darts\n");
 		System.out.print("For this game, you can choose the dimensions of the game map. The minimum size is 8,\nsince smaller sizes would make the game impossible to finish.\n");
 		System.out.print("Please indicate the map size (minimum " + MazeBuilder.MIN_REC_SIDE + ") : ");
 		int map_side = s.nextInt();
@@ -46,7 +51,39 @@ public class AlphanumericInterface {
 			map_side = s.nextInt();
 		}
 
-		return new Game(map_side, true);
+		System.out.print("\nPlease indicate the number of dragons (max 5) : ");
+		int dragon_number = s.nextInt();
+
+		while(dragon_number > 5 && dragon_number < 1)
+		{
+			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
+			dragon_number = s.nextInt();
+		}
+
+		System.out.print("\nPlease indicate the dragon mode (0-still, 1-moving, 2-moving & sleeping) : ");
+		int dragon_mode_int = s.nextInt();
+		Dragon.Dragon_mode drag_mode = Dragon.Dragon_mode.DGN_STILL;
+
+		while(dragon_mode_int > 3 && dragon_mode_int < 0)
+		{
+			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
+			dragon_mode_int = s.nextInt();
+		}
+
+		switch(dragon_mode_int)
+		{
+		case 0:
+			drag_mode = Dragon.Dragon_mode.DGN_STILL;
+			break;
+		case 1:
+			drag_mode = Dragon.Dragon_mode.DGN_RAND;
+			break;
+		case 2:
+			drag_mode = Dragon.Dragon_mode.DGN_RAND_SLP;
+			break;
+		}
+
+		return new Game(map_side, dragon_number, drag_mode);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)
@@ -57,22 +94,32 @@ public class AlphanumericInterface {
 		{
 			matrix[i] = matrix[i].clone();
 		}
-		
+
 		// Exit
 		if (maze.getExit().isVisible())
 			matrix[maze.getExit().getY()][maze.getExit().getX()] = exit_char;
-		
+
 		return matrix;
 	}
 
-	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons)
+	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield)
 	{
 		// Hero
 		if (hero.isArmed())
 			matrix[hero.getY()][hero.getX()] = armed_hero_char;
 		else
 			matrix[hero.getY()][hero.getX()] = hero_char;
+
+		// Darts
+		for(int i = 0; i < darts.length; i++)
+		{
+			if(darts[i].isDropped())
+				matrix[darts[i].getY()][darts[i].getX()] = dart_char;
+		}
 		
+		if(shield.isDropped())
+			matrix[shield.getY()][shield.getX()] = shield_shar;
+
 		// Dragons
 		for (int i = 0; i < dragons.length; i++)
 		{
@@ -97,16 +144,17 @@ public class AlphanumericInterface {
 		}
 		return matrix;
 	}
-	
+
 	public void drawGame(GameData gameData)
 	{
 		int side = gameData.getMap().getSide();
 		char[][] matrix = new char[side][side];
 		matrix = placeMaze(matrix, gameData.getMap());
-		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons());
+		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons(), gameData.getDarts(), gameData.getShield());
 		drawMatrix(matrix);
+		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
 	}
-	
+
 	public void drawMatrix(char[][] matrix)
 	{
 		for (int y = 0; y < matrix.length; y++)
