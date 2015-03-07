@@ -7,7 +7,7 @@ public class Dragon extends Element{
 	private Dragon_mode mode = Dragon_mode.DGN_STILL;
 	
 	public Dragon() {
-		super(0, 0);
+		super(1, 3);
 	}
 	
 	public Dragon(int x, int y) {

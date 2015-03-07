@@ -22,7 +22,7 @@ public class AlphanumericInterface {
 	private static final char armed_hero_char = 'A';			// Símbolo do herói com espada
 	private static final char wall_char = 'X';
 	private static final char exit_char = 'S';
-	private static final char dart_char = '>';
+	private static final char dart_char = '\'';
 	private static final char shield_shar = 'C';
 
 	private Scanner s;
@@ -41,25 +41,42 @@ public class AlphanumericInterface {
 	private Game createGame()
 	{
 		System.out.println("Controls : WASD to move hero, IJKL to fire darts\n");
-		System.out.print("For this game, you can choose the dimensions of the game map. The minimum size is 8,\nsince smaller sizes would make the game impossible to finish.\n");
-		System.out.print("Please indicate the map size (minimum " + MazeBuilder.MIN_REC_SIDE + ") : ");
-		int map_side = s.nextInt();
 
-		while(map_side < MazeBuilder.MIN_REC_SIDE)
+		// Randomness
+		System.out.print("Do you want to generate a random map or use the default one? (r/d) ");
+		char r;
+		do
 		{
-			System.out.print("\nGiven value is less than " + MazeBuilder.MIN_REC_SIDE + ".\nPlease insert new value : ");
+			r = s.next().charAt(0);
+		} while (r != 'r' && r != 'd');
+		boolean random = (r == 'r');
+
+		int map_side = 0, dragon_number = 0;
+		if (random)
+		{
+			// Size
+			System.out.print("To generate a random map, you have to choose a size. The minimum is 8,\nsince smaller ones would make the game impossible to finish.\n");
+			System.out.print("Please indicate the map size (minimum " + MazeBuilder.MIN_REC_SIDE + ") : ");
 			map_side = s.nextInt();
-		}
 
-		System.out.print("\nPlease indicate the number of dragons (max 5) : ");
-		int dragon_number = s.nextInt();
+			while(map_side < MazeBuilder.MIN_REC_SIDE)
+			{
+				System.out.print("\nGiven value is less than " + MazeBuilder.MIN_REC_SIDE + ".\nPlease insert new value : ");
+				map_side = s.nextInt();
+			}
 
-		while(dragon_number > 5 && dragon_number < 1)
-		{
-			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
+			// Dragon number
+			System.out.print("\nPlease indicate the number of dragons (max 5) : ");
 			dragon_number = s.nextInt();
+
+			while(dragon_number > 5 && dragon_number < 1)
+			{
+				System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
+				dragon_number = s.nextInt();
+			}
 		}
 
+		// Dragon mode
 		System.out.print("\nPlease indicate the dragon mode (0-still, 1-moving, 2-moving & sleeping) : ");
 		int dragon_mode_int = s.nextInt();
 		Dragon.Dragon_mode drag_mode = Dragon.Dragon_mode.DGN_STILL;
@@ -82,8 +99,10 @@ public class AlphanumericInterface {
 			drag_mode = Dragon.Dragon_mode.DGN_RAND_SLP;
 			break;
 		}
-
-		return new Game(map_side, dragon_number, drag_mode);
+		if (random)
+			return new Game(map_side, dragon_number, drag_mode);
+		else
+			return new Game(drag_mode);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)
