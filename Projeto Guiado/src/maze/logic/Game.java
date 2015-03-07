@@ -69,7 +69,7 @@ public class Game {
 			map = new DefaultMaze();
 			hero = new Hero(1, 1);
 			dragons = new Dragon[1];
-			dragons[0] = new Dragon();
+			dragons[0] = new Dragon(1, 3, dragon_mode);
 			sword = new Sword(1, 8);
 			generatePosDarts(minElemDist);
 			generatePosShield(minElemDist);
@@ -348,7 +348,7 @@ public class Game {
 
 	private boolean dragonFire(Dragon dragon)
 	{
-		if((!dragon.isAlive() && !dragon.isSleeping()) || hero.isShielded())
+		if(!dragon.isAlive() || dragon.isSleeping() || hero.isShielded())
 			return false;
 		
 		int pos, cells = 3;
