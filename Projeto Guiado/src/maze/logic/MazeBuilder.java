@@ -2,7 +2,7 @@ package maze.logic;
 
 import java.util.Random;
 
-public class MazeBuilder {	
+public class MazeBuilder implements Builder{	
 	private static final double MULTIPLE_PATHS_FACTOR = 0.25;
 
 	public static final int MIN_REC_SIDE = 8;
