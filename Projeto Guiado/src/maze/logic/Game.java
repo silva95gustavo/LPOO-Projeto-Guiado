@@ -1,6 +1,8 @@
 package maze.logic;
 import java.util.Random;
 
+import maze.logic.Dragon.Dragon_mode;
+
 public class Game {
 
 
@@ -14,7 +16,7 @@ public class Game {
 
 	private Hero hero;
 	private Sword sword;
-	private Dragon[] dragons = new Dragon[1];
+	private Dragon[] dragons;
 	private Dart[] darts;
 	private enum Direction {UP, DOWN, LEFT, RIGHT};
 	private Shield shield;
@@ -25,38 +27,53 @@ public class Game {
 	
 	public Game(int side)
 	{
-		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
-		minElemDist = minElemDist*minElemDist;
-		map = new MazeBuilder(side).build();
-		generateMapElements(minElemDist);
+		this(side, Dragon.Dragon_mode.DGN_STILL);
 	}
 
 	public Game(int side, Dragon.Dragon_mode dragon_mode)
 	{
-		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
-		minElemDist = minElemDist*minElemDist;
-		map = new MazeBuilder(side).build();
-		generateMapElements(minElemDist);
-
-		for(int i = 0; i < dragons.length; i++)
-			dragons[i].setMode(dragon_mode);
+		this(side, 1, dragon_mode);
 	}
 
-	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode)
+	public Game(int side, int dragon_number, Dragon.Dragon_mode dragon_mode)
+	{
+		this(side, dragon_number, dragon_mode, true);
+	}
+	
+	public Game(Dragon.Dragon_mode dragon_mode)
+	{
+		this(DefaultMaze.defaultMatrix.length, 1, dragon_mode, false);
+	}
+	
+	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode, boolean random)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
-		map = new MazeBuilder(side).build();
-
-		dragons = new Dragon[dragon_number];
-
-		for(int i = 0; i < dragons.length; i++)
+		
+		if (random)
 		{
-			Dragon dragon = new Dragon(0, 0, dragon_mode);
-			dragons[i] = dragon;
+			map = new MazeBuilder(side).build();
+	
+			dragons = new Dragon[dragon_number];
+	
+			for(int i = 0; i < dragons.length; i++)
+			{
+				Dragon dragon = new Dragon(0, 0, dragon_mode);
+				dragons[i] = dragon;
+			}
+	
+			generateMapElements(minElemDist);
 		}
-
-		generateMapElements(minElemDist);
+		else
+		{
+			map = new DefaultMaze();
+			hero = new Hero(1, 1);
+			dragons = new Dragon[1];
+			dragons[0] = new Dragon(1, 3, dragon_mode);
+			sword = new Sword(1, 8);
+			generatePosDarts(minElemDist);
+			generatePosShield(minElemDist);
+		}
 	}
 
 	public GameData getGameData()
@@ -331,7 +348,7 @@ public class Game {
 
 	private boolean dragonFire(Dragon dragon)
 	{
-		if((!dragon.isAlive() && !dragon.isSleeping()) || hero.isShielded())
+		if(!dragon.isAlive() || dragon.isSleeping() || hero.isShielded())
 			return false;
 		
 		int pos, cells = 3;
@@ -413,7 +430,7 @@ public class Game {
 			do
 			{
 				randX = rand.nextInt(map.getSide()-2) + 1;
-				randY= rand.nextInt(map.getSide()-2) + 1;			
+				randY= rand.nextInt(map.getSide()-2) + 1;	
 			} while(map.isWall(randX, randY) || Maze.coordDistSquare(randX, randY, hero.getX(), hero.getY()) < min_dist);
 
 			Dart dart = new Dart(randX, randY);
