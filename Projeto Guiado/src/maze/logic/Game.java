@@ -22,7 +22,7 @@ public class Game {
 	////////////////////////////////
 	////////   Functions   /////////
 	////////////////////////////////
-
+	
 	public Game(int side)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
