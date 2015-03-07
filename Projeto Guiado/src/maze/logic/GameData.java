@@ -5,12 +5,14 @@ public class GameData {
 	private Hero hero;
 	private Sword sword;
 	private Dragon[] dragons;
+	private Dart[] darts;
 	
-	public GameData(Maze map, Hero hero, Sword sword, Dragon[] dragons) {
+	public GameData(Maze map, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts) {
 		this.map = map;
 		this.hero = hero;
 		this.sword = sword;
 		this.dragons = dragons;
+		this.setDarts(darts);
 	}
 	
 	public Maze getMap() {
@@ -43,5 +45,13 @@ public class GameData {
 
 	public void setDragons(Dragon[] dragons) {
 		this.dragons = dragons;
+	}
+
+	public Dart[] getDarts() {
+		return darts;
+	}
+
+	public void setDarts(Dart[] darts) {
+		this.darts = darts;
 	}
 }

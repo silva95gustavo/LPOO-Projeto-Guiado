@@ -15,6 +15,8 @@ public class Game {
 	private Hero hero;
 	private Sword sword;
 	private Dragon[] dragons = new Dragon[1];
+	private Dart[] darts;
+	private enum Direction {UP, DOWN, LEFT, RIGHT};
 
 	////////////////////////////////
 	////////   Functions   /////////
@@ -58,7 +60,7 @@ public class Game {
 	
 	public GameData getGameData()
 	{
-		return new GameData(map, hero, sword, dragons);
+		return new GameData(map, hero, sword, dragons, darts);
 	}
 
 	public boolean turn(String key)
@@ -71,6 +73,14 @@ public class Game {
 			moverHeroi(hero.getX(), hero.getY() + 1);
 		else if(key.toUpperCase().equals("D"))
 			moverHeroi(hero.getX()+1, hero.getY());
+		else if(key.toUpperCase().equals("I"))
+			fireDart(Direction.UP);
+		else if(key.toUpperCase().equals("J"))
+			fireDart(Direction.LEFT);
+		else if(key.toUpperCase().equals("K"))
+			fireDart(Direction.DOWN);
+		else if(key.toUpperCase().equals("L"))
+			fireDart(Direction.RIGHT);
 		
 		if(map.isExit(hero.getX(), hero.getY())) 
 		{
@@ -82,6 +92,15 @@ public class Game {
 		{
 			sword.setDropped(false);
 			hero.setArmed(true);
+		}
+		
+		for(int i = 0; i < darts.length; i++)
+		{
+			if(hero.getX() == darts[i].getX() && hero.getY() == darts[i].getY())
+			{
+				darts[i].setDropped(false);
+				hero.catchDart();
+			}
 		}
 
 		if(combateDragao())
@@ -188,6 +207,77 @@ public class Game {
 		return false;
 	}
 
+	private void fireDart(Direction dir)
+	{
+		if(!hero.hasDarts())
+			return;
+		hero.fireDart();
+		
+		switch(dir)
+		{
+		case UP:
+			for(int i = hero.getY(); i > 0; i--)
+			{
+				if(map.isWall(hero.getX(), i))
+					return;
+				for(int d = 0; d < dragons.length; d++)
+				{
+					if(dragons[d].getX() == hero.getX() && dragons[d].getY() == i)
+					{
+						dragons[d].setAlive(false);
+						return;
+					}
+				}
+			}
+			break;
+		case DOWN:
+			for(int i = hero.getY(); i < map.getSide(); i++)
+			{
+				if(map.isWall(hero.getX(), i))
+					return;
+				for(int d = 0; d < dragons.length; d++)
+				{
+					if(dragons[d].getX() == hero.getX() && dragons[d].getY() == i)
+					{
+						dragons[d].setAlive(false);
+						return;
+					}
+				}
+			}
+			break;
+		case LEFT:
+			for(int i = hero.getX(); i > 0; i--)
+			{
+				if(map.isWall(i, hero.getY()))
+					return;
+				for(int d = 0; d < dragons.length; d++)
+				{
+					if(dragons[d].getX() == i && dragons[d].getY() == hero.getY())
+					{
+						dragons[d].setAlive(false);
+						return;
+					}
+				}
+			}
+			break;
+		case RIGHT:
+			for(int i = hero.getX(); i < map.getSide(); i++)
+			{
+				if(map.isWall(i, hero.getY()))
+					return;
+				for(int d = 0; d < dragons.length; d++)
+				{
+					if(dragons[d].getX() == i && dragons[d].getY() == hero.getY())
+					{
+						dragons[d].setAlive(false);
+						return;
+					}
+				}
+			}
+			break;
+		}
+	}
+	
 	private boolean allDragonsDead()
 	{
 		for(int i = 0; i < dragons.length; i++)
@@ -208,7 +298,8 @@ public class Game {
 				{
 					// Dragão morreu
 					dragons[i].setAlive(false);
-					map.setExitVisible(true);
+					if(allDragonsDead())
+						map.setExitVisible(true);
 				}
 				else if (!dragons[i].isSleeping())
 					return false;
@@ -223,6 +314,28 @@ public class Game {
 		generatePosHeroi();
 		generatePosEspada(min_dist);
 		generatePosDragoes(min_dist);
+		generatePosDarts(min_dist);
+	}
+
+	private void generatePosDarts(int min_dist) {
+		Random rand = new Random();
+
+		int randX, randY;
+		int n_darts = map.getSide()/4;
+		darts = new Dart[n_darts];
+		
+		for(int i = 0; i < n_darts; i++)
+		{
+			do
+			{
+				randX = rand.nextInt(map.getSide()-2) + 1;
+				randY= rand.nextInt(map.getSide()-2) + 1;			
+			} while(map.isWall(randX, randY) || Maze.coordDistSquare(randX, randY, hero.getX(), hero.getY()) < min_dist);
+
+			Dart dart = new Dart(randX, randY);
+			darts[i] = dart;
+		}
+		
 	}
 
 	private void generatePosHeroi() {

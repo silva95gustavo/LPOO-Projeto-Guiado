@@ -9,6 +9,7 @@ import maze.logic.Hero;
 import maze.logic.Maze;
 import maze.logic.MazeBuilder;
 import maze.logic.Sword;
+import maze.logic.Dart;
 
 public class AlphanumericInterface {
 	private static final char dragon_char = 'D';				// Símbolo representativo do dragão
@@ -20,14 +21,15 @@ public class AlphanumericInterface {
 	private static final char armed_hero_char = 'A';			// Símbolo do herói com espada
 	private static final char wall_char = 'X';
 	private static final char exit_char = 'S';
-	
+	private static final char dart_char = '>';
+
 	private Scanner s;
-	
+
 	public void start()
 	{
 		s = new Scanner(System.in);
 		Game game = createGame();
-		
+
 		do{
 			drawGame(game.getGameData());
 		} while(game.turn(s.next()));
@@ -36,6 +38,7 @@ public class AlphanumericInterface {
 
 	private Game createGame()
 	{
+		System.out.println("Controls : WASD to move hero, IJKL to fire darts\n");
 		System.out.print("For this game, you can choose the dimensions of the game map. The minimum size is 8,\nsince smaller sizes would make the game impossible to finish.\n");
 		System.out.print("Please indicate the map size (minimum " + MazeBuilder.MIN_REC_SIDE + ") : ");
 		int map_side = s.nextInt();
@@ -45,26 +48,26 @@ public class AlphanumericInterface {
 			System.out.print("\nGiven value is less than " + MazeBuilder.MIN_REC_SIDE + ".\nPlease insert new value : ");
 			map_side = s.nextInt();
 		}
-		
+
 		System.out.print("\nPlease indicate the number of dragons (max 5) : ");
 		int dragon_number = s.nextInt();
-		
+
 		while(dragon_number > 5 && dragon_number < 1)
 		{
 			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
 			dragon_number = s.nextInt();
 		}
-		
+
 		System.out.print("\nPlease indicate the dragon mode (0-still, 1-moving, 2-moving & sleeping) : ");
 		int dragon_mode_int = s.nextInt();
 		Dragon.Dragon_mode drag_mode = Dragon.Dragon_mode.DGN_STILL;
-		
+
 		while(dragon_mode_int > 3 && dragon_mode_int < 0)
 		{
 			System.out.print("\nGiven value is out of range.\nPlease insert new value : ");
 			dragon_mode_int = s.nextInt();
 		}
-		
+
 		switch(dragon_mode_int)
 		{
 		case 0:
@@ -89,22 +92,29 @@ public class AlphanumericInterface {
 		{
 			matrix[i] = matrix[i].clone();
 		}
-		
+
 		// Exit
 		if (maze.getExit().isVisible())
 			matrix[maze.getExit().getY()][maze.getExit().getX()] = exit_char;
-		
+
 		return matrix;
 	}
 
-	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons)
+	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts)
 	{
 		// Hero
 		if (hero.isArmed())
 			matrix[hero.getY()][hero.getX()] = armed_hero_char;
 		else
 			matrix[hero.getY()][hero.getX()] = hero_char;
-		
+
+		// Darts
+		for(int i = 0; i < darts.length; i++)
+		{
+			if(darts[i].isDropped())
+				matrix[darts[i].getY()][darts[i].getX()] = dart_char;
+		}
+
 		// Dragons
 		for (int i = 0; i < dragons.length; i++)
 		{
@@ -129,16 +139,17 @@ public class AlphanumericInterface {
 		}
 		return matrix;
 	}
-	
+
 	public void drawGame(GameData gameData)
 	{
 		int side = gameData.getMap().getSide();
 		char[][] matrix = new char[side][side];
 		matrix = placeMaze(matrix, gameData.getMap());
-		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons());
+		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons(), gameData.getDarts());
 		drawMatrix(matrix);
+		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
 	}
-	
+
 	public void drawMatrix(char[][] matrix)
 	{
 		for (int y = 0; y < matrix.length; y++)
