@@ -6,13 +6,15 @@ public class GameData {
 	private Sword sword;
 	private Dragon[] dragons;
 	private Dart[] darts;
+	private Shield shield;
 	
-	public GameData(Maze map, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts) {
+	public GameData(Maze map, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield) {
 		this.map = map;
 		this.hero = hero;
 		this.sword = sword;
 		this.dragons = dragons;
 		this.setDarts(darts);
+		this.shield = shield;
 	}
 	
 	public Maze getMap() {
@@ -53,5 +55,13 @@ public class GameData {
 
 	public void setDarts(Dart[] darts) {
 		this.darts = darts;
+	}
+	
+	public Shield getShield() {
+		return shield;
+	}
+
+	public void setShield(Shield shield) {
+		this.shield = shield;
 	}
 }

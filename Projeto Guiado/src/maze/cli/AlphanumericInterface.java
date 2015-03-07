@@ -10,6 +10,7 @@ import maze.logic.Maze;
 import maze.logic.MazeBuilder;
 import maze.logic.Sword;
 import maze.logic.Dart;
+import maze.logic.Shield;
 
 public class AlphanumericInterface {
 	private static final char dragon_char = 'D';				// Símbolo representativo do dragão
@@ -22,6 +23,7 @@ public class AlphanumericInterface {
 	private static final char wall_char = 'X';
 	private static final char exit_char = 'S';
 	private static final char dart_char = '>';
+	private static final char shield_shar = 'C';
 
 	private Scanner s;
 
@@ -100,7 +102,7 @@ public class AlphanumericInterface {
 		return matrix;
 	}
 
-	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts)
+	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield)
 	{
 		// Hero
 		if (hero.isArmed())
@@ -114,6 +116,9 @@ public class AlphanumericInterface {
 			if(darts[i].isDropped())
 				matrix[darts[i].getY()][darts[i].getX()] = dart_char;
 		}
+		
+		if(shield.isDropped())
+			matrix[shield.getY()][shield.getX()] = shield_shar;
 
 		// Dragons
 		for (int i = 0; i < dragons.length; i++)
@@ -145,7 +150,7 @@ public class AlphanumericInterface {
 		int side = gameData.getMap().getSide();
 		char[][] matrix = new char[side][side];
 		matrix = placeMaze(matrix, gameData.getMap());
-		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons(), gameData.getDarts());
+		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons(), gameData.getDarts(), gameData.getShield());
 		drawMatrix(matrix);
 		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
 	}
