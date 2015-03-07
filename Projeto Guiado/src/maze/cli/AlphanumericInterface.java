@@ -46,7 +46,7 @@ public class AlphanumericInterface {
 			map_side = s.nextInt();
 		}
 
-		return new Game(map_side);
+		return new Game(map_side, true);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)

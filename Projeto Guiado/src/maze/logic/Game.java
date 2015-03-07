@@ -20,7 +20,7 @@ public class Game {
 	////////   Functions   /////////
 	////////////////////////////////
 	
-	public Game(int side)
+	public Game(int side, boolean random)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
