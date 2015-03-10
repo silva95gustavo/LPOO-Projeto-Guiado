@@ -127,4 +127,134 @@ public class TestGameMechanics {
 		assertFalse(data.getHero().isAlive());
 		
 	}
+	
+	@Test
+	public void testKillDragon() {
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
+		
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("a");
+		tGame.turn("a");
+		tGame.turn("a");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+
+		GameData data = tGame.getGameData();
+		
+		assertFalse(data.getDragons()[0].isAlive());
+		
+	}
+	
+	@Test
+	public void testExit() {
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
+		
+		Game.event jogada;
+		
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("a");
+		tGame.turn("a");
+		tGame.turn("a");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("s");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		jogada = tGame.turn("d");
+		
+		assertEquals(jogada, Game.event.WIN);
+		
+	}
+	
+	@Test
+	public void testNotExit() {
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
+		
+		Game.event jogada;
+		
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		jogada = tGame.turn("d");
+		
+		assertEquals(jogada, Game.event.NONE);
+		
+		tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
+		
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("a");
+		tGame.turn("a");
+		tGame.turn("a");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("s");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("s");
+		tGame.turn("d");
+		tGame.turn("d");
+		tGame.turn("w");
+		tGame.turn("w");
+		tGame.turn("w");
+		jogada = tGame.turn("d");
+		
+		assertEquals(jogada, Game.event.NONE);
+	}
 }
