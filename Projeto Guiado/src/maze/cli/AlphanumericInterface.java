@@ -102,7 +102,7 @@ public class AlphanumericInterface {
 		if (random)
 			return new Game(map_side, dragon_number, drag_mode);
 		else
-			return new Game(drag_mode);
+			return new Game(drag_mode, !random);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)

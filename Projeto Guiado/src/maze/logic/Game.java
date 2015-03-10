@@ -11,7 +11,7 @@ public class Game {
 	////////////////////////////////
 
 	private static final int ELEM_DIST_FACTOR = 2;			// Fator usado para determinar a dist. mínima entre elementos
-
+	
 	private Maze map;						// Represents the game map
 
 	private Hero hero;
@@ -37,15 +37,15 @@ public class Game {
 
 	public Game(int side, int dragon_number, Dragon.Dragon_mode dragon_mode)
 	{
-		this(side, dragon_number, dragon_mode, true);
+		this(side, dragon_number, dragon_mode, true, false);
 	}
 	
-	public Game(Dragon.Dragon_mode dragon_mode)
+	public Game(Dragon.Dragon_mode dragon_mode, boolean defaultGame)
 	{
-		this(DefaultMaze.defaultMatrix.length, 1, dragon_mode, false);
+		this(DefaultMaze.defaultMatrix.length, 1, dragon_mode, false, defaultGame);
 	}
 	
-	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode, boolean random)
+	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode, boolean random, boolean defaultGame)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
@@ -73,6 +73,13 @@ public class Game {
 			sword = new Sword(1, 8);
 			generatePosDarts(minElemDist);
 			generatePosShield(minElemDist);
+			
+			if(defaultGame)
+			{
+				shield.setDropped(false);
+				darts = new Dart[0];
+				dragons[0].setFireAbility(false);
+			}
 		}
 	}
 
@@ -112,7 +119,7 @@ public class Game {
 			hero.setArmed(true);
 		}
 		
-		if(hero.getX() == shield.getX() && hero.getY() == shield.getY())
+		if(hero.getX() == shield.getX() && hero.getY() == shield.getY() && shield.isDropped())
 		{
 			System.out.println("\nYou are now shielded against dragon fire!\n");
 			shield.setDropped(false);
@@ -348,7 +355,7 @@ public class Game {
 
 	private boolean dragonFire(Dragon dragon)
 	{
-		if(!dragon.isAlive() || dragon.isSleeping() || hero.isShielded())
+		if(!dragon.isAlive() || dragon.isSleeping() || hero.isShielded() || !dragon.canFire())
 			return false;
 		
 		int pos, cells = 3;
