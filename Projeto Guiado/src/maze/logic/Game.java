@@ -89,7 +89,7 @@ public class Game {
 	}
 
 	public event turn(String key)
-	{
+	{		
 		if(key.toUpperCase().equals("A"))
 			moverHeroi(hero.getX()-1, hero.getY());
 		else if(key.toUpperCase().equals("W"))
@@ -220,7 +220,7 @@ public class Game {
 		} while (!posicaoValida);
 	}
 
-	private boolean moverDragao(int x, int y, int index) {
+	public boolean moverDragao(int x, int y, int index) {
 		if (!map.isWall(x, y))
 		{
 			dragons[index].setPosition(x, y);

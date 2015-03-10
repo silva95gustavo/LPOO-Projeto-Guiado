@@ -120,10 +120,11 @@ public class AlphanumericInterface {
 			drag_mode = Dragon.Dragon_mode.DGN_RAND_SLP;
 			break;
 		}
+		
 		if (random)
 			return new Game(map_side, dragon_number, drag_mode);
 		else
-			return new Game(drag_mode, !random);
+			return new Game(drag_mode, false);
 	}
 
 	public char[][] placeMaze(char[][] matrix, Maze maze)

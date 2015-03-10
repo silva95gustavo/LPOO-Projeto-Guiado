@@ -4,7 +4,7 @@ public class Dragon extends Element{
 	private boolean alive = true;
 	private boolean sleeping = false;
 	private boolean canFire = true;
-	public static enum Dragon_mode {DGN_STILL, DGN_RAND, DGN_RAND_SLP};
+	public static enum Dragon_mode {DGN_STILL, DGN_RAND, DGN_RAND_SLP, DGN_SLP};
 	private Dragon_mode mode = Dragon_mode.DGN_STILL;
 	
 	public Dragon() {
@@ -18,6 +18,14 @@ public class Dragon extends Element{
 	public Dragon(int x, int y, Dragon_mode mode) {
 		super(x, y);
 		this.mode = mode;
+		switch(mode)
+		{
+		case DGN_SLP:
+			sleeping = true;
+			break;
+		default:
+			break;
+		}
 	}
 
 	public boolean isAlive() {
