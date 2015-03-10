@@ -338,6 +338,7 @@ public class Game {
 				}
 				else if (!dragons[i].isSleeping())
 				{	
+					hero.setAlive(false);
 					System.out.println("\n You were killed by a dragon! Kill dragons with a sword or darts.\n\n");
 					return false;
 				}
@@ -345,6 +346,7 @@ public class Game {
 			
 			if(dragonFire(dragons[i]))
 			{
+				hero.setAlive(false);
 				System.out.println("\n You were killed by dragon fire! Picking up a shield would prevent that.\n\n");
 				return false;
 			}
