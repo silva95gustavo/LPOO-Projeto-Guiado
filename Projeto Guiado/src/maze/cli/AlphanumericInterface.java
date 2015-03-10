@@ -37,26 +37,24 @@ public class AlphanumericInterface {
 		{
 			drawGame(game.getGameData());
 			event = game.turn(s.next());
-			switch (event)
+			if (event == Game.event.WIN)
 			{
-			case WIN:
-			{
-
-			}
-			case LOSE:
-			{
-
-			}
-			case SHIELDED:
-			{
-
-			}
-			default:
-			{
+				System.out.print("\n\n Congratulations! You escaped the maze!\n\n");
 				break;
 			}
+			else if (event == Game.event.LOSE || event == Game.event.LOSE_FIRE)
+			{
+				if (event == Game.event.LOSE)
+					System.out.println("\n You were killed by a dragon! Kill dragons with a sword or darts.\n\n");
+				else
+					System.out.println("\n You were killed by dragon fire! Picking up a shield would prevent that.\n\n");
+				System.out.print("\n\n Take revenge next time!\n\n");
+				break;
 			}
-			break;
+			else if (event == Game.event.SHIELDED)
+			{
+				System.out.println("\nYou are now shielded against dragon fire!\n");
+			}
 		}
 		s.close();
 	}
