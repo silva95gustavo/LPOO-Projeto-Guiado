@@ -4,14 +4,14 @@ import java.util.Random;
 import maze.logic.Dragon.Dragon_mode;
 
 public class Game {
-	public static enum event { NONE, WIN, SHIELDED, LOSE };
+	public static enum event { NONE, WIN, SHIELDED, LOSE, LOSE_FIRE};
 
 	////////////////////////////////
 	////////   Attributes   ////////
 	////////////////////////////////
 
 	private static final int ELEM_DIST_FACTOR = 2;			// Fator usado para determinar a dist. mínima entre elementos
-	
+
 	private Maze map;						// Represents the game map
 
 	private Hero hero;
@@ -24,7 +24,7 @@ public class Game {
 	////////////////////////////////
 	////////   Functions   /////////
 	////////////////////////////////
-	
+
 	public Game(int side)
 	{
 		this(side, Dragon.Dragon_mode.DGN_STILL);
@@ -39,29 +39,29 @@ public class Game {
 	{
 		this(side, dragon_number, dragon_mode, true, false);
 	}
-	
+
 	public Game(Dragon.Dragon_mode dragon_mode, boolean defaultGame)
 	{
 		this(DefaultMaze.defaultMatrix.length, 1, dragon_mode, false, defaultGame);
 	}
-	
+
 	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode, boolean random, boolean defaultGame)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
 		minElemDist = minElemDist*minElemDist;
-		
+
 		if (random)
 		{
 			map = new MazeBuilder(side).build();
-	
+
 			dragons = new Dragon[dragon_number];
-	
+
 			for(int i = 0; i < dragons.length; i++)
 			{
 				Dragon dragon = new Dragon(0, 0, dragon_mode);
 				dragons[i] = dragon;
 			}
-	
+
 			generateMapElements(minElemDist);
 		}
 		else
@@ -73,7 +73,7 @@ public class Game {
 			sword = new Sword(1, 8);
 			generatePosDarts(minElemDist);
 			generatePosShield(minElemDist);
-			
+
 			if(defaultGame)
 			{
 				shield.setDropped(false);
@@ -109,7 +109,6 @@ public class Game {
 
 		if(map.isExit(hero.getX(), hero.getY())) 
 		{
-			System.out.print("\n\n Congratulations! You escaped the maze!\n\n");
 			return event.WIN;
 		}
 
@@ -122,7 +121,6 @@ public class Game {
 		if(hero.getX() == shield.getX() && hero.getY() == shield.getY() && shield.isDropped())
 		{
 			caughtShield = true;
-			System.out.println("\nYou are now shielded against dragon fire!\n");
 			shield.setDropped(false);
 			hero.catchShield();
 		}
@@ -142,7 +140,6 @@ public class Game {
 		}
 		else
 		{
-			System.out.print("\n\n Take revenge next time!\n\n");
 			return event.LOSE;
 		}
 
@@ -153,7 +150,6 @@ public class Game {
 			return caughtShield ? event.SHIELDED : event.NONE;
 		}
 
-		System.out.print("\n\n Take revenge next time!\n\n");
 		return event.LOSE;
 	}
 
@@ -170,7 +166,7 @@ public class Game {
 			{
 				if(probability(8))
 					dragons[index].setSleeping(false);
-				
+
 				return;
 			}
 			else
@@ -327,7 +323,7 @@ public class Game {
 	{
 		for(int i = 0; i < dragons.length; i++)
 		{
-			
+
 			if(dragons[i].isAlive() && Maze.areAdjacent(hero.getX(), hero.getY(), dragons[i].getX(), dragons[i].getY()))
 			{
 				if(hero.isArmed())
@@ -340,16 +336,16 @@ public class Game {
 				else if (!dragons[i].isSleeping())
 				{	
 					hero.setAlive(false);
-					System.out.println("\n You were killed by a dragon! Kill dragons with a sword or darts.\n\n");
+					{
+						return false;
+					}
+				}
+
+				if(dragonFire(dragons[i]))
+				{
+					hero.setAlive(false);
 					return false;
 				}
-			}
-			
-			if(dragonFire(dragons[i]))
-			{
-				hero.setAlive(false);
-				System.out.println("\n You were killed by dragon fire! Picking up a shield would prevent that.\n\n");
-				return false;
 			}
 		}
 
@@ -360,24 +356,24 @@ public class Game {
 	{
 		if(!dragon.isAlive() || dragon.isSleeping() || hero.isShielded() || !dragon.canFire())
 			return false;
-		
+
 		int pos, cells = 3;
-		
+
 		if(dragon.getX() == hero.getX())
 		{
 			pos = dragon.getY();
 			while(cells > 0)
 			{
 				cells--;
-				
+
 				if(dragon.getY() > hero.getY())
 					pos--;
 				else
 					pos++;
-				
+
 				if(hero.getY() == pos)
 					return true;
-				
+
 				if(map.isWall(dragon.getX(), pos))
 					return false;
 			}
@@ -388,23 +384,23 @@ public class Game {
 			while(cells > 0)
 			{
 				cells--;
-				
+
 				if(dragon.getX() > hero.getX())
 					pos--;
 				else
 					pos++;
-				
+
 				if(hero.getX() == pos)
 					return true;
-				
+
 				if(map.isWall(pos, dragon.getY()))
 					return false;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private void generateMapElements(int min_dist)
 	{
 		generatePosHeroi();
@@ -418,7 +414,7 @@ public class Game {
 	{
 		Random rand = new Random();
 		int randX, randY;
-		
+
 		do
 		{
 			randX = rand.nextInt(map.getSide()-2) + 1;
