@@ -3,6 +3,7 @@ package maze.logic;
 public class Dragon extends Element{
 	private boolean alive = true;
 	private boolean sleeping = false;
+	private boolean canFire = true;
 	public static enum Dragon_mode {DGN_STILL, DGN_RAND, DGN_RAND_SLP};
 	private Dragon_mode mode = Dragon_mode.DGN_STILL;
 	
@@ -47,6 +48,14 @@ public class Dragon extends Element{
 	{
 		super.setX(x);
 		super.setY(y);
+	}
+
+	public boolean canFire() {
+		return canFire;
+	}
+
+	public void setFireAbility(boolean canFire) {
+		this.canFire = canFire;
 	}
 
 }
