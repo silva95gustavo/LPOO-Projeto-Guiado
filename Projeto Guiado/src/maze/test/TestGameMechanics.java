@@ -19,7 +19,7 @@ public class TestGameMechanics {
 		assertEquals(1.0, x, 0.0);
 		assertEquals(1.0, y, 0.0);
 		
-		tGame.turn("d");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
 
 		data = tGame.getGameData();
 		x = data.getHero().getX();
@@ -28,7 +28,7 @@ public class TestGameMechanics {
 		assertEquals(2.0, x, 0.0);
 		assertEquals(1.0, y, 0.0);
 
-		tGame.turn("d");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
 
 		data = tGame.getGameData();
 		x = data.getHero().getX();
@@ -37,7 +37,7 @@ public class TestGameMechanics {
 		assertEquals(3.0, x, 0.0);
 		assertEquals(1.0, y, 0.0);
 
-		tGame.turn("d");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
 
 		data = tGame.getGameData();
 		x = data.getHero().getX();
@@ -46,7 +46,7 @@ public class TestGameMechanics {
 		assertEquals(4.0, x, 0.0);
 		assertEquals(1.0, y, 0.0);
 
-		tGame.turn("s");
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
 
 		data = tGame.getGameData();
 		x = data.getHero().getX();
@@ -62,7 +62,7 @@ public class TestGameMechanics {
 		GameData data = tGame.getGameData();
 		int x, y;
 		
-		tGame.turn("w");
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
 
 		data = tGame.getGameData();
 		x = data.getHero().getX();
@@ -71,8 +71,8 @@ public class TestGameMechanics {
 		assertEquals(1.0, x, 0.0);
 		assertEquals(1.0, y, 0.0);
 
-		tGame.turn("d");
-		tGame.turn("s");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
 
 		data = tGame.getGameData();
 		x = data.getHero().getX();
@@ -86,19 +86,19 @@ public class TestGameMechanics {
 	public void testCatchSword() {
 		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
 		
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
 
 		GameData data = tGame.getGameData();
 		
@@ -110,17 +110,17 @@ public class TestGameMechanics {
 	public void testBeingKilled() {
 		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
 		
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");	
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("w");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);	
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
 
 		GameData data = tGame.getGameData();
 		
@@ -132,24 +132,24 @@ public class TestGameMechanics {
 	public void testKillDragon() {
 		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
 		
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
 
 		GameData data = tGame.getGameData();
 		
@@ -163,38 +163,38 @@ public class TestGameMechanics {
 		
 		Game.event jogada;
 		
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("s");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		jogada = tGame.turn("d");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		jogada = tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
 		
 		assertEquals(jogada, Game.event.WIN);
 		
@@ -206,54 +206,54 @@ public class TestGameMechanics {
 		
 		Game.event jogada;
 		
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		jogada = tGame.turn("d");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		jogada = tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
 		
 		assertEquals(jogada, Game.event.NONE);
 		
 		tGame = new Game(Dragon.Dragon_mode.DGN_STILL, true);
 		
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("a");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("s");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("d");
-		tGame.turn("d");
-		tGame.turn("w");
-		tGame.turn("w");
-		tGame.turn("w");
-		jogada = tGame.turn("d");
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		jogada = tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
 		
 		assertEquals(jogada, Game.event.NONE);
 	}
