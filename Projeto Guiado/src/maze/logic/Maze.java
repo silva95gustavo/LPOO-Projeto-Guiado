@@ -33,39 +33,6 @@ public class Maze {
 		return matrixCoords(x, y) == ' ';
 	}
 	
-	public void drawMatrix(int[] coords, char[] chars)
-	{
-		boolean printed = false;
-		
-		for(int i = 0; i < matrix.length; i++)
-		{
-			for(int j = 0; j < matrix.length; j++)
-			{
-				for(int coord = 0; coord < chars.length; coord++)
-				{
-					if(j==coords[2*coord] && i == coords[2*coord + 1])
-					{
-						printed=true;
-						System.out.print(chars[coord]);
-						break;
-					}
-				}
-				
-				if(!printed)
-				{
-					if (j == exit.getX() && i == exit.getY() && exit.isVisible())
-						System.out.print(exitChar);
-					else
-						System.out.print(matrix[i][j]);						
-				}
-				
-				printed = false;
-				System.out.print(' ');
-			}
-			System.out.print('\n');
-		}
-	}
-	
 	public char matrixCoords(int x, int y)
 	{
 		return matrix[y][x];
