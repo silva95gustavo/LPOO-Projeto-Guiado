@@ -19,7 +19,41 @@ public class TestGameMechanics {
 		assertEquals(1.0, x, 0.0);
 		assertEquals(1.0, y, 0.0);
 		
-		
+		tGame.turn("d");
+
+		data = tGame.getGameData();
+		x = data.getHero().getX();
+		y = data.getHero().getY();
+
+		assertEquals(2.0, x, 0.0);
+		assertEquals(1.0, y, 0.0);
+
+		tGame.turn("d");
+
+		data = tGame.getGameData();
+		x = data.getHero().getX();
+		y = data.getHero().getY();
+
+		assertEquals(3.0, x, 0.0);
+		assertEquals(1.0, y, 0.0);
+
+		tGame.turn("d");
+
+		data = tGame.getGameData();
+		x = data.getHero().getX();
+		y = data.getHero().getY();
+
+		assertEquals(4.0, x, 0.0);
+		assertEquals(1.0, y, 0.0);
+
+		tGame.turn("s");
+
+		data = tGame.getGameData();
+		x = data.getHero().getX();
+		y = data.getHero().getY();
+
+		assertEquals(4.0, x, 0.0);
+		assertEquals(2.0, y, 0.0);
 	}
 
 }
