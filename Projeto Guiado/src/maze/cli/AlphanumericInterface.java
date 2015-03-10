@@ -32,9 +32,32 @@ public class AlphanumericInterface {
 		s = new Scanner(System.in);
 		Game game = createGame();
 
-		do{
+		Game.event event;
+		while (true)
+		{
 			drawGame(game.getGameData());
-		} while(game.turn(s.next()));
+			event = game.turn(s.next());
+			switch (event)
+			{
+			case WIN:
+			{
+
+			}
+			case LOSE:
+			{
+
+			}
+			case SHIELDED:
+			{
+
+			}
+			default:
+			{
+				break;
+			}
+			}
+			break;
+		}
 		s.close();
 	}
 
