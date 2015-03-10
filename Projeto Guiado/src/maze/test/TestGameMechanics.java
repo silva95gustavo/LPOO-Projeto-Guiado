@@ -262,10 +262,10 @@ public class TestGameMechanics {
 	public void testDragonSleep() {
 		Game tGame = new Game(Dragon.Dragon_mode.DGN_SLP, true);
 
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
-		tGame.turn("s");
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
 		
 		GameData data = tGame.getGameData();
 		
