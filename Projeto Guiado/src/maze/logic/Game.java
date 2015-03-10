@@ -140,24 +140,28 @@ public class Game {
 				hero.catchDart();
 			}
 		}
+		
+		event battle = combateDragao();
 
-		if(combateDragao())
+		if(battle == event.NONE)
 		{
 			turnDragoes();
 		}
 		else
 		{
-			return event.LOSE;
+			return battle;
 		}
+		
+		battle = combateDragao();
 
-		if(combateDragao())
+		if(battle == event.NONE)
 		{
 			if(allDragonsDead())
 				map.setExitVisible(true);
 			return caughtShield ? event.SHIELDED : event.NONE;
 		}
 
-		return event.LOSE;
+		return battle;
 	}
 
 	private void turnDragao(int index)
@@ -186,6 +190,8 @@ public class Game {
 			}
 
 			moverDragaoRandom(index);
+			return;
+		case DGN_SLP:
 			return;
 		}	
 	}
@@ -326,43 +332,47 @@ public class Game {
 		return true;
 	}
 
-	private boolean combateDragao()
+	private event combateDragao()
 	{
 		for(int i = 0; i < dragons.length; i++)
 		{
 
-			if(dragons[i].isAlive() && Maze.areAdjacent(hero.getX(), hero.getY(), dragons[i].getX(), dragons[i].getY()))
+			if(dragons[i].isAlive())
 			{
-				if(hero.isArmed())
+				if(Maze.areAdjacent(hero.getX(), hero.getY(), dragons[i].getX(), dragons[i].getY()))
 				{
-					// Dragão morreu
-					dragons[i].setAlive(false);
-					if(allDragonsDead())
-						map.setExitVisible(true);
-				}
-				else if (!dragons[i].isSleeping())
-				{	
-					hero.setAlive(false);
+					if(hero.isArmed())
 					{
-						return false;
+						// Dragão morreu
+						dragons[i].setAlive(false);
+						if(allDragonsDead())
+							map.setExitVisible(true);
+					}
+					else if (!dragons[i].isSleeping())
+					{	
+						hero.setAlive(false);
+						return event.LOSE;
 					}
 				}
-
+				
 				if(dragonFire(dragons[i]))
 				{
 					hero.setAlive(false);
-					return false;
+					return event.LOSE_FIRE;
 				}
 			}
+
+			
 		}
 
-		return true;
+		return event.NONE;
 	}
 
 	private boolean dragonFire(Dragon dragon)
 	{
 		if(!dragon.isAlive() || dragon.isSleeping() || hero.isShielded() || !dragon.canFire())
 			return false;
+
 
 		int pos, cells = 3;
 
