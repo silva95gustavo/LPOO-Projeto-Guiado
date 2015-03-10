@@ -4,7 +4,7 @@ import java.util.Random;
 import maze.logic.Dragon.Dragon_mode;
 
 public class Game {
-
+	public static enum event { NONE, WIN, SHIELDED, LOSE };
 
 	////////////////////////////////
 	////////   Attributes   ////////
@@ -88,7 +88,7 @@ public class Game {
 		return new GameData(map, hero, sword, dragons, darts, shield);
 	}
 
-	public boolean turn(String key)
+	public event turn(String key)
 	{
 		if(key.toUpperCase().equals("A"))
 			moverHeroi(hero.getX()-1, hero.getY());
@@ -110,7 +110,7 @@ public class Game {
 		if(map.isExit(hero.getX(), hero.getY())) 
 		{
 			System.out.print("\n\n Congratulations! You escaped the maze!\n\n");
-			return false;
+			return event.WIN;
 		}
 
 		if(hero.getX() == sword.getX() && hero.getY() == sword.getY())
@@ -118,9 +118,10 @@ public class Game {
 			sword.setDropped(false);
 			hero.setArmed(true);
 		}
-		
+		boolean caughtShield = false;
 		if(hero.getX() == shield.getX() && hero.getY() == shield.getY() && shield.isDropped())
 		{
+			caughtShield = true;
 			System.out.println("\nYou are now shielded against dragon fire!\n");
 			shield.setDropped(false);
 			hero.catchShield();
@@ -142,18 +143,18 @@ public class Game {
 		else
 		{
 			System.out.print("\n\n Take revenge next time!\n\n");
-			return false;
+			return event.LOSE;
 		}
 
 		if(combateDragao())
 		{
 			if(allDragonsDead())
 				map.setExitVisible(true);
-			return true;
+			return caughtShield ? event.SHIELDED : event.NONE;
 		}
 
 		System.out.print("\n\n Take revenge next time!\n\n");
-		return false;
+		return event.LOSE;
 	}
 
 	private void turnDragao(int index)
