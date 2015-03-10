@@ -5,6 +5,8 @@ import maze.logic.Dragon.Dragon_mode;
 
 public class Game {
 	public static enum event { NONE, WIN, SHIELDED, LOSE, LOSE_FIRE};
+	public static enum command { MOVE, FIRE };
+	public enum Direction {UP, DOWN, LEFT, RIGHT};
 
 	////////////////////////////////
 	////////   Attributes   ////////
@@ -18,7 +20,6 @@ public class Game {
 	private Sword sword;
 	private Dragon[] dragons;
 	private Dart[] darts;
-	private enum Direction {UP, DOWN, LEFT, RIGHT};
 	private Shield shield;
 
 	////////////////////////////////
@@ -88,24 +89,30 @@ public class Game {
 		return new GameData(map, hero, sword, dragons, darts, shield);
 	}
 
-	public event turn(String key)
-	{		
-		if(key.toUpperCase().equals("A"))
-			moverHeroi(hero.getX()-1, hero.getY());
-		else if(key.toUpperCase().equals("W"))
-			moverHeroi(hero.getX(), hero.getY() - 1);
-		else if(key.toUpperCase().equals("S"))
-			moverHeroi(hero.getX(), hero.getY() + 1);
-		else if(key.toUpperCase().equals("D"))
-			moverHeroi(hero.getX()+1, hero.getY());
-		else if(key.toUpperCase().equals("I"))
-			fireDart(Direction.UP);
-		else if(key.toUpperCase().equals("J"))
-			fireDart(Direction.LEFT);
-		else if(key.toUpperCase().equals("K"))
-			fireDart(Direction.DOWN);
-		else if(key.toUpperCase().equals("L"))
-			fireDart(Direction.RIGHT);
+	public event turn(command cmd, Direction direction)
+	{
+		if (cmd == command.MOVE)
+		{
+			switch (direction)
+			{
+			case LEFT:
+				moverHeroi(hero.getX()-1, hero.getY());
+				break;
+			case UP:
+				moverHeroi(hero.getX(), hero.getY() - 1);
+				break;
+			case RIGHT:
+				moverHeroi(hero.getX()+1, hero.getY());
+				break;
+			case DOWN:
+				moverHeroi(hero.getX(), hero.getY() + 1);
+				break;
+			}
+		}
+		else if (cmd == command.FIRE)
+		{
+			fireDart(direction);
+		}
 
 		if(map.isExit(hero.getX(), hero.getY())) 
 		{

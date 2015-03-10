@@ -36,7 +36,56 @@ public class AlphanumericInterface {
 		while (true)
 		{
 			drawGame(game.getGameData());
-			event = game.turn(s.next());
+			Game.command cmd;
+			Game.Direction direction;
+			String c = s.next();
+			
+			if (c.toUpperCase().equals("A"))
+			{
+				cmd = Game.command.MOVE;
+				direction = Game.Direction.LEFT;
+			}
+			else if (c.toUpperCase().equals("W"))
+			{
+				cmd = Game.command.MOVE;
+				direction = Game.Direction.UP;
+			}
+			else if (c.toUpperCase().equals("D"))
+			{
+				cmd = Game.command.MOVE;
+				direction = Game.Direction.RIGHT;
+			}
+			else if (c.toUpperCase().equals("S"))
+			{
+				cmd = Game.command.MOVE;
+				direction = Game.Direction.DOWN;
+			}
+			
+			else if (c.toUpperCase().equals("J"))
+			{
+				cmd = Game.command.FIRE;
+				direction = Game.Direction.LEFT;
+			}
+			else if (c.toUpperCase().equals("I"))
+			{
+				cmd = Game.command.FIRE;
+				direction = Game.Direction.UP;
+			}
+			else if (c.toUpperCase().equals("L"))
+			{
+				cmd = Game.command.FIRE;
+				direction = Game.Direction.RIGHT;
+			}
+			else if (c.toUpperCase().equals("K"))
+			{
+				cmd = Game.command.FIRE;
+				direction = Game.Direction.DOWN;
+			}
+			else
+				continue; // Command not recognised;
+			
+			event = game.turn(cmd, direction);
+			
 			if (event == Game.event.WIN)
 			{
 				System.out.print("\n\n Congratulations! You escaped the maze!\n\n");
