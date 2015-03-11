@@ -294,16 +294,140 @@ public class TestGameMechanics {
 
 	@Test
 	public void testDragonFire() {
-		Game tGame = new Game(Dragon.Dragon_mode.DGN_RAND_SLP, false);
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, false);
 
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		Game.event result = tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+
+		assertEquals(result, Game.event.LOSE_FIRE);
+	}
+
+	@Test
+	public void testShield()
+	{
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, false);
 		GameData data = tGame.getGameData();
 
-		assertEquals(5.0, data.getDragons().length, 0.0);
-		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[0].getMode());
-		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[1].getMode());
-		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[2].getMode());
-		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[3].getMode());
-		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[4].getMode());
+		while(data.getShield().getX() <= 3)
+		{
+			tGame = new Game(Dragon.Dragon_mode.DGN_STILL, false);
+			data = tGame.getGameData();
+		}
 
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+
+		data = tGame.getGameData();
+
+		assertTrue(data.getHero().isShielded());
+
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+
+		assertTrue(data.getHero().isAlive());
+	}
+
+	@Test
+	public void testDarts()
+	{
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_STILL, false);
+		GameData data = tGame.getGameData();
+
+		while(data.getDarts().length <= 1)
+		{
+			tGame = new Game(Dragon.Dragon_mode.DGN_STILL, false);
+		}
+
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.DOWN);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.RIGHT);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.UP);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+
+		data = tGame.getGameData();
+
+		if(data.getHero().getDarts() <= 0)
+			return;
+		
+		int darts = data.getHero().getDarts();
+
+		tGame.turn(Game.command.MOVE, Game.Direction.LEFT);
+		tGame.turn(Game.command.FIRE, Game.Direction.DOWN);
+		
+		data = tGame.getGameData();
+		
+		assertEquals(darts - 1, data.getHero().getDarts());
+		assertFalse(data.getDragons()[0].isAlive());
 	}
 }
+
