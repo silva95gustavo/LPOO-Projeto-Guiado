@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			hero_armed = ImageIO.read(new File("./res/hero_armed.png"));
 			hero_armed_shielded = ImageIO.read(new File("./res/hero_armed_shielded.png"));
 			sword = ImageIO.read(new File("./res/sword.png"));
+			grass = ImageIO.read(new File("./res/pavement.jpg"));
 		}
 		catch(IOException e)
 		{
