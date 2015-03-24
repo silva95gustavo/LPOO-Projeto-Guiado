@@ -2,13 +2,10 @@ package maze.gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-
-import javafx.scene.input.KeyCode;
 
 import javax.swing.*;
 
-import maze.logic.Game;
+import maze.logic.*;
 
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
@@ -23,6 +20,8 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	public GamePanel() {
 		xi = 10;
 		yi = 10;
+		
+		game = new Game(15, 3, Dragon.Dragon_mode.DGN_RAND_SLP);
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -59,6 +58,35 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		}
 	}
 
+	
+	
+	/*public void drawGame(GameData gameData)
+	{
+		int side = gameData.getMap().getSide();
+		char[][] matrix = new char[side][side];
+		matrix = placeMaze(matrix, gameData.getMap());
+		matrix = placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons(), gameData.getDarts(), gameData.getShield());
+		drawMatrix(matrix);
+		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
+	}
+
+	public void drawMatrix(char[][] matrix)
+	{
+		for (int y = 0; y < matrix.length; y++)
+		{
+			for (int x = 0; x < matrix.length; x++)
+			{
+				System.out.print(matrix[y][x] + " ");
+			}
+			System.out.println();
+		}
+	}*/
+	
+	
+	
+	// Unimplemented ////////////////////////////////////////////////////////////////////////
+	
+	
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub

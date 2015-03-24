@@ -19,8 +19,7 @@ public class GameFrame extends JFrame {
 
 					frame.getContentPane().add(panel);
 					frame.setVisible(true);
-
-					panel.requestFocus(); 
+					panel.requestFocus();
 					
 				} catch (Exception e) {
 					e.printStackTrace();
