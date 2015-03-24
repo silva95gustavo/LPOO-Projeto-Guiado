@@ -111,6 +111,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		Shield shield = gameData.getShield();
 		Dragon[] dragons = gameData.getDragons();
 		Sword sword = gameData.getSword();
+		Exit exit = map.getExit();
 
 		int maxSide = Math.min(this.getHeight(), this.getWidth());
 
@@ -123,13 +124,13 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		{
 			for (int x = 0; x < map.getSide(); x++)
 			{	
-				if(map.isWall(x,  y))
-				{
-					g.drawImage(wall, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
-				}
+				if(map.isExit(x, y) && exit.isVisible())
+					g.drawImage(this.pavement, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
+				else if(map.isWall(x,  y))
+					g.drawImage(this.wall, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 				else
 				{
-					//g.drawImage(pavement, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+					g.drawImage(this.pavement, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 				}
 
 				if(x == hero.getX() && y == hero.getY())
@@ -137,19 +138,16 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 					if(hero.isArmed())
 					{
 						if(hero.isShielded())
-							g.drawImage(this.hero_armed_shielded, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+							g.drawImage(this.hero_armed_shielded, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 						else
-							g.drawImage(this.hero_armed, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+							g.drawImage(this.hero_armed, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 					}
 					else
 					{
 						if(hero.isShielded())
-							g.drawImage(this.hero_shielded, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+							g.drawImage(this.hero_shielded, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 						else
-						{
-							g.drawImage(this.hero, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
-							//System.out.println("hero");
-						}
+							g.drawImage(this.hero, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 					}
 				}
 				
@@ -157,18 +155,18 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 				{
 					if(x == darts[i].getX() && y == darts[i].getY() && darts[i].isDropped())
 					{
-						//g.drawImage(this.dart, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+						//g.drawImage(this.dart, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 					}
 				}
 				
 				if(x == shield.getX() && y == shield.getY() && shield.isDropped())
 				{
-					//g.drawImage(this.shield, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+					//g.drawImage(this.shield, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 				}
 				
 				if(x == sword.getX() && y == sword.getY() && sword.isDropped())
 				{
-					g.drawImage(this.sword, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+				    g.drawImage(this.sword, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 				}
 				
 				for(int i = 0; i < dragons.length; i++)
@@ -176,9 +174,9 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 					if(dragons[i].isAlive() && x == dragons[i].getX() && y == dragons[i].getY())
 					{
 						if(dragons[i].isSleeping())
-							g.drawImage(this.pavement, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+							g.drawImage(this.pavement, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 						else
-							g.drawImage(this.dragon, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+							g.drawImage(this.dragon, border+x*cellSide, border+y*cellSide, cellSide, cellSide, this);
 					}
 				}
 
