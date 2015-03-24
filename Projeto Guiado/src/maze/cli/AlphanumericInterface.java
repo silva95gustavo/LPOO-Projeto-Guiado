@@ -176,7 +176,7 @@ public class AlphanumericInterface {
 			return new Game(drag_mode, false);
 	}
 
-	public char[][] placeMaze(char[][] matrix, Maze maze)
+	private char[][] placeMaze(char[][] matrix, Maze maze)
 	{
 		// Walls
 		matrix = maze.getMatrix().clone();
@@ -192,7 +192,7 @@ public class AlphanumericInterface {
 		return matrix;
 	}
 
-	public char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield)
+	private char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield)
 	{
 		// Hero
 		if (hero.isArmed())
@@ -235,7 +235,7 @@ public class AlphanumericInterface {
 		return matrix;
 	}
 
-	public void drawGame(GameData gameData)
+	private void drawGame(GameData gameData)
 	{
 		int side = gameData.getMap().getSide();
 		char[][] matrix = new char[side][side];
@@ -245,7 +245,7 @@ public class AlphanumericInterface {
 		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
 	}
 
-	public void drawMatrix(char[][] matrix)
+	private void drawMatrix(char[][] matrix)
 	{
 		for (int y = 0; y < matrix.length; y++)
 		{

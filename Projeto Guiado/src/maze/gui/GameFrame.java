@@ -18,10 +18,8 @@ public class GameFrame extends JFrame {
 					JPanel panel = new GamePanel();
 
 					frame.getContentPane().add(panel);
-					//frame.pack();
 					frame.setVisible(true);
-
-					panel.requestFocus(); // para receber eventos do teclado  
+					panel.requestFocus();
 					
 				} catch (Exception e) {
 					e.printStackTrace();
