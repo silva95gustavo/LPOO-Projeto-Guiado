@@ -176,7 +176,7 @@ public class AlphanumericInterface {
 			return new Game(drag_mode, false);
 	}
 
-	private char[][] placeMaze(char[][] matrix, Maze maze)
+	public static char[][] placeMaze(char[][] matrix, Maze maze)
 	{
 		// Walls
 		matrix = maze.getMatrix().clone();
@@ -192,7 +192,7 @@ public class AlphanumericInterface {
 		return matrix;
 	}
 
-	private char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield)
+	public static char[][] placeEntities(char[][] matrix, Hero hero, Sword sword, Dragon[] dragons, Dart[] darts, Shield shield)
 	{
 		// Hero
 		if (hero.isArmed())
