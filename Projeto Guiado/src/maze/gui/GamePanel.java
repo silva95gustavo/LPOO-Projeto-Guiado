@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 
 	//BufferedImage hero;
 	BufferedImage wall;
+	BufferedImage grass;
 	
 	Game game;
 	
@@ -26,10 +27,11 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		try
 		{
 			wall = ImageIO.read(new File("./res/wall.jpg"));
+			grass = ImageIO.read(new File("./res/grass.jpg"));
 		}
 		catch(IOException e)
 		{
-			System.out.println("Error");
+			
 			System.exit(1);
 		}
 		
@@ -43,33 +45,39 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
 		showGame(game.getGameData(), g);
-		g.drawImage(wall, 50, 50, 200, 200, 0, 0, wall.getWidth(), wall.getHeight(), null);
+		//g.drawImage(wall, 10, 10, 20, 200, 0, 0, wall.getWidth(), wall.getHeight(), null);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		
+		//System.out.println(this.getWidth());
 	}
 
 	
 	
 	public void showGame(GameData gameData, Graphics g)
 	{
-		int side = gameData.getMap().getSide();
-		char[][] matrix = new char[side][side];
-		matrix = AlphanumericInterface.placeMaze(matrix, gameData.getMap());
-		matrix = AlphanumericInterface.placeEntities(matrix, gameData.getHero(), gameData.getSword(), gameData.getDragons(), gameData.getDarts(), gameData.getShield());
-		drawMatrix(matrix, g);
-		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
-	}
-
-	public void drawMatrix(char[][] matrix, Graphics g)
-	{
-		for (int y = 0; y < matrix.length; y++)
+		Maze map = gameData.getMap();
+		
+		int maxSide = Math.min(this.getHeight(), this.getWidth());
+		
+		int border = 10;
+		int cellSide = (maxSide-(2*border))/map.getSide();
+		
+		for (int y = 0; y < map.getSide(); y++)
 		{
-			for (int x = 0; x < matrix.length; x++)
-			{
-				g.drawRect(10*x, 10*y, 5, 5);
+			for (int x = 0; x < map.getSide(); x++)
+			{	
+				if(map.isWall(x,  y))
+				{
+					g.drawImage(wall, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+				}
+				else
+				{
+					g.drawImage(grass, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+				}
+				
+				//g.drawImage(wall, 50, 50, 200, 200, 0, 0, wall.getWidth(), wall.getHeight(), null);
 			}
 		}
 	}
