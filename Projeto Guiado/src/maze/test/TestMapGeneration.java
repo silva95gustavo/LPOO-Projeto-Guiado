@@ -1,13 +1,13 @@
 package maze.test;
 
 import static org.junit.Assert.assertEquals;
+import maze.logic.DefaultMaze;
 import maze.logic.Dragon;
 import maze.logic.Game;
 import maze.logic.GameData;
 
 import org.junit.Test;
 
-// Warning: this test is not very effective since it doesn't test all aspects about random map generation
 public class TestMapGeneration {
 
 	@Test
@@ -23,5 +23,17 @@ public class TestMapGeneration {
 		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[3].getMode());
 		assertEquals(Dragon.Dragon_mode.DGN_RAND_SLP, data.getDragons()[4].getMode());
 
+	}
+	
+	@Test
+	public void testMapSize() {
+		Game tGame = new Game(Dragon.Dragon_mode.DGN_RAND_SLP, true);
+		GameData data = tGame.getGameData();
+		
+		assertEquals(data.getMap().getSide(), DefaultMaze.defaultMatrix.length);
+		
+		tGame = new Game(18);
+		data = tGame.getGameData();
+		assertEquals(data.getMap().getSide(), 18);
 	}
 }
