@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public class GameFrame extends JFrame {
 	
-	String title = "Maze Escape";
+	static String title = "Maze Escape";
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -32,7 +32,7 @@ public class GameFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public GameFrame() {
-		super("ola");
+		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 10, 500, 500);
 		/*contentPane = new JPanel();
