@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		try
 		{
 			wall = ImageIO.read(new File("./res/wall.jpg"));
-			pavement = ImageIO.read(new File("./res/grass.jpg"));
+			pavement = ImageIO.read(new File("./res/pavement.jpg"));
 			dragon = ImageIO.read(new File("./res/dragon.png"));
 			hero = ImageIO.read(new File("./res/hero.png"));
 			hero_shielded = ImageIO.read(new File("./res/hero_shielded.png"));
@@ -56,12 +56,48 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
 		showGame(game.getGameData(), g);
-		//g.drawImage(wall, 10, 10, 20, 200, 0, 0, wall.getWidth(), wall.getHeight(), null);
+		//g.drawImage(hero, 10, 10, 200, 200, 0, 0, wall.getWidth(), wall.getHeight(), null);
+		if(game.getGameData().getHero().isArmed())
+			System.out.println("ARMED");
 	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		//System.out.println(this.getWidth());
+		switch(arg0.getKeyCode())
+		{
+		case KeyEvent.VK_UP:
+			game.turn(Game.command.MOVE, Game.Direction.UP);
+			repaint();
+			break;
+		case KeyEvent.VK_DOWN:
+			game.turn(Game.command.MOVE, Game.Direction.DOWN);
+			repaint();
+			break;
+		case KeyEvent.VK_LEFT:
+			game.turn(Game.command.MOVE, Game.Direction.LEFT);
+			repaint();
+			break;
+		case KeyEvent.VK_RIGHT:
+			game.turn(Game.command.MOVE, Game.Direction.RIGHT);
+			repaint();
+			break;
+		case KeyEvent.VK_W:
+			game.turn(Game.command.FIRE, Game.Direction.UP);
+			repaint();
+			break;
+		case KeyEvent.VK_A:
+			game.turn(Game.command.FIRE, Game.Direction.LEFT);
+			repaint();
+			break;
+		case KeyEvent.VK_S:
+			game.turn(Game.command.FIRE, Game.Direction.DOWN);
+			repaint();
+			break;
+		case KeyEvent.VK_D:
+			game.turn(Game.command.FIRE, Game.Direction.RIGHT);
+			repaint();
+			break;
+		}
 	}
 
 
@@ -80,6 +116,8 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 
 		int border = 10;
 		int cellSide = (maxSide-(2*border))/map.getSide();
+		
+		//g.drawImage(pavement, 0, 0, this.getWidth()-1, this.getHeight()-1, 0, 0, wall.getWidth(), wall.getHeight(), null);
 
 		for (int y = 0; y < map.getSide(); y++)
 		{
@@ -91,7 +129,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 				}
 				else
 				{
-					g.drawImage(grass, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+					//g.drawImage(pavement, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
 				}
 
 				if(x == hero.getX() && y == hero.getY())
@@ -99,55 +137,50 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 					if(hero.isArmed())
 					{
 						if(hero.isShielded())
-						{
 							g.drawImage(this.hero_armed_shielded, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+						else
+							g.drawImage(this.hero_armed, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+					}
+					else
+					{
+						if(hero.isShielded())
+							g.drawImage(this.hero_shielded, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+						else
+						{
+							g.drawImage(this.hero, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+							//System.out.println("hero");
 						}
 					}
 				}
-
-
-
-				/*
-				 // Hero
-		if (hero.isArmed())
-			matrix[hero.getY()][hero.getX()] = armed_hero_char;
-		else
-			matrix[hero.getY()][hero.getX()] = hero_char;
-
-		// Darts
-		for(int i = 0; i < darts.length; i++)
-		{
-			if(darts[i].isDropped())
-				matrix[darts[i].getY()][darts[i].getX()] = dart_char;
-		}
-
-		if(shield.isDropped())
-			matrix[shield.getY()][shield.getX()] = shield_shar;
-
-		// Dragons
-		for (int i = 0; i < dragons.length; i++)
-		{
-			if (dragons[i].isAlive())
-			{
-				if (dragons[i].isSleeping())
-					matrix[dragons[i].getY()][dragons[i].getX()] = dragon_sleeping_char;
-				else
-					matrix[dragons[i].getY()][dragons[i].getX()] = dragon_char;
-			}
-		}
-
-		// Sword
-		if (sword.isDropped())
-		{
-			if (matrix[sword.getY()][sword.getX()] == dragon_char)
-				matrix[sword.getY()][sword.getX()] = dragon_sword_char;
-			else if (matrix[sword.getY()][sword.getX()] == dragon_sleeping_char)
-				matrix[sword.getY()][sword.getX()] = dragon_sleeping_sword_char;
-			else
-				matrix[sword.getY()][sword.getX()] = sword_char;
-		}
-		return matrix;
-				 */
+				
+				for(int i = 0; i < darts.length; i++)
+				{
+					if(x == darts[i].getX() && y == darts[i].getY() && darts[i].isDropped())
+					{
+						//g.drawImage(this.dart, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+					}
+				}
+				
+				if(x == shield.getX() && y == shield.getY() && shield.isDropped())
+				{
+					//g.drawImage(this.shield, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+				}
+				
+				if(x == sword.getX() && y == sword.getY() && sword.isDropped())
+				{
+					g.drawImage(this.sword, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+				}
+				
+				for(int i = 0; i < dragons.length; i++)
+				{
+					if(dragons[i].isAlive() && x == dragons[i].getX() && y == dragons[i].getY())
+					{
+						if(dragons[i].isSleeping())
+							g.drawImage(this.pavement, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+						else
+							g.drawImage(this.dragon, border+x*cellSide, border+y*cellSide, border+x*cellSide+cellSide, border+y*cellSide+cellSide, 0, 0, wall.getWidth(), wall.getHeight(), null);
+					}
+				}
 
 				//g.drawImage(wall, 50, 50, 200, 200, 0, 0, wall.getWidth(), wall.getHeight(), null);
 			}
