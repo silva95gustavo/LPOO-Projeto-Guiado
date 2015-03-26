@@ -85,12 +85,17 @@ public class TestMapGeneration {
 		private boolean checkExitReachable(Maze maze) {
 			Exit e = maze.getExit();
 			char [][] m = deepClone(maze.getMatrix());
-			visit(m, e.getX(), e.getY());
+			visit(m, e.getY()-1, e.getX());
+			visit(m, e.getY()+1, e.getX());
+			visit(m, e.getY(), e.getX()-1);
+			visit(m, e.getY(), e.getX()+1);
 			
 			for (int i = 0; i < m.length; i++)
 				for (int j = 0; j < m.length; j++)
 					if (m[i][j] != 'X' && m[i][j] != 'V')
+					{
 						return false;
+					}
 			
 			return true; 
 		}
@@ -150,7 +155,7 @@ public class TestMapGeneration {
 				int size = maxSize == 8? 8 : 8 + 2 * rand.nextInt((maxSize - 8)/2);
 				Maze m = new MazeBuilder(size).build();
 				assertTrue("Invalid maze boundaries in maze:\n" + m, checkBoundaries(m));			
-				//assertTrue("Maze exit not reachable in maze:\n" + m, checkExitReachable(m));			
+				assertTrue("Maze exit not reachable in maze:\n" + m, checkExitReachable(m));			
 				assertNotNull("Invalid walls in maze:\n" + m, ! hasSquare(m, badWalls));
 				assertNotNull("Invalid spaces in maze:\n" + m, ! hasSquare(m, badSpaces));
 				assertNotNull("Invalid diagonals in maze:\n" + m, ! hasSquare(m, badDiag1));
