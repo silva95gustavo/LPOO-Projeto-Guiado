@@ -245,7 +245,7 @@ public class AlphanumericInterface {
 		System.out.print("\n Available darts : " + gameData.getHero().getDarts() + "\n\n");
 	}
 
-	private void drawMatrix(char[][] matrix)
+	public static void drawMatrix(char[][] matrix)
 	{
 		for (int y = 0; y < matrix.length; y++)
 		{
