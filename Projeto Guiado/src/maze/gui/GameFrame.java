@@ -34,7 +34,7 @@ public class GameFrame extends JFrame {
 	public GameFrame() {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 10, 500, 500);
+		setBounds(10, 10, 700, 700);
 		/*contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
