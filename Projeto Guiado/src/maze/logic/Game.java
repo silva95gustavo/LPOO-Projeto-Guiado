@@ -134,7 +134,7 @@ public class Game {
 
 		for(int i = 0; i < darts.length; i++)
 		{
-			if(hero.getX() == darts[i].getX() && hero.getY() == darts[i].getY())
+			if(hero.getX() == darts[i].getX() && hero.getY() == darts[i].getY() && darts[i].isDropped())
 			{
 				darts[i].setDropped(false);
 				hero.catchDart();
