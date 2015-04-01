@@ -6,6 +6,8 @@ public class MazeBuilder implements Builder{
 	private static final double MULTIPLE_PATHS_FACTOR = 0.25;
 
 	public static final int MIN_REC_SIDE = 8;
+	public static final int MIN_DRAGS = 1;
+	public static final int MAX_DRAGS = 5;
 	
 	public char[][] matrix;
 	public Exit exit;

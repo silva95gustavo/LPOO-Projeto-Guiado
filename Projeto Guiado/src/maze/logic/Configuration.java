@@ -21,4 +21,5 @@ public class Configuration {
 	public int dartRIGHT = KeyEvent.VK_D;
 	
 	public Configuration() {}
+
 }

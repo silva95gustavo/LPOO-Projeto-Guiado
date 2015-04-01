@@ -74,6 +74,15 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				}
 			}
 		});
+		
+		JButton btnConfig = new JButton("Settings");
+		btnConfig.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				ConfigDialog sett = new ConfigDialog();
+				sett.display(config);
+			}
+		});
 
 		lblDarts = new JLabel("Darts : 0");
 		lblDarts.setToolTipText("Shoot darts at the dragons with W, A, S and D");
@@ -103,6 +112,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			}
 		});
 		add(btnNewGame);
+		add(btnConfig);
 		add(btnCloseGame);
 	}
 
@@ -125,33 +135,22 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 		if(game != null)
 		{
-			switch(arg0.getKeyCode())
-			{
-			case KeyEvent.VK_UP:
+			if(arg0.getKeyCode() == config.cmdUP)
 				ret = game.turn(Game.command.MOVE, Game.Direction.UP);
-				break;
-			case KeyEvent.VK_DOWN:
+			else if(arg0.getKeyCode() == config.cmdDOWN)
 				ret = game.turn(Game.command.MOVE, Game.Direction.DOWN);
-				break;
-			case KeyEvent.VK_LEFT:
+			else if(arg0.getKeyCode() == config.cmdLEFT)
 				ret = game.turn(Game.command.MOVE, Game.Direction.LEFT);
-				break;
-			case KeyEvent.VK_RIGHT:
+			else if(arg0.getKeyCode() == config.cmdRIGHT)
 				ret = game.turn(Game.command.MOVE, Game.Direction.RIGHT);
-				break;
-			case KeyEvent.VK_W:
+			else if(arg0.getKeyCode() == config.dartUP)
 				ret = game.turn(Game.command.FIRE, Game.Direction.UP);
-				break;
-			case KeyEvent.VK_A:
-				ret = game.turn(Game.command.FIRE, Game.Direction.LEFT);
-				break;
-			case KeyEvent.VK_S:
+			else if(arg0.getKeyCode() == config.dartDOWN)
 				ret = game.turn(Game.command.FIRE, Game.Direction.DOWN);
-				break;
-			case KeyEvent.VK_D:
+			else if(arg0.getKeyCode() == config.dartRIGHT)
 				ret = game.turn(Game.command.FIRE, Game.Direction.RIGHT);
-				break;
-			}
+			else if(arg0.getKeyCode() == config.dartLEFT)
+				ret = game.turn(Game.command.FIRE, Game.Direction.LEFT);
 		}
 
 		switch(ret)
