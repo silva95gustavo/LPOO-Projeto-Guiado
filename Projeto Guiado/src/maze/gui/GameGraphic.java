@@ -66,7 +66,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnCloseGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to close the new game?", "Close Game", JOptionPane.YES_NO_OPTION);
+				int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to close the game?", "Close Game", JOptionPane.YES_NO_OPTION);
 
 				if(n == 0)
 				{
