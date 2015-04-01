@@ -27,9 +27,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static BufferedImage shield;
 	private static BufferedImage dart;
 	private int border = 10;
-	
+
 	private JLabel lblDarts;
 	private JButton btnNewGame;
+	
+	private Configuration config = new Configuration();
 
 	Game game;
 
@@ -59,24 +61,45 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
-		
+
 		JButton btnCloseGame = new JButton("Close Game");
 		btnCloseGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+
+				int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to close the new game?", "Close Game", JOptionPane.YES_NO_OPTION);
+
+				if(n == 0)
+				{
+					System.exit(0);
+				}
 			}
 		});
-		
+
 		lblDarts = new JLabel("Darts : 0");
 		lblDarts.setToolTipText("Shoot darts at the dragons with W, A, S and D");
 		add(lblDarts);
-		
+
 		btnNewGame = new JButton("New Game");
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				game = new Game(15, 3, Dragon.Dragon_mode.DGN_RAND_SLP);
-				repaint();
-				requestFocus();
+
+				
+				int n = 0;
+				
+				if(game != null)
+					n = JOptionPane.showConfirmDialog(null, "Are you sure you want to start a new game?", "New Game", JOptionPane.YES_NO_OPTION);
+
+				/*
+				 * The line above was made so that the program only asks the user's confirmation to create a new game
+				 * when there is a game ongoing. If there are no current games, it creates a new one without asking.
+				 */
+				
+				if(n == 0)
+				{
+					game = new Game(config.side, config.dragonNumber, config.dragonMode);
+					repaint();
+					requestFocus();
+				}
 			}
 		});
 		add(btnNewGame);
@@ -89,7 +112,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		if(game != null)
 			showGame(game.getGameData(), g);
 	}
-	
+
 	private void resetGame()
 	{
 		game = null;
@@ -97,9 +120,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	public void keyPressed(KeyEvent arg0) {
-		
+
 		Game.event ret = Game.event.NONE;
-		
+
 		if(game != null)
 		{
 			switch(arg0.getKeyCode())
@@ -130,43 +153,43 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				break;
 			}
 		}
-		
+
 		switch(ret)
 		{
 		case LOSE:
-			JOptionPane.showMessageDialog(null, "Ups... A dragon killed you...\nTry picking up a sword next time!");
+			JOptionPane.showMessageDialog(null, "Ups... A dragon killed you...\nTry picking up a sword next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			resetGame();
 			break;
 		case LOSE_FIRE:
-			JOptionPane.showMessageDialog(null, "Ups... You were killed by dragon fire...\nTry protecting yourself with a shield next time!");
+			JOptionPane.showMessageDialog(null, "Ups... You were killed by dragon fire...\nTry protecting yourself with a shield next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			resetGame();
 			break;
 		case SHIELDED:
 			JOptionPane.showMessageDialog(null, "You are now protected against dragon fire!");
 			break;
 		case WIN:
-			JOptionPane.showMessageDialog(null, "CONGRATULATIONS! You escaped the maze!\nCome back and try again!");
+			JOptionPane.showMessageDialog(null, "CONGRATULATIONS! You escaped the maze!\nCome back and try again!", "Game won!", JOptionPane.PLAIN_MESSAGE);;
 			resetGame();
 			break;
 		}
-		
+
 		repaint();
 	}
-	
+
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
 	{
 		int xBorder = border;
 		int yBorder = border+btnNewGame.getY() + btnNewGame.getHeight();
-		
+
 		int minY = btnNewGame.getY() + btnNewGame.getHeight();
-		
+
 		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
 		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();
-		
+
 		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
 				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
-	
+
 	public void showGame(GameData gameData, Graphics g)
 	{
 		Maze map = gameData.getMap();
@@ -177,9 +200,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		Dragon[] dragons = gameData.getDragons();
 		Sword sword = gameData.getSword();
 		Exit exit = map.getExit();
-		
+
 		lblDarts.setText("Darts : " + hero.getDarts());
-		
+
 		for (int y = 0; y < map.getSide(); y++)
 		{
 			for (int x = 0; x < map.getSide(); x++)
@@ -205,7 +228,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 							showImageCell(g, hero_armed_shielded, x, y);
 						else
 							showImageCell(g, hero_armed, x, y);
-						}
+					}
 					else
 					{
 						if(hero.isShielded())
@@ -216,7 +239,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						}
 					}
 				}
-				
+
 				for(int i = 0; i < darts.length; i++)
 				{
 					if(x == darts[i].getX() && y == darts[i].getY() && darts[i].isDropped())
@@ -224,17 +247,17 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						showImageCell(g, GameGraphic.dart, x, y);
 					}
 				}
-				
+
 				if(x == shield.getX() && y == shield.getY() && shield.isDropped())
 				{
 					showImageCell(g, GameGraphic.shield, x, y);
 				}
-				
+
 				if(x == sword.getX() && y == sword.getY() && sword.isDropped())
 				{
 					showImageCell(g, GameGraphic.sword, x, y);
 				}
-				
+
 				for(int i = 0; i < dragons.length; i++)
 				{
 					if(dragons[i].isAlive() && x == dragons[i].getX() && y == dragons[i].getY())
@@ -243,7 +266,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 							showImageCell(g, GameGraphic.dragon_sleeping, x, y);
 						else
 							showImageCell(g, GameGraphic.dragon, x, y);
-						}
+					}
 				}
 			}
 		}
