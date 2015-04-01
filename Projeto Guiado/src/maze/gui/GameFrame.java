@@ -6,7 +6,7 @@ import java.awt.*;
 import javax.swing.*;
 
 public class GameFrame extends JFrame {
-	
+
 	static String title = "Maze Escape";
 
 	public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class GameFrame extends JFrame {
 					frame.getContentPane().add(panel);
 					frame.setVisible(true);
 					panel.requestFocus();
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -29,17 +29,21 @@ public class GameFrame extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public GameFrame() {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(10, 10, 650, 700);
-		/*contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);*/
+
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (JOptionPane.showConfirmDialog(null, 
+						"Are you sure to close the game?", "Close Game", 
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+					System.exit(0);
+				}
+			}
+		});
 	}
 
 }
