@@ -1,6 +1,8 @@
 package maze.logic;
 
-public class Maze {
+import java.io.Serializable;
+
+public class Maze implements Serializable {
 	public static final char wallChar = 'X';
 	public static final char exitChar = 'S';
 	

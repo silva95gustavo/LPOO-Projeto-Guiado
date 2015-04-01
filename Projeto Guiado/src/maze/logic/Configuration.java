@@ -1,8 +1,9 @@
 package maze.logic;
 
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 
-public class Configuration {
+public class Configuration implements Serializable {
 	
 	// Default configuration
 	

@@ -1,6 +1,9 @@
 package maze.logic;
 
-public class GameData {
+import java.io.Serializable;
+
+public class GameData implements Serializable
+ {
 	private Maze map;
 	private Hero hero;
 	private Sword sword;

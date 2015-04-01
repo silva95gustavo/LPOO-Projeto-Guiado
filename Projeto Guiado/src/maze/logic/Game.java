@@ -30,6 +30,16 @@ public class Game {
 	{
 		this(side, Dragon.Dragon_mode.DGN_STILL);
 	}
+	
+	public Game(GameData data)
+	{
+		map = data.getMap();
+		hero = data.getHero();
+		sword = data.getSword();
+		dragons = data.getDragons();
+		shield = data.getShield();
+		darts = data.getDarts();
+	}
 
 	public Game(int side, Dragon.Dragon_mode dragon_mode)
 	{

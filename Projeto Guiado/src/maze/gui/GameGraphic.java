@@ -5,7 +5,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -30,7 +34,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	private JLabel lblDarts;
 	private JButton btnNewGame;
-	
+	private JButton btnLoadGame;
+	private JButton btnSaveGame;
+
 	private Configuration config = new Configuration();
 
 	Game game;
@@ -70,31 +76,32 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 				if(n == 0)
 				{
+					saveSettings();
 					System.exit(0);
 				}
 			}
 		});
-		
+
 		JButton btnConfig = new JButton("Settings");
 		btnConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
 				ConfigDialog sett = new ConfigDialog();
 				sett.display(config);
+				saveSettings();
 			}
 		});
 
 		lblDarts = new JLabel("Darts : 0");
 		lblDarts.setToolTipText("Shoot darts at the dragons with W, A, S and D");
-		add(lblDarts);
 
 		btnNewGame = new JButton("New Game");
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				
+
 				int n = 0;
-				
+
 				if(game != null)
 					n = JOptionPane.showConfirmDialog(null, "Are you sure you want to start a new game?", "New Game", JOptionPane.YES_NO_OPTION);
 
@@ -102,7 +109,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				 * The line above was made so that the program only asks the user's confirmation to create a new game
 				 * when there is a game ongoing. If there are no current games, it creates a new one without asking.
 				 */
-				
+
 				if(n == 0)
 				{
 					game = new Game(config.side, config.dragonNumber, config.dragonMode);
@@ -111,16 +118,104 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				}
 			}
 		});
+
+		btnLoadGame = new JButton("Load Saved Game");
+		btnLoadGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{
+					ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("./data/game")));
+					GameData data = (GameData) ois.readObject();
+					ois.close();
+
+					int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to load the previous game? Doing this will finish the current game.", "Load Game", JOptionPane.YES_NO_OPTION);
+
+					if(n == 0)
+					{
+						game = new Game(data);
+						repaint();
+					}
+					requestFocus();
+				}
+				catch(Exception exc)
+				{	
+					int n = JOptionPane.showConfirmDialog(null, "An error occurred loading the game. Do you wish to start a new game with the current settings? (accepting will finish the current game)", "Load Game", JOptionPane.YES_NO_OPTION);
+
+					if(n == 0)
+					{
+						game = new Game(config.side, config.dragonNumber, config.dragonMode);
+						repaint();
+					}
+					requestFocus();
+				}
+			}
+		});
+
+		btnSaveGame = new JButton("Save Game");
+		btnSaveGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{
+					ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("./data/game")));
+					oos.writeObject(game.getGameData());
+					oos.close();
+					JOptionPane.showMessageDialog(null, "Game saved!");
+				}
+				catch(Exception exc)
+				{	
+					JOptionPane.showMessageDialog(null, "Error on opening or writing to output file", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				requestFocus();
+			}
+		});
+		
+		btnSaveGame.setEnabled(false);
+
+		loadSettings();
+		
 		add(btnNewGame);
 		add(btnConfig);
 		add(btnCloseGame);
+		add(lblDarts);
+		add(btnSaveGame);
+		add(btnLoadGame);
+	}
+	
+	private void saveSettings()
+	{
+		try
+		{
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("./data/settings")));
+			ConfigurationSerializable conf = new ConfigurationSerializable(config);
+			oos.writeObject(conf);
+			oos.close();
+		}
+		catch(Exception exc) {}
+	}
+	
+	private void loadSettings()
+	{
+		try
+		{
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("./data/settings")));
+			ConfigurationSerializable conf = (ConfigurationSerializable) ois.readObject();
+			ois.close();
+
+			this.config = conf.toConfig();
+		}
+		catch(Exception exc) {}
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
 		if(game != null)
+		{
+			btnSaveGame.setEnabled(true);
 			showGame(game.getGameData(), g);
+		}
+		else
+			btnSaveGame.setEnabled(false);
 	}
 
 	private void resetGame()

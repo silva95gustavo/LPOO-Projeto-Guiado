@@ -1,6 +1,8 @@
 package maze.logic;
 
-public class Element {
+import java.io.Serializable;
+
+public class Element implements Serializable {
 	private int x, y;
 	
 	public Element(int x, int y) {
