@@ -188,9 +188,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 					showImageCell(g, hero, j, i);
 			}
 		}
-		
-		System.out.println(frame.getWidth());
-		System.out.println(frame.getHeight());
 	}
 	
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
