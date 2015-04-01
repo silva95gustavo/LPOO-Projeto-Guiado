@@ -13,6 +13,7 @@ public class Game {
 	////////////////////////////////
 
 	private static final int ELEM_DIST_FACTOR = 2;			// Fator usado para determinar a dist. mínima entre elementos
+	public static final int MAX_DARTS_FACTOR = 4;
 
 	private Maze map;						// Represents the game map
 
@@ -455,7 +456,7 @@ public class Game {
 		Random rand = new Random();
 
 		int randX, randY;
-		int n_darts = map.getSide()/4;
+		int n_darts = map.getSide()/MAX_DARTS_FACTOR;
 		darts = new Dart[n_darts];
 
 		for(int i = 0; i < n_darts; i++)

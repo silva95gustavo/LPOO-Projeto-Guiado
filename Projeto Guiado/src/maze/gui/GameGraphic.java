@@ -36,6 +36,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private JButton btnNewGame;
 	private JButton btnLoadGame;
 	private JButton btnSaveGame;
+	private JButton btnDrawMaze;
 
 	private Configuration config = new Configuration();
 
@@ -170,6 +171,15 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		});
 		
 		btnSaveGame.setEnabled(false);
+		
+		btnDrawMaze = new JButton("Draw Maze");
+		btnDrawMaze.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				DrawMapWindow win = new DrawMapWindow();
+				win.start();				
+			}
+		});
 
 		loadSettings();
 		
@@ -179,9 +189,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		add(lblDarts);
 		add(btnSaveGame);
 		add(btnLoadGame);
+		add(btnDrawMaze);
 	}
 	
-	private void saveSettings()
+	public void saveSettings()
 	{
 		try
 		{
@@ -193,7 +204,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		catch(Exception exc) {}
 	}
 	
-	private void loadSettings()
+	public void loadSettings()
 	{
 		try
 		{
