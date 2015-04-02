@@ -27,6 +27,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static BufferedImage dragon_sleeping;
 	private static BufferedImage sword;
 	private static BufferedImage wall;
+	private static BufferedImage pavement_wall;
 	private static BufferedImage pavement;
 	private static BufferedImage shield;
 	private static BufferedImage dart;
@@ -48,6 +49,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		try
 		{
 			wall = ImageIO.read(new File("./res/wall.jpg"));
+			pavement_wall = ImageIO.read(new File("./res/pavement_wall.jpg"));
 			dragon = ImageIO.read(new File("./res/dragon.png"));
 			dragon_sleeping = ImageIO.read(new File("./res/dragon_sleeping.png"));
 			hero = ImageIO.read(new File("./res/hero.png"));
@@ -314,7 +316,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			{
 				if(map.isExit(x, y) && exit.isVisible())
 				{
-					showImageCell(g, pavement, x, y);
+					if (y > 0 && map.isWall(x,  y - 1))
+						showImageCell(g, pavement_wall, x, y);
+					else
+						showImageCell(g, pavement, x, y);
 				}
 				else if(map.isWall(x,  y))
 				{
@@ -322,7 +327,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				}
 				else
 				{
-					showImageCell(g, pavement, x, y);
+					if (y > 0 && map.isWall(x, y - 1) && !(map.isExit(x, y - 1) && exit.isVisible()))
+						showImageCell(g, pavement_wall, x, y);
+					else
+						showImageCell(g, pavement, x, y);
 				}
 
 				if(x == hero.getX() && y == hero.getY())
