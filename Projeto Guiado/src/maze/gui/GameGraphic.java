@@ -178,8 +178,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnDrawMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				DrawMapWindow win = new DrawMapWindow();
-				win.start();				
+				//DrawMapWindow win = new DrawMapWindow();
+				//win.start();
+				
+				DrawMapDialog d = new DrawMapDialog();
+				d.start();
 			}
 		});
 
