@@ -7,7 +7,9 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 
+import maze.logic.ConfigurationSerializable;
 import maze.logic.Dart;
 import maze.logic.Dragon;
 import maze.logic.Exit;
@@ -45,11 +48,13 @@ import javax.swing.DefaultComboBoxModel;
 public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
 
 	private JFormattedTextField mapSizeField;
-	
+	private boolean leftBtnPressed = false;
+	private boolean rightBtnPressed = false;
+
 	private static final int MAX_SIDE = 25;
-	
+
 	char[][] matrix;
-	
+
 	private static BufferedImage hero;
 	private static BufferedImage dragon;
 	private static BufferedImage sword;
@@ -57,25 +62,24 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 	private static BufferedImage pavement;
 	private static BufferedImage shield;
 	private static BufferedImage dart;
-	
+
 	private int border = 10;
-	
+
 	private JFrame frame;
-	
+
 	private JButton btnSet;
 	private JComboBox<String> pieceBox;
-	
+
 	private String[] pieces = new String[] {"Wall", "Hero", "Dragon", "Shield", "Sword", "Dart"};
-	private char[] pieces_char = new char[] {'x', 'h', 'd', 's', 'e', 'a'};
+	private char[] pieces_char = new char[] {'X', 'h', 'd', 's', 'e', 'a'};
 	private JButton btnDone;
-	
+
 	public void start()
 	{
 		frame = new JFrame();
 		frame.setVisible(true);
 
 		frame.setVisible(true);
-		frame.setAlwaysOnTop(true);
 		frame.setBounds(100, 100, 616, 676);
 		frame.setTitle("Draw maze");
 		frame.setMinimumSize(new Dimension(516, 576));
@@ -83,13 +87,13 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		frame.getContentPane().add(this);
 		requestFocus();
 	}
-	
+
 	public DrawMapWindow() {
 		setLayout(null);
-		
+
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		
+
 		try
 		{
 			wall = ImageIO.read(new File("./res/wall.jpg"));
@@ -105,7 +109,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			System.err.println("Error: " + e.getMessage());
 			System.exit(1);
 		}
-		
+
 		mapSizeField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		mapSizeField.setHorizontalAlignment(SwingConstants.LEFT);
 		mapSizeField.setColumns(2);
@@ -114,7 +118,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		mapSizeField.addPropertyChangeListener("value", this);
 		mapSizeField.setValue(MazeBuilder.MIN_REC_SIDE);
 		add(mapSizeField);
-		
+
 		btnSet = new JButton("Set");
 		btnSet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -122,37 +126,97 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		});
 		btnSet.setBounds(99, 11, 70, 23);
 		add(btnSet);
-		
+
 		JLabel lblSize = new JLabel("Size:");
 		lblSize.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSize.setBounds(0, 15, 70, 14);
 		add(lblSize);
-		
+
 		pieceBox = new JComboBox();
 		pieceBox.setModel(new DefaultComboBoxModel(pieces));
 		pieceBox.setBounds(179, 12, 95, 20);
 		add(pieceBox);
-		
+
 		JButton btnNeedHelp = new JButton("Need help?");
 		btnNeedHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.setAlwaysOnTop(false);
-				JOptionPane.showMessageDialog(null, "Just select the piece in the list on the top and" + '\n' + "left-click to place it. Use the right click to remove" + '\n' + "any piece. Mark the exit by leaving a blank cell on a margin" + '\n' + '\n' + "Rules:" + '\n' + "Max 1 hero, 1 sword, 5 dragons, 1 shield, "+ mapSide()/Game.MAX_DARTS_FACTOR + " darts.", "Help", JOptionPane.QUESTION_MESSAGE);
-				frame.setAlwaysOnTop(true);
+				JOptionPane.showMessageDialog(null, "Just select the piece in the list on the top and" + '\n' + "left-click to place it. Use the right click to remove" + '\n' + "any piece. Mark the exit by leaving a blank cell on a margin" + '\n' + '\n' + "Rules:" + '\n' + "The maze must have 1 hero, 1 sword, 1-5 dragons, 1 shield, 0-"+ mapSide()/Game.MAX_DARTS_FACTOR + " darts (depends on map size)." + '\n' + "The hero can't be next to any dragon(s)." + '\n' + "There can only be linear paths on the maze.", "Help", JOptionPane.QUESTION_MESSAGE);
 			}
 		});
 		btnNeedHelp.setBounds(284, 11, 118, 23);
 		add(btnNeedHelp);
-		
+
 		btnDone = new JButton("Done");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//COMPLETE
+				if(!isValidMap())
+				{
+					JOptionPane.showMessageDialog(null, "This map is invalid." + '\n' + '\n' + "Check the help section to see the rules.", "Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				else
+				{
+					int n = JOptionPane.showConfirmDialog(null, "Do you wish to save this map?", "Draw Map", JOptionPane.YES_NO_OPTION);
+					
+					if(n == JOptionPane.YES_OPTION)
+					{
+						String file = new String();						
+						
+						while(file.isEmpty())
+						{
+							file = JOptionPane.showInputDialog(null, "Map name:", "Save map", JOptionPane.PLAIN_MESSAGE);
+							
+							if(file == null)
+							{
+								JOptionPane.showMessageDialog(null, "Map saving cancelled", "Warning", JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							
+							File f = new File("./maps/" + file);
+							
+							if(f.exists() && !f.isDirectory())
+							{
+								JOptionPane.showMessageDialog(null, "Map name already exists.", "Warning", JOptionPane.WARNING_MESSAGE);
+								file = "";
+							}
+							else
+							{
+								try
+								{
+									int side = mapSide();
+									char[][] map = new char[side][side];
+									
+									for(int i = 0; i < side; i++)
+									{
+										for(int j = 0; j < side; j++)
+										{
+											map[i][j] = matrix[i][j];
+										}
+									}
+									
+									ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
+									oos.writeObject(map);
+									oos.close();
+								}
+								catch(Exception exc) {
+									JOptionPane.showMessageDialog(null, "Error opening file. Please try a different name.", "Warning", JOptionPane.WARNING_MESSAGE);
+									file = "";
+								}
+							}
+							
+						}
+						
+						JOptionPane.showMessageDialog(null, "Map saved", "Message", JOptionPane.PLAIN_MESSAGE);
+					}
+				}
+				
+				frame.setVisible(false);
+				frame.dispose();
 			}
 		});
 		btnDone.setBounds(403, 11, 89, 23);
 		add(btnDone);
-		
+
 		matrix = new char[MAX_SIDE][MAX_SIDE];
 		for(int i = 0; i < MAX_SIDE; i++)
 		{
@@ -161,20 +225,193 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 				matrix[i][j] = ' ';
 			}
 		}
+
+	}
+
+	private boolean isValidMap()
+	{		
+		int side = mapSide();
+		int heroCol = 0;
+		int heroLin = 0;
+
+		// Check walls and exit
+		{			
+			int countExit = 0;
+			if(matrix[0][0] != 'X' || matrix[0][side-1] != 'X' || matrix[side-1][0] != 'X' || matrix[side-1][side-1]!='X')
+				return false;
+
+			for(int i = 1; i < side-1; i++)
+			{
+				if(matrix[0][i] == ' ')
+					countExit++;
+				else if(matrix[0][i] != 'X')
+					return false;
+
+				if(matrix[side-1][i] == ' ')
+					countExit++;
+				else if(matrix[side-1][i] != 'X')
+					return false;
+
+				if(matrix[i][0] == ' ')
+					countExit++;
+				else if(matrix[i][0] != 'X')
+					return false;
+
+				if(matrix[i][side-1] == ' ')
+					countExit++;
+				else if(matrix[i][side-1] != 'X')
+					return false;
+			}
+
+			if(countExit != 1)
+				return false;
+		}
+
+		// Check map elements
+		{
+			int heroCount = 0;
+			int dragonCount = 0;
+			int swordCount = 0;
+			int shieldCount = 0;
+
+			for(int i = 0; i < side; i++)
+			{
+				for(int j = 0; j < side; j++)
+				{
+					if(matrix[i][j] == 'h')
+					{
+						heroLin = i;
+						heroCol = j;
+						heroCount++;
+
+						if((i < side-1 && matrix[i+1][j] == 'd') || (i > 0 && matrix[i-1][j] == 'd') || (j < side-1 && matrix[i][j+1] == 'd') || (j > 0 && matrix[i][j-1] == 'd'))
+							return false;
+
+						if(i == 0 || i == side-1 || j == 0 || j == side-1)
+							return false;
+					}
+
+					if(matrix[i][j] == 'd')
+					{
+						dragonCount++;
+
+						if(i == 0 || i == side-1 || j == 0 || j == side-1)
+							return false;
+					}
+
+					if(matrix[i][j] == 's')
+					{
+						shieldCount++;
+					
+						if(i == 0 || i == side-1 || j == 0 || j == side-1)
+							return false;
+					}
+
+					if(matrix[i][j] == 'e')
+					{
+						swordCount++;
+						
+						if(i == 0 || i == side-1 || j == 0 || j == side-1)
+							return false;
+					}
+				}
+			}
+
+			if(heroCount!=1 || dragonCount<1 || shieldCount!=1 || swordCount!=1)
+				return false;
+		}
+
+		// Check linear paths
+		for(int i = 1; i < side-2; i++)
+		{
+			for(int j = 1; j < side-2; j++)
+			{
+				if(matrix[i][j] != 'X' && matrix[i+1][j] != 'X' && matrix[i][j+1] != 'X' && matrix[i+1][j+1] != 'X')
+					return false;
+			}
+		}
+
+		// Check path to exit
+		boolean visited[][] = new boolean[side][side]; // initialized as false, as desired
+		return checkHeroPath(side, visited, heroCol, heroLin);
+	}
+
+	private boolean checkHeroPath(int side, boolean visited[][], int heroCol, int heroLin)
+	{
+		if(heroCol < 0 || heroCol >= side || heroLin < 0 || heroLin >= side)
+			return false;
+
+		if(visited[heroLin][heroCol])
+			return false;
+
+		visited[heroLin][heroCol] = true;
 		
+		if(matrix[heroLin][heroCol] == 'X')
+			return false;
+
+		if(isExit(heroCol, heroLin))
+			return true;
+
+		if(checkHeroPath(side, visited, heroCol+1, heroLin))
+			return true;
+		if(checkHeroPath(side, visited, heroCol-1, heroLin))
+			return true;
+		if(checkHeroPath(side, visited, heroCol, heroLin+1))
+			return true;
+		if(checkHeroPath(side, visited, heroCol, heroLin-1))
+			return true;
+
+		return false;
 	}
 	
+	private void updateDrawMouse(MouseEvent e)
+	{
+		int xBorder = border;
+		int yBorder = border+btnSet.getY() + btnSet.getHeight();
+
+		int minY = btnSet.getY() + btnSet.getHeight();
+
+		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
+		int cellSide = (maxSide-(2*border))/mapSide();
+
+		if(e.getX() <= xBorder || e.getY() <= yBorder || e.getX() >= xBorder+mapSide()*cellSide || e.getY() >= yBorder+mapSide()*cellSide)
+			return;
+
+		double y = (e.getY() - yBorder)/(cellSide+1);
+		double x = (e.getX() - xBorder)/(cellSide+1);
+
+		if(rightBtnPressed)
+			matrix[(int) Math.round(y)][(int) Math.round(x)] = ' ';
+		else if(leftBtnPressed)
+			insertChar((int) Math.round(x), (int) Math.round(y), pieces_char[pieceBox.getSelectedIndex()]);
+
+		repaint();
+	}
+
+	private boolean isExit(int col, int lin)
+	{
+		int side = mapSide();
+
+		if(col < 0 || col >= side || lin < 0 || lin >= side)
+			return false;
+
+		if(matrix[lin][col] == ' ' && (col == 0 || col == side-1 || lin == 0 || lin == side-1))
+			return true;
+
+		return false;
+	}
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
-		
+
 		for(int i = 0; i < mapSide(); i++)
 		{
 			for(int j = 0; j < mapSide(); j++)
 			{
 				showImageCell(g, pavement, j, i);
 
-				if(matrix[i][j] == 'x')
+				if(matrix[i][j] == 'X')
 					showImageCell(g, wall, j, i);
 				else if(matrix[i][j] == 'd')
 					showImageCell(g, dragon, j, i);
@@ -189,7 +426,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			}
 		}
 	}
-	
+
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
 	{
 		int xBorder = border;
@@ -203,16 +440,16 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
 				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
-	
+
 	private int mapSide()
 	{
 		return ((Number)mapSizeField.getValue()).intValue();
 	}
-	
+
 	public void propertyChange(PropertyChangeEvent e) {
 		Object source = e.getSource();
 		Number x;
-		
+
 		if (source == mapSizeField && mapSizeField != null)
 		{
 			x = ((Number)mapSizeField.getValue());
@@ -220,16 +457,12 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			if(x != null && x.intValue() < MazeBuilder.MIN_REC_SIDE)
 			{
 				mapSizeField.setValue(MazeBuilder.MIN_REC_SIDE);
-				frame.setAlwaysOnTop(false);
 				JOptionPane.showMessageDialog(null, "Minimum maze size is " + MazeBuilder.MIN_REC_SIDE, "Warning", JOptionPane.WARNING_MESSAGE);
-				frame.setAlwaysOnTop(true);
 			}
 			else if(x != null && x.intValue() > MAX_SIDE)
 			{
 				mapSizeField.setValue(MAX_SIDE);
-				frame.setAlwaysOnTop(false);
 				JOptionPane.showMessageDialog(null, "Maximum maze size is " + MAX_SIDE, "Warning", JOptionPane.WARNING_MESSAGE);
-				frame.setAlwaysOnTop(true);
 			}
 			else if(x == null)
 			{
@@ -240,60 +473,50 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		repaint();
 	}
 
-	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		updateDrawMouse(arg0);
 	}
 
-	@Override
+	
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		updateDrawMouse(arg0);
 	}
 
-	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if(e.getButton() == MouseEvent.BUTTON1)
+			leftBtnPressed = true;
 		
+		if(e.getButton() == MouseEvent.BUTTON3)
+			rightBtnPressed = true;
+		
+		updateDrawMouse(e);
+
+		if(e.getButton() == MouseEvent.BUTTON1)
+			leftBtnPressed = false;
+		
+		if(e.getButton() == MouseEvent.BUTTON3)
+			rightBtnPressed = false;
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	
+	public void mouseEntered(MouseEvent e) {		
+		updateDrawMouse(e);
 	}
-
-	@Override
+	
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		updateDrawMouse(e);
 	}
 
 	public void mousePressed(MouseEvent e) {
-	
-		int xBorder = border;
-		int yBorder = border+btnSet.getY() + btnSet.getHeight();
-
-		int minY = btnSet.getY() + btnSet.getHeight();
-
-		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
-		int cellSide = (maxSide-(2*border))/mapSide();
-		
-		if(e.getX() <= xBorder || e.getY() <= yBorder || e.getX() >= xBorder+mapSide()*cellSide || e.getY() >= yBorder+mapSide()*cellSide)
-			return;
-		
-		double y = (e.getY() - yBorder)/(cellSide+1);
-		double x = (e.getX() - xBorder)/(cellSide+1);
+		if(e.getButton() == MouseEvent.BUTTON1)
+			leftBtnPressed = true;
 		
 		if(e.getButton() == MouseEvent.BUTTON3)
-			matrix[(int) Math.round(y)][(int) Math.round(x)] = ' ';
-		else
-			insertChar((int) Math.round(x), (int) Math.round(y), pieces_char[pieceBox.getSelectedIndex()]);
+			rightBtnPressed = true;
 		
-		repaint();
+		updateDrawMouse(e);	
 	}
-	
+
 	private void insertChar(int x, int y, char c)
 	{
 		switch(c)
@@ -314,7 +537,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			deleteCharCount('e', 0);
 			matrix[y][x] = c;
 			break;
-		case 'x':
+		case 'X':
 			matrix[y][x] = c;
 			break;
 		case 'a':
@@ -323,7 +546,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			break;
 		}
 	}
-	
+
 	private void deleteCharCount(char c, int maxCount)
 	{
 		int count = 0;
@@ -343,9 +566,13 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		}
 	}
 
-	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if(e.getButton() == MouseEvent.BUTTON1)
+			leftBtnPressed = false;
 		
+		if(e.getButton() == MouseEvent.BUTTON3)
+			rightBtnPressed = false;
+		
+		updateDrawMouse(e);
 	}
 }

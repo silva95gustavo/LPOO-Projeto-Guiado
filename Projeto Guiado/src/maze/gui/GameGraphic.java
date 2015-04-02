@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -89,9 +90,35 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				ConfigDialog sett = new ConfigDialog();
-				sett.display(config);
-				saveSettings();
+				String[] options = {"Settings", "Manage map"};
+				
+				int n = JOptionPane.showOptionDialog(null,
+						"What would you like to do?",
+						"Settings",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						options,
+						options[0]);
+				
+				if(n == 0)
+				{
+					ConfigDialog sett = new ConfigDialog();
+					sett.display(config);
+					saveSettings();	
+				}
+				else
+				{
+					ManageMapDialog mapDialog = new ManageMapDialog();
+					mapDialog.display();
+					String file = ManageMapDialog.mapName;
+					if(file != null)
+					{
+						file = ManageMapDialog.mapName.toString();
+						ManageMapDialog.mapName = null;
+						loadGameFromMap(file);
+					}
+				}
 			}
 		});
 
@@ -171,23 +198,20 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				requestFocus();
 			}
 		});
-		
+
 		btnSaveGame.setEnabled(false);
-		
+
 		btnDrawMaze = new JButton("Draw Maze");
 		btnDrawMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				//DrawMapWindow win = new DrawMapWindow();
-				//win.start();
-				
-				DrawMapDialog d = new DrawMapDialog();
-				d.start();
+
+				DrawMapWindow win = new DrawMapWindow();
+				win.start();
 			}
 		});
 
 		loadSettings();
-		
+
 		add(btnNewGame);
 		add(btnConfig);
 		add(btnCloseGame);
@@ -197,6 +221,101 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		add(btnDrawMaze);
 	}
 	
+	private void loadGameFromMap(String file)
+	{
+		char[][] matrix;
+		try
+		{
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("./maps/" + file)));
+			matrix = (char[][])ois.readObject();
+			ois.close();
+		}
+		catch(Exception exc) {
+			JOptionPane.showMessageDialog(null, "Error on opening file", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		Hero hero = new Hero(0, 0);
+		ArrayList<Dragon> dragList = new ArrayList<Dragon>();
+		Dragon[] dragons = new Dragon[0];
+		Sword sword = new Sword(0, 0);
+		Exit exit = new Exit(0, 0);
+		Maze map;
+		ArrayList<Dart> dartList = new ArrayList<Dart>();
+		Dart[] darts;
+		Shield shield = new Shield(0, 0);
+		
+		for(int lin = 1; lin < matrix.length-1; lin++)
+		{
+			for(int col = 1; col < matrix.length-1; col++)
+			{				
+				switch(matrix[lin][col])
+				{
+				case 'h':
+					hero = new Hero(col, lin);
+					break;
+				case 'e':
+					sword = new Sword(col, lin);
+					break;
+				case 'd':
+					dragList.add(new Dragon(col, lin, config.dragonMode));
+					break;
+				case 's':
+					shield = new Shield(col, lin);
+					break;
+				case 'a':
+					dartList.add(new Dart(col, lin));
+					break;
+				}
+				
+				if(matrix[lin][col] != Maze.wallChar)
+					matrix[lin][col] = ' ';
+			}
+		}
+		
+		int side = matrix.length;
+		
+		for(int i = 0; i < side; i++)
+		{			
+			if(matrix[i][0] == ' ')
+			{
+				exit = new Exit(0, i);
+				matrix[i][0] = 'X';
+				break;
+			}
+			
+			if(matrix[i][side-1] == ' ')
+			{
+				exit = new Exit(side-1, i);
+				matrix[i][side-1] = 'X';
+				break;
+			}
+			
+			if(matrix[0][i] == ' ')
+			{
+				exit = new Exit(i, 0);
+				matrix[0][i] = 'X';
+				break;
+			}
+			
+			if(matrix[side-1][i] == ' ')
+			{
+				exit = new Exit(i, side-1);
+				matrix[side-1][i] = 'X';
+				break;
+			}
+		}
+		
+		map = new Maze(matrix, exit);
+		dragons = dragList.toArray(new Dragon[dragList.size()]);
+		darts = dartList.toArray(new Dart[dartList.size()]);
+		
+		GameData data = new GameData(map, hero, sword, dragons, darts, shield);
+		game = new Game(data);
+		repaint();
+		requestFocus();
+	}
+
 	public void saveSettings()
 	{
 		try
@@ -208,7 +327,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		}
 		catch(Exception exc) {}
 	}
-	
+
 	public void loadSettings()
 	{
 		try
