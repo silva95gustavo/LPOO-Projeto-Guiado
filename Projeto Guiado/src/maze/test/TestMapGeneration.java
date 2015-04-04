@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Random;
 
+import maze.cli.AlphanumericInterface;
 import maze.logic.DefaultMaze;
 import maze.logic.Dragon;
 import maze.logic.Exit;
@@ -153,13 +154,54 @@ public class TestMapGeneration {
 			Random rand = new Random(); 
 			for (int i = 0; i < numMazes; i++) {
 				int size = maxSize == 8? 8 : 8 + 2 * rand.nextInt((maxSize - 8)/2);
-				Maze m = new MazeBuilder(size).build();
+				Game g = new Game(size);
+				GameData gd = g.getGameData();
+				Maze m = g.getGameData().getMap();
 				assertTrue("Invalid maze boundaries in maze:\n" + m, checkBoundaries(m));			
 				assertTrue("Maze exit not reachable in maze:\n" + m, checkExitReachable(m));			
 				assertNotNull("Invalid walls in maze:\n" + m, ! hasSquare(m, badWalls));
 				assertNotNull("Invalid spaces in maze:\n" + m, ! hasSquare(m, badSpaces));
 				assertNotNull("Invalid diagonals in maze:\n" + m, ! hasSquare(m, badDiag1));
-				assertNotNull("Invalid diagonals in maze:\n" + m, ! hasSquare(m, badDiag2));	
+				assertNotNull("Invalid diagonals in maze:\n" + m, ! hasSquare(m, badDiag2));
+				assertTrue("Missing or overlapping objects in maze:\n" + m, 
+						notNullAndDistinct(new Position(m.getExit().getX(), m.getExit().getY()),
+								new Position(gd.getHero().getX(), gd.getHero().getY()),
+								new Position(gd.getDragons()[0].getX(), gd.getDragons()[0].getY()))
+								||
+						notNullAndDistinct(new Position(m.getExit().getX(), m.getExit().getY()),
+								new Position(gd.getHero().getX(), gd.getHero().getY()),
+								new Position(gd.getSword().getX(), gd.getSword().getY()))		
+						);
 			}	
+		}
+		public class Position
+		{
+			public int x;
+			public int y;
+			Position(int x, int y)
+			{
+				this.x = x;
+				this.y = y;
+			}
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj)
+					return true;
+				if (obj == null)
+					return false;
+				if (getClass() != obj.getClass())
+					return false;
+				Position other = (Position) obj;
+				if (!getOuterType().equals(other.getOuterType()))
+					return false;
+				if (x != other.x)
+					return false;
+				if (y != other.y)
+					return false;
+				return true;
+			}
+			private TestMapGeneration getOuterType() {
+				return TestMapGeneration.this;
+			}
 		}
 }

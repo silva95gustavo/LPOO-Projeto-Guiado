@@ -2,6 +2,7 @@ package maze.logic;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class ConfigurationSerializable implements Serializable {
 	
 	public int side;

@@ -20,7 +20,6 @@ public class AlphanumericInterface {
 	private static final char dragon_sleeping_sword_char = 'f';
 	private static final char hero_char = 'H';					// Símbolo do herói sem espada
 	private static final char armed_hero_char = 'A';			// Símbolo do herói com espada
-	private static final char wall_char = 'X';
 	private static final char exit_char = 'S';
 	private static final char dart_char = '\'';
 	private static final char shield_shar = 'C';
