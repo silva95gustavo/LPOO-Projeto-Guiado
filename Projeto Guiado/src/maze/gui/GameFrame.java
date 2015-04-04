@@ -5,6 +5,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class GameFrame extends JFrame {
 
 	static String title = "Maze Escape";

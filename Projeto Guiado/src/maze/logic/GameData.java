@@ -2,6 +2,7 @@ package maze.logic;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class GameData implements Serializable
  {
 	private Maze map;
