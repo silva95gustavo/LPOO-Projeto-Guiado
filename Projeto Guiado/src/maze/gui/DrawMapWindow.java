@@ -36,7 +36,7 @@ import javax.swing.DefaultComboBoxModel;
 
 @SuppressWarnings("serial")
 public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
-
+	
 	private JFormattedTextField mapSizeField;
 	private boolean leftBtnPressed = false;
 	private boolean rightBtnPressed = false;
@@ -70,7 +70,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		frame.setVisible(true);
 
 		frame.setVisible(true);
-		frame.setBounds(100, 100, 616, 676);
+		frame.setBounds(100, 100, 610, 676);
 		frame.setTitle("Draw maze");
 		frame.setMinimumSize(new Dimension(516, 576));
 		this.setBounds(100,  100, 516, 576);
@@ -162,6 +162,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 								return;
 							}
 							
+							file = file + Game.mapFileExtension;
 							File f = new File("./maps/" + file);
 							
 							if(f.exists() && !f.isDirectory())
