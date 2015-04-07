@@ -198,7 +198,7 @@ public class Game {
 		}
 	}
 	
-	public Game load()
+	public static Game load()
 	{
 		try
 		{

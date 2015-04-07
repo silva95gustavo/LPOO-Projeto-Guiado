@@ -4,7 +4,6 @@ package maze.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,8 +23,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	private GameFrame frame;
 
-	//private static final int window_x = 100;
-	//private static final int window_y = 30;
 	private static final int default_width = 880;
 	private static final int default_width_minimized = 370;
 	private static final int default_height = 940;
@@ -43,7 +40,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static BufferedImage pavement;
 	private static BufferedImage shield;
 	private static BufferedImage dart;
+	private static BufferedImage exit_open;
+	private static BufferedImage exit_closed;
 	private int border = 10;
+
+	private Game.Direction hero_direction = Game.Direction.UP;
 
 	private JLabel lblDarts;
 	private JButton btnNewGame;
@@ -77,6 +78,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			pavement = ImageIO.read(new File("./res/pavement.jpg"));
 			shield = ImageIO.read(new File("./res/shield.png"));
 			dart = ImageIO.read(new File("./res/dart.png"));
+			exit_open = ImageIO.read(new File("./res/exit_open.png"));
+			exit_closed = ImageIO.read(new File("./res/exit_closed.png"));
 		}
 		catch(IOException e)
 		{
@@ -174,7 +177,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				{
 					try
 					{
-						game = game.load();
+						game = Game.load();
 					}
 					catch(Exception exc)
 					{	
@@ -389,13 +392,25 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		if(game != null)
 		{
 			if(arg0.getKeyCode() == config.cmdUP)
+			{
 				ret = game.turn(Game.command.MOVE, Game.Direction.UP);
+				hero_direction = Game.Direction.UP;
+			}
 			else if(arg0.getKeyCode() == config.cmdDOWN)
+			{
 				ret = game.turn(Game.command.MOVE, Game.Direction.DOWN);
+				hero_direction = Game.Direction.DOWN;
+			}
 			else if(arg0.getKeyCode() == config.cmdLEFT)
+			{
 				ret = game.turn(Game.command.MOVE, Game.Direction.LEFT);
+				hero_direction = Game.Direction.LEFT;
+			}
 			else if(arg0.getKeyCode() == config.cmdRIGHT)
+			{
 				ret = game.turn(Game.command.MOVE, Game.Direction.RIGHT);
+				hero_direction = Game.Direction.RIGHT;
+			}
 			else if(arg0.getKeyCode() == config.dartUP)
 				ret = game.turn(Game.command.FIRE, Game.Direction.UP);
 			else if(arg0.getKeyCode() == config.dartDOWN)
@@ -416,9 +431,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			JOptionPane.showMessageDialog(null, "Ups... You were killed by dragon fire...\nTry protecting yourself with a shield next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			resetGame();
 			break;
-		case SHIELDED:
-			JOptionPane.showMessageDialog(null, "You are now protected against dragon fire!");
-			break;
 		case WIN:
 			JOptionPane.showMessageDialog(null, "CONGRATULATIONS! You escaped the maze!\nCome back and try again!", "Game won!", JOptionPane.PLAIN_MESSAGE);;
 			resetGame();
@@ -428,6 +440,65 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		}
 
 		repaint();
+	}
+
+	private void showExitCellRot(Graphics g, int x, int y, int cellSide, BufferedImage img, int xCoord, int yCoord)
+	{
+		int rotation_factor = 0;
+
+		if(xCoord == 0)
+			rotation_factor = 1;
+		else if(yCoord != 0)
+		{
+			if(yCoord>xCoord)
+				rotation_factor = 2;
+			else
+				rotation_factor = 3;
+		}
+
+		int imgW = img.getWidth();
+		int imgH = img.getHeight();
+
+		AffineTransform at = new AffineTransform();
+		at.translate(x+cellSide/2, y+cellSide/2);
+		at.rotate(rotation_factor*Math.PI/2);
+		at.scale((double)cellSide/imgW, (double)cellSide/imgH);
+		at.translate(-imgW/2, -imgH/2);
+
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(img, at, null);
+	}
+
+	private void showHeroCell(Graphics g, int x, int y, int cellSide, BufferedImage img)
+	{
+		int rotation_factor = 0;
+
+		switch(hero_direction)
+		{
+		case RIGHT:
+			rotation_factor = 1;
+			break;
+		case DOWN:
+			rotation_factor = 2;
+			break;
+		case LEFT:
+			rotation_factor = 3;
+			break;
+		default:			// just to prevent warnings
+			break;
+		}
+
+		int heroW = img.getWidth();
+		int heroH = img.getHeight();
+
+		AffineTransform at = new AffineTransform();
+		at.translate(x+cellSide/2, y+cellSide/2);
+		at.rotate(rotation_factor*Math.PI/2);
+		at.scale((double)cellSide/heroW, (double)cellSide/heroH);
+		at.translate(-heroW/2, -heroH/2);
+
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(img, at, null);
 	}
 
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
@@ -440,29 +511,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
 		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();
 
-		/*///////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		
-		// The required drawing location
-		int drawLocationX = 300;
-		int drawLocationY = 300;
-
-		// Rotation information
-
-		double rotationRequired = Math.toRadians(90);
-		double locationX = img.getWidth() / 2;
-		double locationY = img.getHeight() / 2;
-		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-
-		// Drawing the rotated image at the required drawing locations
-		img.getGraphics().drawImage(op.filter(img, null), drawLocationX, drawLocationY, null);
-		
-		////////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////*/
-
-		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
-				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
+		if(img == hero || img == hero_armed || img == hero_shielded || img == hero_armed_shielded)
+			showHeroCell(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img);
+		else if(img == exit_open || img == exit_closed)
+			showExitCellRot(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img, x, y);
+		else
+			g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
+					yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
 
 	public void showGame(GameData gameData, Graphics g)
@@ -482,12 +537,17 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		{
 			for (int x = 0; x < map.getSide(); x++)
 			{
-				if(map.isExit(x, y) && exit.isVisible())
+				if(map.isExit(x, y))
 				{
-					if (y > 0 && map.isWall(x,  y - 1))
+					if(y>0 && map.isWall(x, y-1))
 						showImageCell(g, pavement_wall, x, y);
 					else
 						showImageCell(g, pavement, x, y);
+
+					if (exit.isVisible())
+						showImageCell(g, exit_open, x, y);
+					else
+						showImageCell(g, exit_closed, x, y);
 				}
 				else if(map.isWall(x,  y))
 				{
@@ -495,7 +555,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				}
 				else
 				{
-					if (y > 0 && map.isWall(x, y - 1) && !(map.isExit(x, y - 1) && exit.isVisible()))
+					if (y > 0 && map.isWall(x, y - 1) && !(map.isExit(x, y - 1)))
 						showImageCell(g, pavement_wall, x, y);
 					else
 						showImageCell(g, pavement, x, y);
@@ -553,7 +613,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
-
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
@@ -596,13 +655,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	}
 
-
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}
-
 
 	@Override
 	public void keyTyped(KeyEvent e) {
