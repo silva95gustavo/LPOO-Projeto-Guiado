@@ -9,6 +9,7 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 public class Game {
+
 	/**
 	 * Turn events.
 	 */
@@ -79,6 +80,8 @@ public class Game {
 		 */
 		RIGHT
 	};
+
+	public static final String mapFileExtension = ".map";
 
 	////////////////////////////////
 	////////   Attributes   ////////
