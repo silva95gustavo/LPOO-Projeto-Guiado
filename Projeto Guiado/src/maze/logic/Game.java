@@ -9,9 +9,76 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 public class Game {
-	public static enum event { NONE, WIN, SHIELDED, LOSE, LOSE_FIRE};
-	public static enum command { MOVE, FIRE };
-	public enum Direction {UP, DOWN, LEFT, RIGHT};
+	/**
+	 * Turn events.
+	 */
+	public static enum event {
+		/**
+		 * No event to be reported.
+		 */
+		NONE,
+		
+		/**
+		 * Game won.
+		 */
+		WIN,
+		
+		/**
+		 * The hero grabbed a shield.
+		 */
+		SHIELDED,
+		
+		/**
+		 * Game lost because a dragon attacked the hero.
+		 */
+		LOSE,
+		
+		/**
+		 * Game lost because the hero burned in a dragon's fire.
+		 */
+		LOSE_FIRE
+	};
+	
+	/**
+	 * Action commands
+	 *
+	 */
+	public static enum command {
+		/**
+		 * Move hero.
+		 */
+		MOVE,
+		
+		/**
+		 * Fire dart.
+		 */
+		FIRE
+	};
+	
+	/**
+	 * {@link command.MOVE} direction
+	 */
+	public enum Direction {
+		/**
+		 * Move up
+		 */
+		UP,
+		
+		/**
+		 * Move down
+		 */
+		DOWN,
+		
+		/**
+		 * Move left
+		 */
+		LEFT,
+		
+		/**
+		 * Move right
+		 */
+		RIGHT
+	};
 
 	////////////////////////////////
 	////////   Attributes   ////////
@@ -32,11 +99,26 @@ public class Game {
 	////////   Functions   /////////
 	////////////////////////////////
 
+	/**
+	 * Creates a game with the following settings:
+	 * Dragon number: 1
+	 * Dragon mode: {@link Dragon.Dragon_mode#DGN_STILL}
+	 * Map generation: random
+	 * Hero, sword and dragons position: random
+	 * Shield and darts position: random
+	 * 
+	 * @param side size of the map to be generated
+	 */
 	public Game(int side)
 	{
 		this(side, Dragon.Dragon_mode.DGN_STILL);
 	}
 	
+	/**
+	 * Creates a game with custom settings
+	 * 
+	 * @param data
+	 */
 	public Game(GameData data)
 	{
 		map = data.getMap();
@@ -47,21 +129,56 @@ public class Game {
 		darts = data.getDarts();
 	}
 
+	/**
+	 * Creates a game with the following settings:
+	 * Dragon number: 1
+	 * Map generation: random
+	 * Hero, sword and dragons position: random
+	 * Shield and darts position: random
+	 * 
+	 * @param side size of the map to be generated
+	 * @param dragon_mode
+	 */
 	public Game(int side, Dragon.Dragon_mode dragon_mode)
 	{
 		this(side, 1, dragon_mode);
 	}
 
+	/**
+	 * Creates a game with the following settings:
+	 * Map generation: random
+	 * Hero, sword and dragons position: random
+	 * Shield and darts position: random
+	 * 
+	 * @param side size of the map to be generated
+	 * @param dragon_number
+	 * @param dragon_mode
+	 */
 	public Game(int side, int dragon_number, Dragon.Dragon_mode dragon_mode)
 	{
 		this(side, dragon_number, dragon_mode, true, false);
 	}
 
+	/**
+	 * Creates a game with the following settings:
+	 * Map generation: default map
+	 * Hero, sword and dragons position: default positions
+	 * @param dragon_mode
+	 * @param defaultGame if false a shield and darts will be generated, otherwise they won't be created
+	 */
 	public Game(Dragon.Dragon_mode dragon_mode, boolean defaultGame)
 	{
 		this(DefaultMaze.defaultMatrix.length, 1, dragon_mode, false, defaultGame);
 	}
 
+	/**
+	 * Creates a game with custom settings
+	 * @param side size of the map to be generated (this field will be ignored if the random param is set to false)
+	 * @param dragon_number
+	 * @param dragon_mode
+	 * @param random
+	 * @param defaultGame if false a shield and darts will be generated, otherwise they won't be created (this field will be ignored if the random param is set to true)
+	 */
 	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode, boolean random, boolean defaultGame)
 	{
 		int minElemDist = (int) (side/ELEM_DIST_FACTOR);
@@ -88,8 +205,6 @@ public class Game {
 			dragons = new Dragon[1];
 			dragons[0] = new Dragon(1, 3, dragon_mode);
 			sword = new Sword(1, 8);
-			generatePosDarts(minElemDist);
-			generatePosShield(minElemDist);
 
 			if(defaultGame)
 			{
@@ -97,14 +212,29 @@ public class Game {
 				darts = new Dart[0];
 				dragons[0].setFireAbility(false);
 			}
+			else
+			{
+				generatePosDarts(minElemDist);
+				generatePosShield(minElemDist);
+			}
 		}
 	}
 
+	/**
+	 * Returns a {@link GameData} class with all information about the game
+	 * @return {@link GameData}
+	 */
 	public GameData getGameData()
 	{
 		return new GameData(map, hero, sword, dragons, darts, shield);
 	}
 
+	/**
+	 * Makes a moving/firing turn and updates dragons positions
+	 * @param cmd {@link command}
+	 * @param direction {@link Direction}
+	 * @return {@link event} class representing the result of the turn
+	 */
 	public event turn(command cmd, Direction direction)
 	{
 		if (cmd == command.MOVE)
@@ -180,6 +310,9 @@ public class Game {
 		return battle;
 	}
 
+	/**
+	 * Saves the game to the file /data/game
+	 */
 	public void save()
 	{
 		try
@@ -195,6 +328,10 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * Loads the game from the file /data/game
+	 * @return The loaded game in case of success or null otherwise.
+	 */
 	public Game load()
 	{
 		try
@@ -282,6 +419,13 @@ public class Game {
 		} while (!posicaoValida);
 	}
 
+	/**
+	 * Forces a dragon to move to a given position
+	 * @param x x coordinate of the position to move the dragon to
+	 * @param y y coordinate of the position to move the dragon to
+	 * @param index number of the dragon to be moved
+	 * @return
+	 */
 	public boolean moverDragao(int x, int y, int index) {
 		if (!map.isWall(x, y))
 		{
