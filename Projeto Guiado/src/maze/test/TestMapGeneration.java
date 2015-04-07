@@ -4,14 +4,12 @@ import static org.junit.Assert.*;
 
 import java.util.Random;
 
-import maze.cli.AlphanumericInterface;
 import maze.logic.DefaultMaze;
 import maze.logic.Dragon;
 import maze.logic.Exit;
 import maze.logic.Game;
 import maze.logic.GameData;
 import maze.logic.Maze;
-import maze.logic.MazeBuilder;
 
 import org.junit.Test;
 
