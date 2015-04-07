@@ -1,12 +1,38 @@
 package maze.logic;
 
+@SuppressWarnings("serial")
 public class Dragon extends Element{
 	private boolean alive = true;
 	private boolean sleeping = false;
 	private boolean canFire = true;
-	public static enum Dragon_mode {DGN_STILL, DGN_RAND, DGN_RAND_SLP, DGN_SLP};
-	private Dragon_mode mode = Dragon_mode.DGN_STILL;
 	
+	/**
+	 * Dragon modes
+	 */
+	public static enum Dragon_mode {
+		/**
+		 * Not moving
+		 */
+		DGN_STILL,
+
+		/**
+		 * Random movement
+		 */
+		DGN_RAND,
+
+		/**
+		 * Random movement mixed with sleeping
+		 */
+		DGN_RAND_SLP,
+
+		/**
+		 * Sleeping
+		 */
+		DGN_SLP
+	};
+	
+	private Dragon_mode mode = Dragon_mode.DGN_STILL;
+
 	public Dragon() {
 		super(1, 3);
 	}
