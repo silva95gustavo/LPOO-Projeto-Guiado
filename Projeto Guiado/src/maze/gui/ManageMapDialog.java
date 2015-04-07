@@ -1,22 +1,13 @@
 package maze.gui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import java.awt.Window.Type;
-
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JComboBox;
-
-import maze.logic.Configuration;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -24,9 +15,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public class ManageMapDialog extends JDialog implements MouseListener, MouseMotionListener {
 
 	private JComboBox<String> comboBox;
@@ -53,7 +44,7 @@ public class ManageMapDialog extends JDialog implements MouseListener, MouseMoti
 		lblMap.setBounds(38, 11, 44, 24);
 		getContentPane().add(lblMap);
 
-		comboBox = new JComboBox();
+		comboBox = new JComboBox<String>();
 		comboBox.setBounds(92, 13, 131, 20);
 
 		JButton btnLoadMap = new JButton("Load Map");

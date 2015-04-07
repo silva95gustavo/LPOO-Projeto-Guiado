@@ -2,6 +2,7 @@ package maze.logic;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Maze implements Serializable {
 	public static final char wallChar = 'X';
 	public static final char exitChar = 'S';

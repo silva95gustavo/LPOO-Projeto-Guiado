@@ -159,49 +159,34 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnLoadGame = new JButton("Load Saved Game");
 		btnLoadGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try
+				int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to load the previous game? Doing this will finish the current game.", "Load Game", JOptionPane.YES_NO_OPTION);
+
+				if(n == 0)
 				{
-					ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("./data/game")));
-					GameData data = (GameData) ois.readObject();
-					ois.close();
-
-					int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to load the previous game? Doing this will finish the current game.", "Load Game", JOptionPane.YES_NO_OPTION);
-
-					if(n == 0)
+					try
 					{
-						game = new Game(data);
-						repaint();
+						game = game.load();
 					}
-					requestFocus();
-				}
-				catch(Exception exc)
-				{	
-					int n = JOptionPane.showConfirmDialog(null, "An error occurred loading the game. Do you wish to start a new game with the current settings? (accepting will finish the current game)", "Load Game", JOptionPane.YES_NO_OPTION);
+					catch(Exception exc)
+					{	
+						n = JOptionPane.showConfirmDialog(null, "An error occurred loading the game. Do you wish to start a new game with the current settings? (accepting will finish the current game)", "Load Game", JOptionPane.YES_NO_OPTION);
 
-					if(n == 0)
-					{
-						game = new Game(config.side, config.dragonNumber, config.dragonMode);
-						repaint();
+						if(n == 0)
+						{
+							game = new Game(config.side, config.dragonNumber, config.dragonMode);
+							repaint();
+						}
 					}
-					requestFocus();
+					repaint();
 				}
+				requestFocus();
 			}
 		});
 
 		btnSaveGame = new JButton("Save Game");
 		btnSaveGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try
-				{
-					ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("./data/game")));
-					oos.writeObject(game.getGameData());
-					oos.close();
-					JOptionPane.showMessageDialog(null, "Game saved!");
-				}
-				catch(Exception exc)
-				{	
-					JOptionPane.showMessageDialog(null, "Error on opening or writing to output file", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				game.save();
 				requestFocus();
 			}
 		});
@@ -238,7 +223,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			ois.close();
 		}
 		catch(Exception exc) {
-			JOptionPane.showMessageDialog(null, "Error on opening file", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Error opening file", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -413,6 +398,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		case WIN:
 			JOptionPane.showMessageDialog(null, "CONGRATULATIONS! You escaped the maze!\nCome back and try again!", "Game won!", JOptionPane.PLAIN_MESSAGE);;
 			resetGame();
+			break;
+		default:
 			break;
 		}
 

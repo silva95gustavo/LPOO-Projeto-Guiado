@@ -1,7 +1,12 @@
 package maze.logic;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
-import maze.logic.Dragon.Dragon_mode;
+import javax.swing.JOptionPane;
 
 public class Game {
 	public static enum event { NONE, WIN, SHIELDED, LOSE, LOSE_FIRE};
@@ -175,6 +180,39 @@ public class Game {
 		return battle;
 	}
 
+	public void save()
+	{
+		try
+		{
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("./data/game")));
+			oos.writeObject(getGameData());
+			oos.close();
+			JOptionPane.showMessageDialog(null, "Game saved!");
+		}
+		catch(Exception exc)
+		{	
+			JOptionPane.showMessageDialog(null, "Error on opening or writing to output file", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public Game load()
+	{
+		try
+		{
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("./data/game")));
+			GameData data = (GameData) ois.readObject();
+			ois.close();
+
+			return new Game(data);
+		}
+		catch(Exception exc)
+		{	
+			exc.printStackTrace();
+			System.exit(1);
+			return null;
+		}
+	}
+	
 	private void turnDragao(int index)
 	{
 		switch(dragons[index].getMode()){

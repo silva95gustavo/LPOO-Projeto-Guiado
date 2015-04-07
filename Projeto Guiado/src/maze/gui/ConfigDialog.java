@@ -8,11 +8,6 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import java.awt.Window.Type;
-
 import javax.swing.JLabel;
 
 import maze.logic.Configuration;
@@ -24,30 +19,25 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.SwingConstants;
 
-import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
-import javax.swing.JTextField;
-import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 
 import java.text.Format;
 
-import javax.swing.JList;
-import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
 import com.sun.glass.events.KeyEvent;
 
+@SuppressWarnings("serial")
 public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 	private final JPanel contentPanel = new JPanel();
 
 	private Configuration config;
-	private Configuration currentConfig;
 	private JFormattedTextField mazeSizeField;
 	private JFormattedTextField dragNoField;
 	private JComboBox<String> dragModeBox;
@@ -197,8 +187,8 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		lblemptyBoxesWill.setBounds(0, 29, 351, 14);
 		contentPanel.add(lblemptyBoxesWill);
 
-		dragModeBox = new JComboBox();
-		dragModeBox.setModel(new DefaultComboBoxModel(new String[] {"Not moving", "Moving randomly", "Moving and sleeping", "Always sleeping"}));
+		dragModeBox = new JComboBox<String>();
+		dragModeBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Not moving", "Moving randomly", "Moving and sleeping", "Always sleeping"}));
 		dragModeBox.setBounds(34, 160, 123, 20);
 		contentPanel.add(dragModeBox);
 
@@ -224,43 +214,43 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 		String[] cmdOptions = new String[] {"Up Arrow", "Down Arrow", "Left Arrow", "Right Arrow", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
-		upCmdBox = new JComboBox();
-		upCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		upCmdBox = new JComboBox<String>();
+		upCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		upCmdBox.setBounds(279, 69, 92, 17);
 		contentPanel.add(upCmdBox);
 
-		downCmdBox = new JComboBox();
-		downCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		downCmdBox = new JComboBox<String>();
+		downCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		downCmdBox.setBounds(279, 86, 92, 17);
 		contentPanel.add(downCmdBox);
 
-		leftCmdBox = new JComboBox();
-		leftCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		leftCmdBox = new JComboBox<String>();
+		leftCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		leftCmdBox.setBounds(279, 103, 92, 17);
 		contentPanel.add(leftCmdBox);
 
-		rightCmdBox = new JComboBox();
-		rightCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		rightCmdBox = new JComboBox<String>();
+		rightCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		rightCmdBox.setBounds(279, 120, 92, 17);
 		contentPanel.add(rightCmdBox);
 
-		rightDCmdBox = new JComboBox();
-		rightDCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		rightDCmdBox = new JComboBox<String>();
+		rightDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		rightDCmdBox.setBounds(279, 195, 92, 17);
 		contentPanel.add(rightDCmdBox);
 
-		leftDCmdBox = new JComboBox();
-		leftDCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		leftDCmdBox = new JComboBox<String>();
+		leftDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		leftDCmdBox.setBounds(279, 178, 92, 17);
 		contentPanel.add(leftDCmdBox);
 
-		downDCmdBox = new JComboBox();
-		downDCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		downDCmdBox = new JComboBox<String>();
+		downDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		downDCmdBox.setBounds(279, 161, 92, 17);
 		contentPanel.add(downDCmdBox);
 
-		upDCmdBox = new JComboBox();
-		upDCmdBox.setModel(new DefaultComboBoxModel(cmdOptions));
+		upDCmdBox = new JComboBox<String>();
+		upDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
 		upDCmdBox.setBounds(279, 144, 92, 17);
 		contentPanel.add(upDCmdBox);
 
@@ -391,7 +381,6 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 	public void propertyChange(PropertyChangeEvent e) {
 		Object source = e.getSource();
-		double n;
 		Number x = 0;
 
 		if (source == mazeSizeField && mazeSizeField != null)

@@ -19,32 +19,22 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 
-import maze.logic.ConfigurationSerializable;
-import maze.logic.Dart;
-import maze.logic.Dragon;
-import maze.logic.Exit;
 import maze.logic.Game;
-import maze.logic.GameData;
-import maze.logic.Hero;
-import maze.logic.Maze;
 import maze.logic.MazeBuilder;
-import maze.logic.Shield;
-import maze.logic.Sword;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import java.awt.Window.Type;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
+@SuppressWarnings("serial")
 public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
 
 	private JFormattedTextField mapSizeField;
@@ -132,8 +122,8 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		lblSize.setBounds(0, 15, 70, 14);
 		add(lblSize);
 
-		pieceBox = new JComboBox();
-		pieceBox.setModel(new DefaultComboBoxModel(pieces));
+		pieceBox = new JComboBox<String>();
+		pieceBox.setModel(new DefaultComboBoxModel<String>(pieces));
 		pieceBox.setBounds(179, 12, 95, 20);
 		add(pieceBox);
 
