@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.io.Serializable;
 
 import maze.logic.Dragon;
-import maze.logic.Dragon.Dragon_mode;
 
 @SuppressWarnings("serial")
 public class Configuration implements Serializable {

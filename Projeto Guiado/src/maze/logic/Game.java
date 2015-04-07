@@ -9,14 +9,6 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 public class Game {
-<<<<<<< HEAD
-
-	public static final String mapFileExtension = ".map";
-	
-	public static enum event { NONE, WIN, SHIELDED, LOSE, LOSE_FIRE};
-	public static enum command { MOVE, FIRE };
-	public enum Direction {UP, DOWN, LEFT, RIGHT};
-=======
 
 	/**
 	 * Turn events.
@@ -90,7 +82,6 @@ public class Game {
 	};
 
 	public static final String mapFileExtension = ".map";
->>>>>>> refs/remotes/origin/master
 
 	////////////////////////////////
 	////////   Attributes   ////////
@@ -346,12 +337,12 @@ public class Game {
 			JOptionPane.showMessageDialog(null, "Error on opening or writing to output file", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
+	
 	/**
-	 * Loads the game from the file /data/game
+	 * Loads a game from the file /data/game
 	 * @return The loaded game in case of success or null otherwise.
 	 */
-	public Game load()
+public static Game load()
 	{
 		try
 		{
