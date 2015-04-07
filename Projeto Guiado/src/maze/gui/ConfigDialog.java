@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
-import maze.logic.Configuration;
 import maze.logic.Dragon;
 import maze.logic.MazeBuilder;
 

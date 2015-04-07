@@ -84,7 +84,14 @@ public class Game {
 	////////   Attributes   ////////
 	////////////////////////////////
 
-	private static final int ELEM_DIST_FACTOR = 2;			// Fator usado para determinar a dist. mínima entre elementos
+	/**
+	 * Factor used to calculate the minimum distance between elements (used in random map generation).
+	 */
+	private static final int ELEM_DIST_FACTOR = 2;
+	
+	/**
+	 * Factor used to calculated the maximum number of darts to be created (used in random map generation).
+	 */
 	public static final int MAX_DARTS_FACTOR = 4;
 
 	private Maze map;						// Represents the game map
