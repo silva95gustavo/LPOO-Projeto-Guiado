@@ -1,9 +1,12 @@
-package maze.logic;
+package maze.gui;
 
 import java.io.Serializable;
 
+import maze.logic.Dragon;
+import maze.logic.Dragon.Dragon_mode;
+
 @SuppressWarnings("serial")
-public class ConfigurationSerializable implements Serializable {
+class ConfigurationSerializable implements Serializable {
 	
 	public int side;
 	public int dragonNumber;

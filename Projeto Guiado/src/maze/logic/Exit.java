@@ -1,5 +1,6 @@
 package maze.logic;
 
+@SuppressWarnings("serial")
 public class Exit extends Element{
 	private boolean visible = false;
 	

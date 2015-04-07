@@ -4,6 +4,10 @@ package maze.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+<<<<<<< HEAD
+=======
+import java.awt.image.AffineTransformOp;
+>>>>>>> refs/remotes/origin/master
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -511,6 +515,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
 		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();
 
+<<<<<<< HEAD
 		if(img == hero || img == hero_armed || img == hero_shielded || img == hero_armed_shielded)
 			showHeroCell(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img);
 		else if(img == exit_open || img == exit_closed)
@@ -518,6 +523,31 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		else
 			g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
 					yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
+=======
+		/*///////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		
+		// The required drawing location
+		int drawLocationX = 300;
+		int drawLocationY = 300;
+
+		// Rotation information
+
+		double rotationRequired = Math.toRadians(90);
+		double locationX = img.getWidth() / 2;
+		double locationY = img.getHeight() / 2;
+		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+
+		// Drawing the rotated image at the required drawing locations
+		img.getGraphics().drawImage(op.filter(img, null), drawLocationX, drawLocationY, null);
+		
+		////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////*/
+
+		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
+				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
+>>>>>>> refs/remotes/origin/master
 	}
 
 	public void showGame(GameData gameData, Graphics g)
@@ -613,6 +643,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/master
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
@@ -655,11 +689,21 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	}
 
+<<<<<<< HEAD
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}
+=======
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+>>>>>>> refs/remotes/origin/master
 
 	@Override
 	public void keyTyped(KeyEvent e) {
