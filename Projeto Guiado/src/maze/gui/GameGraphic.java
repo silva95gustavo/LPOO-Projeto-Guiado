@@ -20,6 +20,10 @@ import maze.logic.*;
 @SuppressWarnings("serial")
 public class GameGraphic extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 
+	private JFrame frame;
+	
+	private static int width_def, height_def;
+	
 	private static BufferedImage hero;
 	private static BufferedImage hero_shielded;
 	private static BufferedImage hero_armed;
@@ -44,8 +48,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	Game game;
 
-	public GameGraphic() throws IOException {		
+	public GameGraphic(JFrame frame) throws IOException {		
 		game = null;
+		this.frame = frame;
+		height_def = frame.getHeight();
+		width_def = frame.getWidth();
 
 		try
 		{
@@ -346,11 +353,18 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		g.setColor(Color.BLACK);
 		if(game != null)
 		{
+			width_def = frame.getWidth();
+			height_def = frame.getHeight();
+			//frame.setBounds(this.getX(), this.getY(), 700, 700);
 			btnSaveGame.setEnabled(true);
 			showGame(game.getGameData(), g);
 		}
 		else
+		{
+			frame.setBounds(frame.getX(), frame.getY(), width_def, height_def);
+			//frame.setBounds(this.getX(), this.getY(), 700, 400);
 			btnSaveGame.setEnabled(false);
+		}
 	}
 
 	private void resetGame()
@@ -408,9 +422,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
 	{
 		int xBorder = border;
-		int yBorder = border+btnNewGame.getY() + btnNewGame.getHeight();
+		int yBorder = border+btnDrawMaze.getY() + btnDrawMaze.getHeight();
 
-		int minY = btnNewGame.getY() + btnNewGame.getHeight();
+		int minY = btnDrawMaze.getY() + btnDrawMaze.getHeight();
 
 		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
 		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();

@@ -24,7 +24,7 @@ public class GameFrame extends JFrame {
 					GameFrame frame = new GameFrame();
 					frame.setVisible(true);
 
-					JPanel panel = new GameGraphic();
+					JPanel panel = new GameGraphic(frame);
 
 					frame.getContentPane().add(panel);
 					frame.setVisible(true);
@@ -40,7 +40,7 @@ public class GameFrame extends JFrame {
 	public GameFrame() {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(10, 10, 650, 700);
+		setBounds(10, 10, 890, 926);
 	}
 
 }
