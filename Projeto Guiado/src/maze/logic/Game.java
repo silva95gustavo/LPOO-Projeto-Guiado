@@ -339,10 +339,10 @@ public class Game {
 	}
 	
 	/**
-	 * Loads the game from the file /data/game
+	 * Loads a game from the file /data/game
 	 * @return The loaded game in case of success or null otherwise.
 	 */
-	public Game load()
+public static Game load()
 	{
 		try
 		{

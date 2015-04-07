@@ -3,7 +3,6 @@ package maze.gui;
 import java.io.Serializable;
 
 import maze.logic.Dragon;
-import maze.logic.Dragon.Dragon_mode;
 
 @SuppressWarnings("serial")
 class ConfigurationSerializable implements Serializable {
