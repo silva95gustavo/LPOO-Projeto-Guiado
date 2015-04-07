@@ -3,6 +3,8 @@ package maze.gui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,14 +23,14 @@ import maze.logic.*;
 public class GameGraphic extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 
 	private GameFrame frame;
-	
+
 	//private static final int window_x = 100;
 	//private static final int window_y = 30;
 	private static final int default_width = 880;
 	private static final int default_width_minimized = 370;
 	private static final int default_height = 940;
 	private static final int default_height_minimized = 100;
-	
+
 	private static BufferedImage hero;
 	private static BufferedImage hero_shielded;
 	private static BufferedImage hero_armed;
@@ -105,7 +107,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			public void actionPerformed(ActionEvent arg0) {
 
 				String[] options = {"Settings", "Manage map"};
-				
+
 				int n = JOptionPane.showOptionDialog(null,
 						"What would you like to do?",
 						"Settings",
@@ -114,14 +116,14 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						null,
 						options,
 						options[0]);
-				
+
 				if(n == 0)
 				{
 					ConfigDialog sett = new ConfigDialog();
 					sett.display(config);
 					saveSettings();	
 				}
-				else
+				else if (n == 1)
 				{
 					ManageMapDialog mapDialog = new ManageMapDialog();
 					mapDialog.display();
@@ -130,7 +132,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 					{
 						file = ManageMapDialog.mapName.toString();
 						ManageMapDialog.mapName = null;
-						loadGameFromMap(file);
+						loadGameFromMap(file + Game.mapFileExtension);
 					}
 				}
 			}
@@ -219,7 +221,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		add(btnLoadGame);
 		add(btnDrawMaze);
 	}
-	
+
 	private void loadGameFromMap(String file)
 	{
 		char[][] matrix;
@@ -233,7 +235,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			JOptionPane.showMessageDialog(null, "Error opening file", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		Hero hero = new Hero(0, 0);
 		ArrayList<Dragon> dragList = new ArrayList<Dragon>();
 		Dragon[] dragons = new Dragon[0];
@@ -243,7 +245,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		ArrayList<Dart> dartList = new ArrayList<Dart>();
 		Dart[] darts;
 		Shield shield = new Shield(0, 0);
-		
+
 		for(int lin = 1; lin < matrix.length-1; lin++)
 		{
 			for(int col = 1; col < matrix.length-1; col++)
@@ -266,14 +268,14 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 					dartList.add(new Dart(col, lin));
 					break;
 				}
-				
+
 				if(matrix[lin][col] != Maze.wallChar)
 					matrix[lin][col] = ' ';
 			}
 		}
-		
+
 		int side = matrix.length;
-		
+
 		for(int i = 0; i < side; i++)
 		{			
 			if(matrix[i][0] == ' ')
@@ -282,21 +284,21 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				matrix[i][0] = 'X';
 				break;
 			}
-			
+
 			if(matrix[i][side-1] == ' ')
 			{
 				exit = new Exit(side-1, i);
 				matrix[i][side-1] = 'X';
 				break;
 			}
-			
+
 			if(matrix[0][i] == ' ')
 			{
 				exit = new Exit(i, 0);
 				matrix[0][i] = 'X';
 				break;
 			}
-			
+
 			if(matrix[side-1][i] == ' ')
 			{
 				exit = new Exit(i, side-1);
@@ -304,11 +306,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				break;
 			}
 		}
-		
+
 		map = new Maze(matrix, exit);
 		dragons = dragList.toArray(new Dragon[dragList.size()]);
 		darts = dartList.toArray(new Dart[dartList.size()]);
-		
+
 		GameData data = new GameData(map, hero, sword, dragons, darts, shield);
 		game = new Game(data);
 		repaint();
@@ -341,6 +343,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	public void paintComponent(Graphics g) {
+
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
 		if(game != null)
@@ -437,6 +440,27 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
 		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();
 
+		/*///////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		
+		// The required drawing location
+		int drawLocationX = 300;
+		int drawLocationY = 300;
+
+		// Rotation information
+
+		double rotationRequired = Math.toRadians(90);
+		double locationX = img.getWidth() / 2;
+		double locationY = img.getHeight() / 2;
+		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+
+		// Drawing the rotated image at the required drawing locations
+		img.getGraphics().drawImage(op.filter(img, null), drawLocationX, drawLocationY, null);
+		
+		////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////*/
+
 		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
 				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
@@ -530,22 +554,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 
-
-	// Unimplemented ////////////////////////////////////////////////////////////////////////
-
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
@@ -584,6 +592,20 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}

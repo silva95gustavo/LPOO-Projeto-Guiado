@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JComboBox;
 
+import maze.logic.Game;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -84,7 +86,7 @@ public class ManageMapDialog extends JDialog implements MouseListener, MouseMoti
 					
 					if(n == JOptionPane.YES_OPTION)
 					{
-						File f = new File("./maps/" + name);
+						File f = new File("./maps/" + name + Game.mapFileExtension);
 						
 						if(f.delete())
 						{
@@ -109,11 +111,19 @@ public class ManageMapDialog extends JDialog implements MouseListener, MouseMoti
 		File[] listOfFiles = folder.listFiles();
 		ArrayList<String> maps = new ArrayList<String>();
 		maps.add("None");
+		
+		String extension = "";
 
 		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile())
+			
+			String fileName = listOfFiles[i].getName();
+			int index_ext = fileName.lastIndexOf('.');
+			if(i>0) extension = fileName.substring(index_ext);
+			
+			if (listOfFiles[i].isFile() && extension.equals(Game.mapFileExtension))
 			{
-				maps.add(listOfFiles[i].getName());
+				fileName = fileName.substring(0, index_ext);
+				maps.add(fileName);
 			}
 		}
 

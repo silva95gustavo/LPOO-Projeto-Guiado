@@ -9,6 +9,9 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 public class Game {
+
+	public static final String mapFileExtension = ".map";
+	
 	public static enum event { NONE, WIN, SHIELDED, LOSE, LOSE_FIRE};
 	public static enum command { MOVE, FIRE };
 	public enum Direction {UP, DOWN, LEFT, RIGHT};
