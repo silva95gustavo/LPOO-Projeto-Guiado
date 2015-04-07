@@ -41,7 +41,12 @@ public class GameFrame extends JFrame {
 	public GameFrame() {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(10, 10, 890, 926);
+	}
+	
+	public void centerFrameHorizonal()
+	{
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 	}
 
 }

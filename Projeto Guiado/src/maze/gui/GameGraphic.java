@@ -20,9 +20,14 @@ import maze.logic.*;
 @SuppressWarnings("serial")
 public class GameGraphic extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 
-	private JFrame frame;
+	private GameFrame frame;
 	
-	private static int width_def, height_def;
+	//private static final int window_x = 100;
+	//private static final int window_y = 30;
+	private static final int default_width = 880;
+	private static final int default_width_minimized = 370;
+	private static final int default_height = 940;
+	private static final int default_height_minimized = 100;
 	
 	private static BufferedImage hero;
 	private static BufferedImage hero_shielded;
@@ -48,11 +53,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	Game game;
 
-	public GameGraphic(JFrame frame) throws IOException {		
+	public GameGraphic(GameFrame frame) throws IOException {		
 		game = null;
 		this.frame = frame;
-		height_def = frame.getHeight();
-		width_def = frame.getWidth();
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		int windowX = dim.width/2-default_width_minimized/2;
+		int windowY = dim.height/2-default_height_minimized/2;
+		frame.setBounds(windowX, windowY, default_width_minimized, default_height_minimized);
 
 		try
 		{
@@ -338,16 +345,30 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		g.setColor(Color.BLACK);
 		if(game != null)
 		{
-			width_def = frame.getWidth();
-			height_def = frame.getHeight();
-			//frame.setBounds(this.getX(), this.getY(), 700, 700);
+			lblDarts.setVisible(true);
+			if(!frame.isResizable())
+			{
+				frame.setResizable(true);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				int windowX = dim.width/2-default_width/2;
+				int windowY = dim.height/2-default_height/2;
+				frame.setBounds(windowX, windowY, default_width, default_height);
+
+			}
 			btnSaveGame.setEnabled(true);
 			showGame(game.getGameData(), g);
 		}
 		else
 		{
-			frame.setBounds(frame.getX(), frame.getY(), width_def, height_def);
-			//frame.setBounds(this.getX(), this.getY(), 700, 400);
+			lblDarts.setVisible(false);
+			if(frame.isResizable())
+			{
+				frame.setResizable(false);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				int windowX = dim.width/2-default_width_minimized/2;
+				int windowY = dim.height/2-default_height_minimized/2;
+				frame.setBounds(windowX, windowY, default_width_minimized, default_height_minimized);
+			}
 			btnSaveGame.setEnabled(false);
 		}
 	}
