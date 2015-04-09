@@ -18,28 +18,28 @@ public class Game {
 		 * No event to be reported.
 		 */
 		NONE,
-		
+
 		/**
 		 * Game won.
 		 */
 		WIN,
-		
+
 		/**
 		 * The hero grabbed a shield.
 		 */
 		SHIELDED,
-		
+
 		/**
 		 * Game lost because a dragon attacked the hero.
 		 */
 		LOSE,
-		
+
 		/**
 		 * Game lost because the hero burned in a dragon's fire.
 		 */
 		LOSE_FIRE
 	};
-	
+
 	/**
 	 * Action commands
 	 *
@@ -49,13 +49,13 @@ public class Game {
 		 * Move hero.
 		 */
 		MOVE,
-		
+
 		/**
 		 * Fire dart.
 		 */
 		FIRE
 	};
-	
+
 	/**
 	 * {@link command.MOVE} direction
 	 */
@@ -64,17 +64,17 @@ public class Game {
 		 * Move up
 		 */
 		UP,
-		
+
 		/**
 		 * Move down
 		 */
 		DOWN,
-		
+
 		/**
 		 * Move left
 		 */
 		LEFT,
-		
+
 		/**
 		 * Move right
 		 */
@@ -91,7 +91,7 @@ public class Game {
 	 * Factor used to calculate the minimum distance between elements (used in random map generation).
 	 */
 	private static final int ELEM_DIST_FACTOR = 2;
-	
+
 	/**
 	 * Factor used to calculated the maximum number of darts to be created (used in random map generation).
 	 */
@@ -123,7 +123,7 @@ public class Game {
 	{
 		this(side, Dragon.Dragon_mode.DGN_STILL);
 	}
-	
+
 	/**
 	 * Creates a game with custom settings
 	 * 
@@ -296,7 +296,7 @@ public class Game {
 				hero.catchDart();
 			}
 		}
-		
+
 		event battle = combateDragao();
 
 		if(battle == event.NONE)
@@ -307,8 +307,78 @@ public class Game {
 		{
 			return battle;
 		}
-		
+
 		battle = combateDragao();
+
+		if(battle == event.NONE)
+		{
+			if(allDragonsDead())
+				map.setExitVisible(true);
+			return caughtShield ? event.SHIELDED : event.NONE;
+		}
+
+		return battle;
+	}
+
+	/**
+	 * Makes a moving/firing turn, but only for the hero
+	 * @param cmd {@link command}
+	 * @param direction {@link Direction}
+	 * @return {@link event} class representing the result of the turn
+	 */
+	public event turnHero(command cmd, Direction direction)
+	{
+		if (cmd == command.MOVE)
+		{
+			switch (direction)
+			{
+			case LEFT:
+				moverHeroi(hero.getX()-1, hero.getY());
+				break;
+			case UP:
+				moverHeroi(hero.getX(), hero.getY() - 1);
+				break;
+			case RIGHT:
+				moverHeroi(hero.getX()+1, hero.getY());
+				break;
+			case DOWN:
+				moverHeroi(hero.getX(), hero.getY() + 1);
+				break;
+			}
+		}
+		else if (cmd == command.FIRE)
+		{
+			fireDart(direction);
+		}
+
+		if(map.isExit(hero.getX(), hero.getY())) 
+		{
+			return event.WIN;
+		}
+
+		if(hero.getX() == sword.getX() && hero.getY() == sword.getY())
+		{
+			sword.setDropped(false);
+			hero.setArmed(true);
+		}
+		boolean caughtShield = false;
+		if(hero.getX() == shield.getX() && hero.getY() == shield.getY() && shield.isDropped())
+		{
+			caughtShield = true;
+			shield.setDropped(false);
+			hero.catchShield();
+		}
+
+		for(int i = 0; i < darts.length; i++)
+		{
+			if(hero.getX() == darts[i].getX() && hero.getY() == darts[i].getY() && darts[i].isDropped())
+			{
+				darts[i].setDropped(false);
+				hero.catchDart();
+			}
+		}
+
+		event battle = combateDragao();
 
 		if(battle == event.NONE)
 		{
@@ -337,12 +407,12 @@ public class Game {
 			JOptionPane.showMessageDialog(null, "Error on opening or writing to output file", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	/**
 	 * Loads a game from the file /data/game
 	 * @return The loaded game in case of success or null otherwise.
 	 */
-public static Game load()
+	public static Game load()
 	{
 		try
 		{
@@ -359,7 +429,7 @@ public static Game load()
 			return null;
 		}
 	}
-	
+
 	private void turnDragao(int index)
 	{
 		switch(dragons[index].getMode()){
@@ -392,7 +462,7 @@ public static Game load()
 		}	
 	}
 
-	private void turnDragoes()
+	public void turnDragoes()
 	{
 
 		for(int i = 0; i < dragons.length; i++)
@@ -535,7 +605,7 @@ public static Game load()
 		return true;
 	}
 
-	private event combateDragao()
+	public event combateDragao()
 	{
 		for(int i = 0; i < dragons.length; i++)
 		{
@@ -557,7 +627,7 @@ public static Game load()
 						return event.LOSE;
 					}
 				}
-				
+
 				if(dragonFire(dragons[i]))
 				{
 					hero.setAlive(false);
@@ -565,7 +635,7 @@ public static Game load()
 				}
 			}
 
-			
+
 		}
 
 		return event.NONE;
