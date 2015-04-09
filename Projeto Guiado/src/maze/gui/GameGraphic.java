@@ -45,8 +45,14 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static BufferedImage exit_closed;
 	private int border = 10;
 	
-	private static final int dragon_move_timer = 1200;	// equals value/1000 seconds
-	private Thread dragonMoveThread;					// thread for automatic dragon movement
+	/*
+	 * These two variables represent the range of time for the dragons to move
+	 * independantly, regardless of the user's choices
+	 */
+	public static final int dragon_timer_min = 600;		
+	public static final int dragon_timer_max = 1800;
+	
+	private ArrayList<DragonMoveThread> running_threads = new ArrayList<DragonMoveThread>();
 
 	private Game.Direction hero_direction = Game.Direction.UP;
 
@@ -92,21 +98,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			System.err.println("Error: " + e.getMessage());
 			System.exit(1);
 		}
-		
-		dragonMoveThread = new Thread () {
-			public void run() {
-				while(game != null)
-				{
-					try {
-						game.turnDragoes();
-						Game.event battle = game.combateDragao();
-						actOnEvent(battle);
-						
-						sleep(dragon_move_timer);
-					} catch(Exception ex) {}
-				}
-			}
-		};
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -185,7 +176,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				if(n == 0)
 				{
 					game = new Game(config.side, config.dragonNumber, config.dragonMode);
-					dragonMoveThread.start();
+					startThreads();
 
 					repaint();
 					requestFocus();
@@ -203,7 +194,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 					try
 					{
 						game = Game.load();
-						dragonMoveThread.start();
+						startThreads();
 					}
 					catch(Exception exc)
 					{	
@@ -212,7 +203,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						if(n == 0)
 						{
 							game = new Game(config.side, config.dragonNumber, config.dragonMode);
-							dragonMoveThread.start();
+							startThreads();
 							repaint();
 						}
 					}
@@ -343,7 +334,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 		GameData data = new GameData(map, hero, sword, dragons, darts, shield);
 		game = new Game(data);
-		dragonMoveThread.start();
+		startThreads();
 		repaint();
 		requestFocus();
 	}
@@ -410,6 +401,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private void resetGame()
 	{
 		game = null;
+		stopThreads();
 		lblDarts.setText("Darts : 0");
 	}
 
@@ -452,7 +444,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		actOnEvent(ret);
 	}
 	
-	private void actOnEvent(Game.event event)
+	public void actOnEvent(Game.event event)
 	{
 		switch(event)
 		{
@@ -475,6 +467,33 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		repaint();
 	}
 
+	public boolean isGameRunning()
+	{
+		return game != null;
+	}
+	
+	private void stopThreads()
+	{
+		while(!running_threads.isEmpty()){
+			running_threads.get(0).end();
+			running_threads.remove(0);
+		}
+	}
+	
+	private void startThreads()
+	{
+		int dragons = game.numDragoes();
+		
+		for(int i = 0; i < dragons; i++)
+		{
+			DragonMoveThread t = new DragonMoveThread(game, i, this);
+			running_threads.add(t);
+			t.start();
+			requestFocus();
+			repaint();
+		}
+	}
+	
 	private void showExitCellRot(Graphics g, int x, int y, int cellSide, BufferedImage img, int xCoord, int yCoord)
 	{
 		int rotation_factor = 0;

@@ -430,7 +430,12 @@ public class Game {
 		}
 	}
 
-	private void turnDragao(int index)
+	public int numDragoes()
+	{
+		return dragons.length;
+	}
+	
+	public void turnDragao(int index)
 	{
 		switch(dragons[index].getMode()){
 		case DGN_STILL:
