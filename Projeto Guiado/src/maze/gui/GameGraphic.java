@@ -379,6 +379,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			}
 			btnSaveGame.setEnabled(false);
 		}
+		
+		//g.drawImage(pavement, 100, 100, this.getWidth()-1, this.getHeight()-1, 0, 0, pavement.getWidth(), pavement.getHeight(), null);
 	}
 
 	private void resetGame()
@@ -505,21 +507,24 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
 	{
-		int xBorder = border;
-		int yBorder = border+btnDrawMaze.getY() + btnDrawMaze.getHeight();
-
-		int minY = btnDrawMaze.getY() + btnDrawMaze.getHeight();
-
-		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
-		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();
-
+		int minHeight = btnDrawMaze.getY() + btnDrawMaze.getHeight();
+		
+		int gridWidth = this.getWidth()-2*border;
+		int gridHeight = this.getHeight() - minHeight - 2*border;
+		int minSize = Math.min(gridWidth, gridHeight);
+		int mazeSize = game.getGameData().getMap().getSide();
+		int cellSize = (int)minSize/mazeSize;
+		
+		int xBorder = (int)((this.getWidth()-cellSize*mazeSize)/2);
+		int yBorder = (int)((this.getHeight()-minHeight-cellSize*mazeSize)/2);
+		
 		if(img == hero || img == hero_armed || img == hero_shielded || img == hero_armed_shielded)
-			showHeroCell(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img);
+			showHeroCell(g, xBorder+x*cellSize, minHeight+yBorder+y*cellSize, cellSize, img);
 		else if(img == exit_open || img == exit_closed)
-			showExitCellRot(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img, x, y);
+			showExitCellRot(g, xBorder+x*cellSize, minHeight+yBorder+y*cellSize, cellSize, img, x, y);
 		else
-			g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
-					yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
+			g.drawImage(img, xBorder+x*cellSize, minHeight+yBorder+y*cellSize, xBorder+x*cellSize + cellSize,
+					minHeight+yBorder+y*cellSize+cellSize, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
 
 	public void showGame(GameData gameData, Graphics g)
