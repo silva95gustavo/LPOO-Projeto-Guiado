@@ -3,6 +3,7 @@ package maze.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -40,6 +41,9 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 	private JFormattedTextField mapSizeField;
 	private boolean leftBtnPressed = false;
 	private boolean rightBtnPressed = false;
+	
+	private static final int default_width = 516;
+	private static final int default_height = 576;
 
 	private static final int MAX_SIDE = 25;
 
@@ -73,7 +77,12 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		frame.setBounds(100, 100, 610, 676);
 		frame.setTitle("Draw maze");
 		frame.setMinimumSize(new Dimension(516, 576));
-		this.setBounds(100,  100, 516, 576);
+		
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		int windowX = dim.width/2-default_width/2;
+		int windowY = dim.height/2-default_height/2;
+		frame.setBounds(windowX, windowY, default_width, default_height);
+		
 		frame.getContentPane().add(this);
 		requestFocus();
 	}

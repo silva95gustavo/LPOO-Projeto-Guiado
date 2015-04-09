@@ -138,7 +138,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						loadGameFromMap(file + Game.mapFileExtension);
 					}
 				}
-				
+
 				requestFocus();
 			}
 		});
@@ -379,8 +379,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			}
 			btnSaveGame.setEnabled(false);
 		}
-		
-		//g.drawImage(pavement, 100, 100, this.getWidth()-1, this.getHeight()-1, 0, 0, pavement.getWidth(), pavement.getHeight(), null);
 	}
 
 	private void resetGame()
@@ -508,16 +506,16 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
 	{
 		int minHeight = btnDrawMaze.getY() + btnDrawMaze.getHeight();
-		
+
 		int gridWidth = this.getWidth()-2*border;
 		int gridHeight = this.getHeight() - minHeight - 2*border;
 		int minSize = Math.min(gridWidth, gridHeight);
 		int mazeSize = game.getGameData().getMap().getSide();
 		int cellSize = (int)minSize/mazeSize;
-		
+
 		int xBorder = (int)((this.getWidth()-cellSize*mazeSize)/2);
 		int yBorder = (int)((this.getHeight()-minHeight-cellSize*mazeSize)/2);
-		
+
 		if(img == hero || img == hero_armed || img == hero_shielded || img == hero_armed_shielded)
 			showHeroCell(g, xBorder+x*cellSize, minHeight+yBorder+y*cellSize, cellSize, img);
 		else if(img == exit_open || img == exit_closed)
@@ -619,7 +617,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			}
 		}
 	}
-	
+
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
