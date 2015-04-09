@@ -435,6 +435,11 @@ public class Game {
 		return dragons.length;
 	}
 	
+	public int numDartsHero()
+	{
+		return hero.getDarts();
+	}
+	
 	public void turnDragao(int index)
 	{
 		switch(dragons[index].getMode()){

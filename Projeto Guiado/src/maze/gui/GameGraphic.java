@@ -398,6 +398,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		if(game != null)
 		{
 			lblDarts.setVisible(true);
+			lblDarts.setText("Darts : " + game.numDartsHero());
 			if(!frame.isResizable())
 			{
 				frame.setResizable(true);
