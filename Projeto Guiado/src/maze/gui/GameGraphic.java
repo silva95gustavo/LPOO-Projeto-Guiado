@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import maze.logic.*;
+import maze.logic.Game.event;
 
 @SuppressWarnings("serial")
 public class GameGraphic extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
@@ -43,6 +44,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static BufferedImage exit_open;
 	private static BufferedImage exit_closed;
 	private int border = 10;
+	
+	private static final int dragon_move_timer = 1200;	// equals value/1000 seconds
+	private Thread dragonMoveThread;					// thread for automatic dragon movement
 
 	private Game.Direction hero_direction = Game.Direction.UP;
 
@@ -63,9 +67,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		int windowX = dim.width/2-default_width_minimized/2;
 		int windowY = dim.height/2-default_height_minimized/2;
 		frame.setBounds(windowX, windowY, default_width_minimized, default_height_minimized);
-		
+
 		Images.load();
-		
+
 		try
 		{
 			wall = ImageIO.read(new File("./res/wall.jpg"));
@@ -88,6 +92,21 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			System.err.println("Error: " + e.getMessage());
 			System.exit(1);
 		}
+		
+		dragonMoveThread = new Thread () {
+			public void run() {
+				while(game != null)
+				{
+					try {
+						game.turnDragoes();
+						Game.event battle = game.combateDragao();
+						actOnEvent(battle);
+						
+						sleep(dragon_move_timer);
+					} catch(Exception ex) {}
+				}
+			}
+		};
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -166,6 +185,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				if(n == 0)
 				{
 					game = new Game(config.side, config.dragonNumber, config.dragonMode);
+					dragonMoveThread.start();
+
 					repaint();
 					requestFocus();
 				}
@@ -182,6 +203,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 					try
 					{
 						game = Game.load();
+						dragonMoveThread.start();
 					}
 					catch(Exception exc)
 					{	
@@ -190,6 +212,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						if(n == 0)
 						{
 							game = new Game(config.side, config.dragonNumber, config.dragonMode);
+							dragonMoveThread.start();
 							repaint();
 						}
 					}
@@ -320,6 +343,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 		GameData data = new GameData(map, hero, sword, dragons, darts, shield);
 		game = new Game(data);
+		dragonMoveThread.start();
 		repaint();
 		requestFocus();
 	}
@@ -397,35 +421,40 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		{
 			if(arg0.getKeyCode() == config.cmdUP)
 			{
-				ret = game.turn(Game.command.MOVE, Game.Direction.UP);
+				ret = game.turnHero(Game.command.MOVE, Game.Direction.UP);
 				hero_direction = Game.Direction.UP;
 			}
 			else if(arg0.getKeyCode() == config.cmdDOWN)
 			{
-				ret = game.turn(Game.command.MOVE, Game.Direction.DOWN);
+				ret = game.turnHero(Game.command.MOVE, Game.Direction.DOWN);
 				hero_direction = Game.Direction.DOWN;
 			}
 			else if(arg0.getKeyCode() == config.cmdLEFT)
 			{
-				ret = game.turn(Game.command.MOVE, Game.Direction.LEFT);
+				ret = game.turnHero(Game.command.MOVE, Game.Direction.LEFT);
 				hero_direction = Game.Direction.LEFT;
 			}
 			else if(arg0.getKeyCode() == config.cmdRIGHT)
 			{
-				ret = game.turn(Game.command.MOVE, Game.Direction.RIGHT);
+				ret = game.turnHero(Game.command.MOVE, Game.Direction.RIGHT);
 				hero_direction = Game.Direction.RIGHT;
 			}
 			else if(arg0.getKeyCode() == config.dartUP)
-				ret = game.turn(Game.command.FIRE, Game.Direction.UP);
+				ret = game.turnHero(Game.command.FIRE, Game.Direction.UP);
 			else if(arg0.getKeyCode() == config.dartDOWN)
-				ret = game.turn(Game.command.FIRE, Game.Direction.DOWN);
+				ret = game.turnHero(Game.command.FIRE, Game.Direction.DOWN);
 			else if(arg0.getKeyCode() == config.dartRIGHT)
-				ret = game.turn(Game.command.FIRE, Game.Direction.RIGHT);
+				ret = game.turnHero(Game.command.FIRE, Game.Direction.RIGHT);
 			else if(arg0.getKeyCode() == config.dartLEFT)
-				ret = game.turn(Game.command.FIRE, Game.Direction.LEFT);
+				ret = game.turnHero(Game.command.FIRE, Game.Direction.LEFT);
 		}
 
-		switch(ret)
+		actOnEvent(ret);
+	}
+	
+	private void actOnEvent(Game.event event)
+	{
+		switch(event)
 		{
 		case LOSE:
 			JOptionPane.showMessageDialog(null, "Ups... A dragon killed you...\nTry picking up a sword next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
@@ -504,7 +533,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.drawImage(img, at, null);
 	}
-	
+
 	public void showGame(GameData gameData, Graphics g)
 	{
 		MapDrawer md = new MapDrawer(gameData.getMap());
