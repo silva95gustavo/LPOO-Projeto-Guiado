@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -51,6 +52,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	 */
 	public static final int dragon_timer_min = 600;		
 	public static final int dragon_timer_max = 1800;
+	private static final int dragon_delay_min = 100;
+	private static final int dragon_delay_max = 400;
 	
 	private ArrayList<DragonMoveThread> running_threads = new ArrayList<DragonMoveThread>();
 
@@ -61,6 +64,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private JButton btnLoadGame;
 	private JButton btnSaveGame;
 	private JButton btnDrawMaze;
+	private JButton btnPauseGame;
+	private static final String btnPauseText = "Pause Game";
+	private static final String btnResumeText = "Resume Game";
+	private boolean paused = false;
 
 	private Configuration config = new Configuration();
 
@@ -231,6 +238,25 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				win.start();
 			}
 		});
+		
+		btnPauseGame = new JButton("Pause Game");
+		btnPauseGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(paused)
+				{
+					paused = false;
+					btnPauseGame.setText(btnPauseText);
+					startThreads();
+				}
+				else
+				{
+					paused = true;
+					btnPauseGame.setText(btnResumeText);
+					stopThreads();
+				}
+			}
+		});
+		btnPauseGame.setVisible(false);
 
 		loadSettings();
 
@@ -241,6 +267,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		add(btnSaveGame);
 		add(btnLoadGame);
 		add(btnDrawMaze);
+		add(btnPauseGame);
 	}
 
 	private void loadGameFromMap(String file)
@@ -381,6 +408,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 			}
 			btnSaveGame.setEnabled(true);
+			btnPauseGame.setVisible(true);
 			showGame(game.getGameData(), g);
 		}
 		else
@@ -395,53 +423,64 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				frame.setBounds(windowX, windowY, default_width_minimized, default_height_minimized);
 			}
 			btnSaveGame.setEnabled(false);
+			btnPauseGame.setVisible(false);
 		}
 	}
 
+	public boolean isPaused()
+	{
+		return paused;
+	}
+	
 	private void resetGame()
 	{
 		game = null;
+		paused = false;
+		btnPauseGame.setText(btnPauseText);
 		stopThreads();
 		lblDarts.setText("Darts : 0");
 	}
 
 	public void keyPressed(KeyEvent arg0) {
 
-		Game.event ret = Game.event.NONE;
-
-		if(game != null)
+		if(!paused)
 		{
-			if(arg0.getKeyCode() == config.cmdUP)
-			{
-				ret = game.turnHero(Game.command.MOVE, Game.Direction.UP);
-				hero_direction = Game.Direction.UP;
-			}
-			else if(arg0.getKeyCode() == config.cmdDOWN)
-			{
-				ret = game.turnHero(Game.command.MOVE, Game.Direction.DOWN);
-				hero_direction = Game.Direction.DOWN;
-			}
-			else if(arg0.getKeyCode() == config.cmdLEFT)
-			{
-				ret = game.turnHero(Game.command.MOVE, Game.Direction.LEFT);
-				hero_direction = Game.Direction.LEFT;
-			}
-			else if(arg0.getKeyCode() == config.cmdRIGHT)
-			{
-				ret = game.turnHero(Game.command.MOVE, Game.Direction.RIGHT);
-				hero_direction = Game.Direction.RIGHT;
-			}
-			else if(arg0.getKeyCode() == config.dartUP)
-				ret = game.turnHero(Game.command.FIRE, Game.Direction.UP);
-			else if(arg0.getKeyCode() == config.dartDOWN)
-				ret = game.turnHero(Game.command.FIRE, Game.Direction.DOWN);
-			else if(arg0.getKeyCode() == config.dartRIGHT)
-				ret = game.turnHero(Game.command.FIRE, Game.Direction.RIGHT);
-			else if(arg0.getKeyCode() == config.dartLEFT)
-				ret = game.turnHero(Game.command.FIRE, Game.Direction.LEFT);
-		}
+			Game.event ret = Game.event.NONE;
 
-		actOnEvent(ret);
+			if(game != null)
+			{
+				if(arg0.getKeyCode() == config.cmdUP)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.UP);
+					hero_direction = Game.Direction.UP;
+				}
+				else if(arg0.getKeyCode() == config.cmdDOWN)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.DOWN);
+					hero_direction = Game.Direction.DOWN;
+				}
+				else if(arg0.getKeyCode() == config.cmdLEFT)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.LEFT);
+					hero_direction = Game.Direction.LEFT;
+				}
+				else if(arg0.getKeyCode() == config.cmdRIGHT)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.RIGHT);
+					hero_direction = Game.Direction.RIGHT;
+				}
+				else if(arg0.getKeyCode() == config.dartUP)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.UP);
+				else if(arg0.getKeyCode() == config.dartDOWN)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.DOWN);
+				else if(arg0.getKeyCode() == config.dartRIGHT)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.RIGHT);
+				else if(arg0.getKeyCode() == config.dartLEFT)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.LEFT);
+			}
+
+			actOnEvent(ret);
+		}
 	}
 	
 	public void actOnEvent(Game.event event)
@@ -483,10 +522,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private void startThreads()
 	{
 		int dragons = game.numDragoes();
+		Random rand = new Random();
+		int delay;
 		
 		for(int i = 0; i < dragons; i++)
 		{
-			DragonMoveThread t = new DragonMoveThread(game, i, this);
+			delay = rand.nextInt(dragon_delay_max-dragon_delay_min) + dragon_delay_min;
+			DragonMoveThread t = new DragonMoveThread(game, i, this, delay);
 			running_threads.add(t);
 			t.start();
 			requestFocus();
