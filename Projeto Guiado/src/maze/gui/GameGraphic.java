@@ -63,7 +63,9 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		int windowX = dim.width/2-default_width_minimized/2;
 		int windowY = dim.height/2-default_height_minimized/2;
 		frame.setBounds(windowX, windowY, default_width_minimized, default_height_minimized);
-
+		
+		Images.load();
+		
 		try
 		{
 			wall = ImageIO.read(new File("./res/wall.jpg"));
@@ -501,116 +503,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		g2d.drawImage(img, at, null);
 	}
 
-	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
-	{
-		int xBorder = border;
-		int yBorder = border+btnDrawMaze.getY() + btnDrawMaze.getHeight();
-
-		int minY = btnDrawMaze.getY() + btnDrawMaze.getHeight();
-
-		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
-		int cellSide = (maxSide-(2*border))/game.getGameData().getMap().getSide();
-
-		if(img == hero || img == hero_armed || img == hero_shielded || img == hero_armed_shielded)
-			showHeroCell(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img);
-		else if(img == exit_open || img == exit_closed)
-			showExitCellRot(g, xBorder+x*cellSide, yBorder+y*cellSide, cellSide, img, x, y);
-		else
-			g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
-					yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
-	}
-
 	public void showGame(GameData gameData, Graphics g)
 	{
-		Maze map = gameData.getMap();
-
-		Hero hero = gameData.getHero();
-		Dart darts[] = gameData.getDarts();
-		Shield shield = gameData.getShield();
-		Dragon[] dragons = gameData.getDragons();
-		Sword sword = gameData.getSword();
-		Exit exit = map.getExit();
-
-		lblDarts.setText("Darts : " + hero.getDarts());
-
-		for (int y = 0; y < map.getSide(); y++)
-		{
-			for (int x = 0; x < map.getSide(); x++)
-			{
-				if(map.isExit(x, y))
-				{
-					if(y>0 && map.isWall(x, y-1))
-						showImageCell(g, pavement_wall, x, y);
-					else
-						showImageCell(g, pavement, x, y);
-
-					if (exit.isVisible())
-						showImageCell(g, exit_open, x, y);
-					else
-						showImageCell(g, exit_closed, x, y);
-				}
-				else if(map.isWall(x,  y))
-				{
-					showImageCell(g, wall, x, y);
-				}
-				else
-				{
-					if (y > 0 && map.isWall(x, y - 1) && !(map.isExit(x, y - 1)))
-						showImageCell(g, pavement_wall, x, y);
-					else
-						showImageCell(g, pavement, x, y);
-				}
-
-				if(x == hero.getX() && y == hero.getY())
-				{
-					if(hero.isArmed())
-					{
-						if(hero.isShielded())
-							showImageCell(g, hero_armed_shielded, x, y);
-						else
-							showImageCell(g, hero_armed, x, y);
-					}
-					else
-					{
-						if(hero.isShielded())
-							showImageCell(g, hero_shielded, x, y);
-						else
-						{
-							showImageCell(g, GameGraphic.hero, x, y);
-						}
-					}
-				}
-
-				for(int i = 0; i < darts.length; i++)
-				{
-					if(x == darts[i].getX() && y == darts[i].getY() && darts[i].isDropped())
-					{
-						showImageCell(g, GameGraphic.dart, x, y);
-					}
-				}
-
-				if(x == shield.getX() && y == shield.getY() && shield.isDropped())
-				{
-					showImageCell(g, GameGraphic.shield, x, y);
-				}
-
-				if(x == sword.getX() && y == sword.getY() && sword.isDropped())
-				{
-					showImageCell(g, GameGraphic.sword, x, y);
-				}
-
-				for(int i = 0; i < dragons.length; i++)
-				{
-					if(dragons[i].isAlive() && x == dragons[i].getX() && y == dragons[i].getY())
-					{
-						if(dragons[i].isSleeping())
-							showImageCell(g, GameGraphic.dragon_sleeping, x, y);
-						else
-							showImageCell(g, GameGraphic.dragon, x, y);
-					}
-				}
-			}
-		}
+		MapDrawer md = new MapDrawer(gameData.getMap());
+		md.draw(gameData, hero_direction, g, border, border + btnDrawMaze.getY() + btnDrawMaze.getHeight(), this.getWidth(), this.getHeight());
 	}
 	
 	@Override
