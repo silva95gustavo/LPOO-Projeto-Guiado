@@ -138,6 +138,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 						loadGameFromMap(file + Game.mapFileExtension);
 					}
 				}
+				
+				requestFocus();
 			}
 		});
 
