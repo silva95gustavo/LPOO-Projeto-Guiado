@@ -34,6 +34,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import java.awt.FlowLayout;
 
 @SuppressWarnings("serial")
 public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
@@ -88,7 +89,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 	}
 
 	public DrawMapWindow() {
-		setLayout(null);
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -111,10 +111,14 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 
 		mapSizeField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		mapSizeField.setHorizontalAlignment(SwingConstants.LEFT);
-		mapSizeField.setColumns(2);
-		mapSizeField.setBounds(59, 12, 35, 20);
+		mapSizeField.setColumns(3);
 		mapSizeField.setFocusLostBehavior(JFormattedTextField.COMMIT);
 		mapSizeField.addPropertyChangeListener("value", this);
+		setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+				JLabel lblSize = new JLabel("Size:");
+				add(lblSize);
+				lblSize.setHorizontalAlignment(SwingConstants.CENTER);
 		mapSizeField.setValue(MazeBuilder.MIN_REC_SIDE);
 		add(mapSizeField);
 
@@ -123,17 +127,10 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		btnSet.setBounds(99, 11, 70, 23);
 		add(btnSet);
-
-		JLabel lblSize = new JLabel("Size:");
-		lblSize.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSize.setBounds(0, 15, 70, 14);
-		add(lblSize);
 
 		pieceBox = new JComboBox<String>();
 		pieceBox.setModel(new DefaultComboBoxModel<String>(pieces));
-		pieceBox.setBounds(179, 12, 95, 20);
 		add(pieceBox);
 
 		JButton btnNeedHelp = new JButton("Need help?");
@@ -142,7 +139,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 				JOptionPane.showMessageDialog(null, "Just select the piece in the list on the top and" + '\n' + "left-click to place it. Use the right click to remove" + '\n' + "any piece. Mark the exit by leaving a blank cell on a margin" + '\n' + '\n' + "Rules:" + '\n' + "The maze must have 1 hero, 1 sword, 1-5 dragons, 1 shield, 0-"+ mapSide()/Game.MAX_DARTS_FACTOR + " darts (depends on map size)." + '\n' + "The hero can't be next to any dragon(s)." + '\n' + "There can only be linear paths on the maze.", "Help", JOptionPane.QUESTION_MESSAGE);
 			}
 		});
-		btnNeedHelp.setBounds(284, 11, 118, 23);
 		add(btnNeedHelp);
 
 		btnDone = new JButton("Done");
@@ -214,7 +210,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 				frame.dispose();
 			}
 		});
-		btnDone.setBounds(403, 11, 89, 23);
 		add(btnDone);
 
 		matrix = new char[MAX_SIDE][MAX_SIDE];
@@ -429,7 +424,22 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
 	{
-		int xBorder = border;
+		int minHeight = btnSet.getY() + btnSet.getHeight();
+
+		int gridWidth = this.getWidth()-2*border;
+		int gridHeight = this.getHeight() - minHeight - 2*border;
+		int minSize = Math.min(gridWidth, gridHeight);
+		int mazeSize = mapSide();
+		int cellSize = (int)minSize/mazeSize;
+
+		int xBorder = (int)((this.getWidth()-cellSize*mazeSize)/2);
+		int yBorder = (int)((this.getHeight()-minHeight-cellSize*mazeSize)/2);
+
+		g.drawImage(img, xBorder+x*cellSize, minHeight+yBorder+y*cellSize, xBorder+x*cellSize + cellSize,
+					minHeight+yBorder+y*cellSize+cellSize, 0, 0, img.getWidth(), img.getHeight(), null);
+		
+		
+		/*int xBorder = border;
 		int yBorder = border+btnSet.getY() + btnSet.getHeight();
 
 		int minY = btnSet.getY() + btnSet.getHeight();
@@ -438,7 +448,7 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		int cellSide = (maxSide-(2*border))/mapSide();
 
 		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
-				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
+				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);*/
 	}
 
 	private int mapSide()
