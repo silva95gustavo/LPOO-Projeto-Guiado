@@ -113,11 +113,12 @@ public class MapDrawer {
 		}
 	}
 
-	private void showImageCell(Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasLength, int cellX, int cellY)
+	private void showImageCell(Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasHeight, int cellX, int cellY)
 	{
-		int min = Math.min(canvasWidth, canvasLength);
+		int min = Math.min(canvasWidth, canvasHeight);
 		int cellSide = min / m.getSide();
-		x = (canvasWidth - min) / 2;
+		x += (canvasWidth - min) / 2;
+		y += (canvasHeight - min) / 2;
 		
 		int cellStartX = x + cellX * cellSide;
 		int cellStartY = y + cellY * cellSide;
@@ -127,7 +128,11 @@ public class MapDrawer {
 	
 	private void showExitCellRot(Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasHeight, int cellX, int cellY)
 	{
-		int cellSide = Math.min(canvasWidth, canvasHeight) / m.getSide();
+		int min = Math.min(canvasWidth, canvasHeight);
+		int cellSide = min / m.getSide();
+		x += (canvasWidth - min) / 2;
+		y += (canvasHeight - min) / 2;
+		
 		int cellStartX = x + cellX * cellSide;
 		int cellStartY = y + cellY * cellSide;
 		
@@ -158,7 +163,11 @@ public class MapDrawer {
 
 	private void showHeroCell(Direction hero_direction, Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasHeight, int cellX, int cellY)
 	{
-		int cellSide = Math.min(canvasWidth, canvasHeight) / m.getSide();
+		int min = Math.min(canvasWidth, canvasHeight);
+		int cellSide = min / m.getSide();
+		x += (canvasWidth - min) / 2;
+		y += (canvasHeight - min) / 2;
+		
 		int cellStartX = x + cellX * cellSide;
 		int cellStartY = y + cellY * cellSide;
 		
