@@ -25,11 +25,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	private GameFrame frame;
 
+	// Default window sizes. "Minimized" represents the window when there is no running game
 	private static final int default_width = 880;
 	private static final int default_width_minimized = 370;
 	private static final int default_height = 940;
 	private static final int default_height_minimized = 100;
 
+	// Game images
 	private static BufferedImage hero;
 	private static BufferedImage hero_shielded;
 	private static BufferedImage hero_armed;
@@ -44,36 +46,48 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static BufferedImage dart;
 	private static BufferedImage exit_open;
 	private static BufferedImage exit_closed;
-	private int border = 10;
-	
+
+	private int border = 10;	// Minimum border (distance to frame limits)
+
 	/*
 	 * These two variables represent the range of time for the dragons to move
 	 * independantly, regardless of the user's choices
 	 */
 	public static final int dragon_timer_min = 600;		
 	public static final int dragon_timer_max = 1800;
+	/*
+	 * These two variables define the range of delay to be caused by each
+	 * DragonMoveThread when they are initialized. This prevents the dragons
+	 * from starting their movement everytime the user presses the
+	 * "Resume Game" button
+	 */
 	private static final int dragon_delay_min = 100;
 	private static final int dragon_delay_max = 400;
-	
+
+	// ArrayList that stores the current running DragonMoveThread
 	private ArrayList<DragonMoveThread> running_threads = new ArrayList<DragonMoveThread>();
 
+	// Auxiliary variables for game management
 	private Game.Direction hero_direction = Game.Direction.UP;
+	private boolean paused = false;
 
+	// Window elements
 	private JLabel lblDarts;
 	private JButton btnNewGame;
 	private JButton btnLoadGame;
 	private JButton btnSaveGame;
 	private JButton btnDrawMaze;
 	private JButton btnPauseGame;
+	private JButton btnCloseGame;
+	private JButton btnConfig;
 	private static final String btnPauseText = "Pause Game";
 	private static final String btnResumeText = "Resume Game";
-	private boolean paused = false;
 
-	private Configuration config = new Configuration();
+	private Configuration config = new Configuration();		// Game settings
+	Game game;												// Game itself
 
-	Game game;
-
-	public GameGraphic(GameFrame frame) throws IOException {		
+	public GameGraphic(GameFrame frame) throws IOException
+	{		
 		game = null;
 		this.frame = frame;
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -85,20 +99,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 		try
 		{
-			wall = ImageIO.read(new File("./res/wall.jpg"));
-			pavement_wall = ImageIO.read(new File("./res/pavement_wall.jpg"));
-			dragon = ImageIO.read(new File("./res/dragon.png"));
-			dragon_sleeping = ImageIO.read(new File("./res/dragon_sleeping.png"));
-			hero = ImageIO.read(new File("./res/hero.png"));
-			hero_shielded = ImageIO.read(new File("./res/hero_shielded.png"));
-			hero_armed = ImageIO.read(new File("./res/hero_armed.png"));
-			hero_armed_shielded = ImageIO.read(new File("./res/hero_armed_shielded.png"));
-			sword = ImageIO.read(new File("./res/sword.png"));
-			pavement = ImageIO.read(new File("./res/pavement.jpg"));
-			shield = ImageIO.read(new File("./res/shield.png"));
-			dart = ImageIO.read(new File("./res/dart.png"));
-			exit_open = ImageIO.read(new File("./res/exit_open.png"));
-			exit_closed = ImageIO.read(new File("./res/exit_closed.png"));
+			initializeImages();
 		}
 		catch(IOException e)
 		{
@@ -110,7 +111,40 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
 
-		JButton btnCloseGame = new JButton("Close Game");
+		initializeWindowElements();
+		loadSettings();
+
+		add(btnNewGame);
+		add(btnConfig);
+		add(btnCloseGame);
+		add(lblDarts);
+		add(btnSaveGame);
+		add(btnLoadGame);
+		add(btnDrawMaze);
+		add(btnPauseGame);
+	}
+
+	private void initializeImages() throws IOException
+	{
+		wall = ImageIO.read(new File("./res/wall.jpg"));
+		pavement_wall = ImageIO.read(new File("./res/pavement_wall.jpg"));
+		dragon = ImageIO.read(new File("./res/dragon.png"));
+		dragon_sleeping = ImageIO.read(new File("./res/dragon_sleeping.png"));
+		hero = ImageIO.read(new File("./res/hero.png"));
+		hero_shielded = ImageIO.read(new File("./res/hero_shielded.png"));
+		hero_armed = ImageIO.read(new File("./res/hero_armed.png"));
+		hero_armed_shielded = ImageIO.read(new File("./res/hero_armed_shielded.png"));
+		sword = ImageIO.read(new File("./res/sword.png"));
+		pavement = ImageIO.read(new File("./res/pavement.jpg"));
+		shield = ImageIO.read(new File("./res/shield.png"));
+		dart = ImageIO.read(new File("./res/dart.png"));
+		exit_open = ImageIO.read(new File("./res/exit_open.png"));
+		exit_closed = ImageIO.read(new File("./res/exit_closed.png"));
+	}
+
+	private void initializeWindowElements()
+	{
+		btnCloseGame = new JButton("Close Game");
 		btnCloseGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -124,7 +158,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			}
 		});
 
-		JButton btnConfig = new JButton("Settings");
+		btnConfig = new JButton("Settings");
 		btnConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -234,11 +268,16 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnDrawMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				DrawMapWindow win = new DrawMapWindow();
-				win.start();
+				Thread drawMazeThread = new Thread () {
+					public void run() {
+						DrawMapWindow win = new DrawMapWindow();
+						win.start();
+					}
+				};
+				drawMazeThread.start();
 			}
 		});
-		
+
 		btnPauseGame = new JButton("Pause Game");
 		btnPauseGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -257,17 +296,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			}
 		});
 		btnPauseGame.setVisible(false);
-
-		loadSettings();
-
-		add(btnNewGame);
-		add(btnConfig);
-		add(btnCloseGame);
-		add(lblDarts);
-		add(btnSaveGame);
-		add(btnLoadGame);
-		add(btnDrawMaze);
-		add(btnPauseGame);
 	}
 
 	private void loadGameFromMap(String file)
@@ -432,7 +460,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	{
 		return paused;
 	}
-	
+
 	private void resetGame()
 	{
 		game = null;
@@ -442,48 +470,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		lblDarts.setText("Darts : 0");
 	}
 
-	public void keyPressed(KeyEvent arg0) {
-
-		if(!paused)
-		{
-			Game.event ret = Game.event.NONE;
-
-			if(game != null)
-			{
-				if(arg0.getKeyCode() == config.cmdUP)
-				{
-					ret = game.turnHero(Game.command.MOVE, Game.Direction.UP);
-					hero_direction = Game.Direction.UP;
-				}
-				else if(arg0.getKeyCode() == config.cmdDOWN)
-				{
-					ret = game.turnHero(Game.command.MOVE, Game.Direction.DOWN);
-					hero_direction = Game.Direction.DOWN;
-				}
-				else if(arg0.getKeyCode() == config.cmdLEFT)
-				{
-					ret = game.turnHero(Game.command.MOVE, Game.Direction.LEFT);
-					hero_direction = Game.Direction.LEFT;
-				}
-				else if(arg0.getKeyCode() == config.cmdRIGHT)
-				{
-					ret = game.turnHero(Game.command.MOVE, Game.Direction.RIGHT);
-					hero_direction = Game.Direction.RIGHT;
-				}
-				else if(arg0.getKeyCode() == config.dartUP)
-					ret = game.turnHero(Game.command.FIRE, Game.Direction.UP);
-				else if(arg0.getKeyCode() == config.dartDOWN)
-					ret = game.turnHero(Game.command.FIRE, Game.Direction.DOWN);
-				else if(arg0.getKeyCode() == config.dartRIGHT)
-					ret = game.turnHero(Game.command.FIRE, Game.Direction.RIGHT);
-				else if(arg0.getKeyCode() == config.dartLEFT)
-					ret = game.turnHero(Game.command.FIRE, Game.Direction.LEFT);
-			}
-
-			actOnEvent(ret);
-		}
-	}
-	
 	public void actOnEvent(Game.event event)
 	{
 		switch(event)
@@ -511,7 +497,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	{
 		return game != null;
 	}
-	
+
 	private void stopThreads()
 	{
 		while(!running_threads.isEmpty()){
@@ -519,13 +505,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			running_threads.remove(0);
 		}
 	}
-	
+
 	private void startThreads()
 	{
 		int dragons = game.numDragoes();
 		Random rand = new Random();
 		int delay;
-		
+
 		for(int i = 0; i < dragons; i++)
 		{
 			delay = rand.nextInt(dragon_delay_max-dragon_delay_min) + dragon_delay_min;
@@ -536,7 +522,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			repaint();
 		}
 	}
-	
+
 	private void showExitCellRot(Graphics g, int x, int y, int cellSide, BufferedImage img, int xCoord, int yCoord)
 	{
 		int rotation_factor = 0;
@@ -600,6 +586,49 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	{
 		MapDrawer md = new MapDrawer(gameData.getMap());
 		md.draw(gameData, hero_direction, g, border, border + btnDrawMaze.getY() + btnDrawMaze.getHeight(), this.getWidth(), this.getHeight());
+	}
+
+	public void keyPressed(KeyEvent arg0)
+	{
+
+		if(!paused)
+		{
+			Game.event ret = Game.event.NONE;
+
+			if(game != null)
+			{
+				if(arg0.getKeyCode() == config.cmdUP)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.UP);
+					hero_direction = Game.Direction.UP;
+				}
+				else if(arg0.getKeyCode() == config.cmdDOWN)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.DOWN);
+					hero_direction = Game.Direction.DOWN;
+				}
+				else if(arg0.getKeyCode() == config.cmdLEFT)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.LEFT);
+					hero_direction = Game.Direction.LEFT;
+				}
+				else if(arg0.getKeyCode() == config.cmdRIGHT)
+				{
+					ret = game.turnHero(Game.command.MOVE, Game.Direction.RIGHT);
+					hero_direction = Game.Direction.RIGHT;
+				}
+				else if(arg0.getKeyCode() == config.dartUP)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.UP);
+				else if(arg0.getKeyCode() == config.dartDOWN)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.DOWN);
+				else if(arg0.getKeyCode() == config.dartRIGHT)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.RIGHT);
+				else if(arg0.getKeyCode() == config.dartLEFT)
+					ret = game.turnHero(Game.command.FIRE, Game.Direction.LEFT);
+			}
+
+			actOnEvent(ret);
+		}
 	}
 
 	@Override
