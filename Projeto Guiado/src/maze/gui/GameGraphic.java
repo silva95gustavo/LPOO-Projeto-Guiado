@@ -562,7 +562,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	public void showGame(GameData gameData, Graphics g)
 	{
 		MapDrawer md = new MapDrawer(gameData.getMap());
-		md.draw(gameData, hero_direction, g, border, border + btnPauseGame.getY() + btnPauseGame.getHeight(), this.getWidth() - border, this.getHeight() - (border + btnPauseGame.getY() + btnPauseGame.getHeight()));
+		md.draw(gameData, hero_direction, g, border, border + btnPauseGame.getY() + btnPauseGame.getHeight(), this.getWidth() - 2 * border, this.getHeight() - (2 * border + btnPauseGame.getY() + btnPauseGame.getHeight()));
 	}
 
 	public void keyPressed(KeyEvent arg0)

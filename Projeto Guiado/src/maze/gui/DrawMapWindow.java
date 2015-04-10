@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -20,8 +21,16 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 
+import maze.logic.Dart;
+import maze.logic.Dragon;
 import maze.logic.Game;
+import maze.logic.Game.Direction;
+import maze.logic.GameData;
+import maze.logic.Hero;
+import maze.logic.Maze;
 import maze.logic.MazeBuilder;
+import maze.logic.Shield;
+import maze.logic.Sword;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -34,6 +43,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+
 import java.awt.FlowLayout;
 
 @SuppressWarnings("serial")
@@ -127,16 +137,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
-		try
-		{
-			initializeImages();
-		}
-		catch(IOException e)
-		{
-			System.err.println("Error: " + e.getMessage());
-			System.exit(1);
-		}
-
 		initializeWindowElements();
 
 		matrix = new char[MAX_SIDE][MAX_SIDE];
@@ -148,17 +148,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			}
 		}
 
-	}
-
-	private void initializeImages() throws IOException
-	{
-		wall = ImageIO.read(new File("./res/wall.jpg"));
-		dragon = ImageIO.read(new File("./res/dragon.png"));
-		hero = ImageIO.read(new File("./res/hero.png"));
-		sword = ImageIO.read(new File("./res/sword.png"));
-		pavement = ImageIO.read(new File("./res/pavement.jpg"));
-		shield = ImageIO.read(new File("./res/shield.png"));
-		dart = ImageIO.read(new File("./res/dart.png"));
 	}
 
 	private void initializeWindowElements()
@@ -684,58 +673,13 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
+		
+		GameData gd = matrixToGameData(matrix);
 
-		for(int i = 0; i < mapSide(); i++)
-		{
-			for(int j = 0; j < mapSide(); j++)
-			{
-				showImageCell(g, pavement, j, i);
-
-				if(matrix[i][j] == 'X')
-					showImageCell(g, wall, j, i);
-				else if(matrix[i][j] == 'd')
-					showImageCell(g, dragon, j, i);
-				else if(matrix[i][j] == 's')
-					showImageCell(g, shield, j, i);
-				else if(matrix[i][j] == 'e')
-					showImageCell(g, sword, j, i);
-				else if(matrix[i][j] == 'a')
-					showImageCell(g, dart, j, i);
-				else if(matrix[i][j] == 'h')
-					showImageCell(g, hero, j, i);
-			}
-		}
+		MapDrawer md = new MapDrawer(new Maze(gd.getMap().getMatrix(), null));
+		md.draw(gd, Direction.UP, g, border, border + btnSet.getY() + btnSet.getHeight(), this.getWidth() - 2 * border, this.getHeight() - (2 * border + btnSet.getY() + btnSet.getHeight()));
 	}
-
-	private void showImageCell(Graphics g, BufferedImage img, int x, int y)
-	{
-		int minHeight = btnSet.getY() + btnSet.getHeight();
-
-		int gridWidth = this.getWidth()-2*border;
-		int gridHeight = this.getHeight() - minHeight - 2*border;
-		int minSize = Math.min(gridWidth, gridHeight);
-		int mazeSize = mapSide();
-		int cellSize = (int)minSize/mazeSize;
-
-		int xBorder = (int)((this.getWidth()-cellSize*mazeSize)/2);
-		int yBorder = (int)((this.getHeight()-minHeight-cellSize*mazeSize)/2);
-
-		g.drawImage(img, xBorder+x*cellSize, minHeight+yBorder+y*cellSize, xBorder+x*cellSize + cellSize,
-				minHeight+yBorder+y*cellSize+cellSize, 0, 0, img.getWidth(), img.getHeight(), null);
-
-
-		/*int xBorder = border;
-		int yBorder = border+btnSet.getY() + btnSet.getHeight();
-
-		int minY = btnSet.getY() + btnSet.getHeight();
-
-		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
-		int cellSide = (maxSide-(2*border))/mapSide();
-
-		g.drawImage(img, xBorder+x*cellSide, yBorder+y*cellSide, xBorder+x*cellSide+cellSide,
-				yBorder+y*cellSide+cellSide, 0, 0, img.getWidth(), img.getHeight(), null);*/
-	}
-
+	
 	private int mapSide()
 	{
 		return ((Number)mapSizeField.getValue()).intValue();
@@ -869,5 +813,61 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 			rightBtnPressed = false;
 
 		updateDrawMouse(e);
+	}
+
+	private GameData matrixToGameData(char[][] matrix)
+	{
+		Hero hero = null;
+		Sword sword = null;
+		ArrayList<Dragon> dragons = new ArrayList<Dragon>();
+		ArrayList<Dart> darts = new ArrayList<Dart>();
+		Shield shield = null;
+		
+		int dr = 0;
+		int da = 0;
+		
+		for (int x = 0; x < matrix.length; ++x)
+		{
+			for (int y = 0; y < matrix.length; ++y)
+			{
+				switch (matrix[y][x])
+				{
+				case 'h':
+					hero = new Hero(x, y);
+					break;
+				case 'd':
+					dragons.add(new Dragon(x, y));
+					break;
+				case 's':
+					shield = new Shield(x, y);
+					break;
+				case 'e':
+					sword = new Sword(x, y);
+					break;
+				case 'a':
+					darts.add(new Dart(x, y));
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		
+		char[][] matrix2 = new char[mapSide()][mapSide()];
+		for (int i = 0; i < matrix2.length; ++i)
+		{
+			for (int j = 0; j < matrix2.length; ++j)
+			{
+				matrix2[i][j] = matrix[i][j];
+			}
+		}
+		
+		Dragon[] d = new Dragon[0];
+		d = dragons.toArray(d);
+		
+		Dart[] d2 = new Dart[0];
+		d2 = darts.toArray(d2);
+		
+		return new GameData(new Maze(matrix2, null), hero, sword, d, d2, shield);
 	}
 }

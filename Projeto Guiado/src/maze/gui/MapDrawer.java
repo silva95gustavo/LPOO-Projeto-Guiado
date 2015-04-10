@@ -23,7 +23,7 @@ public class MapDrawer {
 	{
 		this.m = m;
 	}
-	
+
 	public void draw(GameData gameData, Direction hero_direction, Graphics g, int x, int y, int width, int length)
 	{
 		Hero hero = gameData.getHero();
@@ -37,7 +37,7 @@ public class MapDrawer {
 		{
 			for (int i = 0; i < m.getSide(); i++)
 			{
-				if(m.isExit(i, j))
+				if(exit != null && m.isExit(i, j))
 				{
 					if(j>0 && m.isWall(i, j-1))
 						showImageCell(g, Images.pavement_wall, x, y, width, length, i, j);
@@ -55,13 +55,13 @@ public class MapDrawer {
 				}
 				else
 				{
-					if (j > 0 && m.isWall(i, j - 1) && !(m.isExit(i, j - 1)))
+					if (j > 0 && m.isWall(i, j - 1) && !(exit != null && m.isExit(i, j - 1)))
 						showImageCell(g, Images.pavement_wall, x, y, width, length, i, j);
 					else
 						showImageCell(g, Images.pavement, x, y, width, length, i, j);
 				}
 
-				if(i == hero.getX() && j == hero.getY())
+				if(hero != null && i == hero.getX() && j == hero.getY())
 				{
 					if(hero.isArmed())
 					{
@@ -89,12 +89,12 @@ public class MapDrawer {
 					}
 				}
 
-				if(i == shield.getX() && j == shield.getY() && shield.isDropped())
+				if(shield != null && i == shield.getX() && j == shield.getY() && shield.isDropped())
 				{
 					showImageCell(g, Images.shield, x, y, width, length, i, j);
 				}
 
-				if(i == sword.getX() && j == sword.getY() && sword.isDropped())
+				if(sword != null && i == sword.getX() && j == sword.getY() && sword.isDropped())
 				{
 					showImageCell(g, Images.sword, x, y, width, length, i, j);
 				}
@@ -116,26 +116,26 @@ public class MapDrawer {
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasHeight, int cellX, int cellY)
 	{
 		int min = Math.min(canvasWidth, canvasHeight);
-		int cellSide = min / m.getSide();
+		double cellSide = (double)min / m.getSide();
 		x += (canvasWidth - min) / 2;
 		y += (canvasHeight - min) / 2;
-		
-		int cellStartX = x + cellX * cellSide;
-		int cellStartY = y + cellY * cellSide;
 
-		g.drawImage(img, cellStartX, cellStartY, cellStartX + cellSide, cellStartY + cellSide, 0, 0, img.getWidth(), img.getHeight(), null);
+		int cellStartX = (int)(x + cellX * cellSide);
+		int cellStartY = (int)(y + cellY * cellSide);
+
+		g.drawImage(img, cellStartX, cellStartY, (int)(cellStartX + cellSide) + 1, (int)(cellStartY + cellSide) + 1, 0, 0, img.getWidth(), img.getHeight(), null);
 	}
-	
+
 	private void showExitCellRot(Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasHeight, int cellX, int cellY)
 	{
 		int min = Math.min(canvasWidth, canvasHeight);
-		int cellSide = min / m.getSide();
+		double cellSide = (double)min / m.getSide();
 		x += (canvasWidth - min) / 2;
 		y += (canvasHeight - min) / 2;
-		
-		int cellStartX = x + cellX * cellSide;
-		int cellStartY = y + cellY * cellSide;
-		
+
+		int cellStartX = (int)(x + cellX * cellSide);
+		int cellStartY = (int)(y + cellY * cellSide);
+
 		int rotation_factor = 0;
 
 		if(cellX == 0)
@@ -164,13 +164,13 @@ public class MapDrawer {
 	private void showHeroCell(Direction hero_direction, Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasHeight, int cellX, int cellY)
 	{
 		int min = Math.min(canvasWidth, canvasHeight);
-		int cellSide = min / m.getSide();
+		double cellSide = (double)min / m.getSide();
 		x += (canvasWidth - min) / 2;
 		y += (canvasHeight - min) / 2;
-		
-		int cellStartX = x + cellX * cellSide;
-		int cellStartY = y + cellY * cellSide;
-		
+
+		int cellStartX = (int)(x + cellX * cellSide);
+		int cellStartY = (int)(y + cellY * cellSide);
+
 		int rotation_factor = 0;
 
 		switch(hero_direction)
