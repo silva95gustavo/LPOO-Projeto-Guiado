@@ -115,7 +115,10 @@ public class MapDrawer {
 
 	private void showImageCell(Graphics g, BufferedImage img, int x, int y, int canvasWidth, int canvasLength, int cellX, int cellY)
 	{
-		int cellSide = Math.min(canvasWidth, canvasLength) / m.getSide();
+		int min = Math.min(canvasWidth, canvasLength);
+		int cellSide = min / m.getSide();
+		x = (canvasWidth - min) / 2;
+		
 		int cellStartX = x + cellX * cellSide;
 		int cellStartY = y + cellY * cellSide;
 

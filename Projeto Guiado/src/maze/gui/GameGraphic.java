@@ -559,69 +559,10 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		}
 	}
 
-	private void showExitCellRot(Graphics g, int x, int y, int cellSide, BufferedImage img, int xCoord, int yCoord)
-	{
-		int rotation_factor = 0;
-
-		if(xCoord == 0)
-			rotation_factor = 1;
-		else if(yCoord != 0)
-		{
-			if(yCoord>xCoord)
-				rotation_factor = 2;
-			else
-				rotation_factor = 3;
-		}
-
-		int imgW = img.getWidth();
-		int imgH = img.getHeight();
-
-		AffineTransform at = new AffineTransform();
-		at.translate(x+cellSide/2, y+cellSide/2);
-		at.rotate(rotation_factor*Math.PI/2);
-		at.scale((double)cellSide/imgW, (double)cellSide/imgH);
-		at.translate(-imgW/2, -imgH/2);
-
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(img, at, null);
-	}
-
-	private void showHeroCell(Graphics g, int x, int y, int cellSide, BufferedImage img)
-	{
-		int rotation_factor = 0;
-
-		switch(hero_direction)
-		{
-		case RIGHT:
-			rotation_factor = 1;
-			break;
-		case DOWN:
-			rotation_factor = 2;
-			break;
-		case LEFT:
-			rotation_factor = 3;
-			break;
-		default:			// just to prevent warnings
-			break;
-		}
-
-		int heroW = img.getWidth();
-		int heroH = img.getHeight();
-
-		AffineTransform at = new AffineTransform();
-		at.translate(x+cellSide/2, y+cellSide/2);
-		at.rotate(rotation_factor*Math.PI/2);
-		at.scale((double)cellSide/heroW, (double)cellSide/heroH);
-		at.translate(-heroW/2, -heroH/2);
-
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(img, at, null);
-	}
-
 	public void showGame(GameData gameData, Graphics g)
 	{
 		MapDrawer md = new MapDrawer(gameData.getMap());
-		md.draw(gameData, hero_direction, g, border, border + btnDrawMaze.getY() + btnDrawMaze.getHeight(), this.getWidth(), this.getHeight());
+		md.draw(gameData, hero_direction, g, border, border + btnPauseGame.getY() + btnPauseGame.getHeight(), this.getWidth() - border, this.getHeight() - (border + btnPauseGame.getY() + btnPauseGame.getHeight()));
 	}
 
 	public void keyPressed(KeyEvent arg0)
