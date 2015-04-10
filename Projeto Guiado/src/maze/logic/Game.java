@@ -82,6 +82,7 @@ public class Game {
 	};
 
 	public static final String mapFileExtension = ".map";
+	public static final String gameFileExtension = ".game";
 
 	////////////////////////////////
 	////////   Attributes   ////////

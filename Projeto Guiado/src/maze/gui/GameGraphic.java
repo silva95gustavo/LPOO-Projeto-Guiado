@@ -257,7 +257,43 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnSaveGame = new JButton("Save Game");
 		btnSaveGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				game.save();
+
+				String file = new String();						
+
+				while(file.isEmpty())
+				{
+					file = JOptionPane.showInputDialog(null, "Game name:", "Save game", JOptionPane.PLAIN_MESSAGE);
+
+					if(file == null)
+					{
+						JOptionPane.showMessageDialog(null, "Game saving cancelled", "Warning", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+
+					file = file + Game.gameFileExtension;
+					File f = new File("./games/" + file);
+
+					if(f.exists() && !f.isDirectory())
+					{
+						JOptionPane.showMessageDialog(null, "Game name already exists.", "Warning", JOptionPane.WARNING_MESSAGE);
+						file = "";
+					}
+					else
+					{
+						try
+						{
+							ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
+							oos.writeObject(game.getGameData());
+							oos.close();
+						}
+						catch(Exception exc) {
+							JOptionPane.showMessageDialog(null, "Error opening file. Please try a different name.", "Warning", JOptionPane.WARNING_MESSAGE);
+							file = "";
+						}
+					}
+				}
+
+				JOptionPane.showMessageDialog(null, "Game saved!", "Action complete", JOptionPane.PLAIN_MESSAGE);
 				requestFocus();
 			}
 		});
