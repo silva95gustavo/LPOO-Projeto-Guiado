@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,6 +19,7 @@ import maze.logic.MazeBuilder;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.SwingConstants;
 
@@ -37,27 +39,61 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
 import com.sun.glass.events.KeyEvent;
+import javax.swing.JTextPane;
 
 @SuppressWarnings("serial")
-public class ConfigDialog extends JDialog implements PropertyChangeListener  {
+public class ConfigDialog extends JDialog implements PropertyChangeListener, KeyListener  {
 
 	private final JPanel contentPanel = new JPanel();
 	
 	private static final int width = 387;
 	private static final int height = 300;
+	
+	private boolean keyListen = false;
+	private int typedKey;
 
 	private Configuration config;
+	
 	private JFormattedTextField mazeSizeField;
 	private JFormattedTextField dragNoField;
 	private JComboBox<String> dragModeBox;
-	private JComboBox<String> upCmdBox;
-	private JComboBox<String> downCmdBox;
-	private JComboBox<String> rightCmdBox;
-	private JComboBox<String> leftCmdBox;
-	private JComboBox<String> upDCmdBox;
-	private JComboBox<String> downDCmdBox;
-	private JComboBox<String> rightDCmdBox;
-	private JComboBox<String> leftDCmdBox;
+	private JLabel lblSettings;
+	private JLabel lblNumberOfDragons;
+	private JLabel lblNumberOfDragons_1;
+	private JLabel lblDragonsMode;
+	private JLabel lblemptyBoxesWill;
+	private JLabel lblUp;
+	private JLabel lblDown;
+	private JLabel lblLeft;
+	private JLabel lblRight;
+	private JLabel lblFireDartRight;
+	private JLabel lblFireDartLeft;
+	private JLabel lblFireDartUp;
+	private JLabel lblFireDartDown;
+	private JButton btnDeleteGame;
+	private JPanel buttonPane;
+	private JButton okButton;
+	private JButton btnDefault;
+	private JButton cancelButton;
+	
+	private JButton btnUpCmd;
+	private int upCmd;
+	private JButton btnDownCmd;
+	private int downCmd;
+	private JButton btnLeftCmd;
+	private int leftCmd;
+	private JButton btnRightCmd;
+	private int rightCmd;
+	private JButton btnUpDart;
+	private int upDart;
+	private JButton btnDownDart;
+	private int downDart;
+	private JButton btnLeftDart;
+	private int leftDart;
+	private JButton btnRightDart;
+	private int rightDart;
+	private JButton cmdButtons[];
+	private int values[];
 
 	public void display(Configuration config) {
 
@@ -83,64 +119,25 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 			break;
 		}
 		
-		upCmdBox.setSelectedIndex(getIndexFromKey(config.cmdUP));
-		downCmdBox.setSelectedIndex(getIndexFromKey(config.cmdDOWN));
-		leftCmdBox.setSelectedIndex(getIndexFromKey(config.cmdLEFT));
-		rightCmdBox.setSelectedIndex(getIndexFromKey(config.cmdRIGHT));
-		upDCmdBox.setSelectedIndex(getIndexFromKey(config.dartUP));
-		downDCmdBox.setSelectedIndex(getIndexFromKey(config.dartDOWN));
-		leftDCmdBox.setSelectedIndex(getIndexFromKey(config.dartLEFT));
-		rightDCmdBox.setSelectedIndex(getIndexFromKey(config.dartRIGHT));
+		btnUpCmd.setText(getKeyChar(config.cmdUP));
+		btnDownCmd.setText(getKeyChar(config.cmdDOWN));
+		btnLeftCmd.setText(getKeyChar(config.cmdLEFT));
+		btnRightCmd.setText(getKeyChar(config.cmdRIGHT));
+		btnUpDart.setText(getKeyChar(config.dartUP));
+		btnDownDart.setText(getKeyChar(config.dartDOWN));
+		btnLeftDart.setText(getKeyChar(config.dartLEFT));
+		btnRightDart.setText(getKeyChar(config.dartRIGHT));
+		upCmd = config.cmdUP;
+		downCmd = config.cmdDOWN;
+		leftCmd = config.cmdLEFT;
+		rightCmd = config.cmdRIGHT;
+		upDart = config.dartUP;
+		downDart = config.dartDOWN;
+		leftDart = config.dartLEFT;
+		rightDart = config.dartRIGHT;
 
+		updateArrays();
 		setVisible(true);
-	}
-
-	private int getKeyFromIndex(int index)
-	{	
-		switch(index)
-		{
-		case 0:
-			return KeyEvent.VK_UP;
-		case 1:
-			return KeyEvent.VK_DOWN;
-		case 2:
-			return KeyEvent.VK_LEFT;
-		case 3:
-			return KeyEvent.VK_RIGHT;
-		}
-		
-
-		if(index > 3)
-		{
-			if(index < 30)
-				return 61+index;
-			else if (index <= 39)
-				return 18+index;
-		}
-		
-		return -1;
-	}
-	
-	private int getIndexFromKey(int key)
-	{
-		switch(key)
-		{
-		case KeyEvent.VK_UP:
-			return 0;
-		case KeyEvent.VK_DOWN:
-			return 1;
-		case KeyEvent.VK_LEFT:
-			return 2;
-		case KeyEvent.VK_RIGHT:
-			return 3;
-		}
-		
-		if(key >= 65 && key <= 90)
-			return key - 61;
-		else if(key >= 48 && key <= 57)
-			return key-18;
-		
-		return -1;
 	}
 
 	public ConfigDialog() {
@@ -154,19 +151,24 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		int windowX = dim.width/2-width/2;
 		int windowY = dim.height/2-height/2;
-		setBounds(windowX, windowY, width, height);
+		setBounds(windowX, windowY, 417, 300);
 
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-
-		JLabel lblSettings = new JLabel("Settings:");
+		
+		initializeElements();
+	}
+	
+	private void initializeElements()
+	{
+		lblSettings = new JLabel("Settings:");
 		lblSettings.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSettings.setBounds(0, 11, 351, 14);
+		lblSettings.setBounds(0, 11, 411, 14);
 		contentPanel.add(lblSettings);
 
-		JLabel lblNumberOfDragons = new JLabel("Maze size:");
+		lblNumberOfDragons = new JLabel("Maze size:");
 		lblNumberOfDragons.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNumberOfDragons.setBounds(0, 79, 86, 14);
 		contentPanel.add(lblNumberOfDragons);
@@ -185,19 +187,19 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		dragNoField.addPropertyChangeListener("value", this);
 		contentPanel.add(dragNoField);
 
-		JLabel lblNumberOfDragons_1 = new JLabel("Dragon n\u00BA:");
+		lblNumberOfDragons_1 = new JLabel("Dragon n\u00BA:");
 		lblNumberOfDragons_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNumberOfDragons_1.setBounds(0, 107, 86, 14);
 		contentPanel.add(lblNumberOfDragons_1);
 
-		JLabel lblDragonsMode = new JLabel("Dragons mode:");
+		lblDragonsMode = new JLabel("Dragons mode:");
 		lblDragonsMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDragonsMode.setBounds(48, 145, 92, 14);
 		contentPanel.add(lblDragonsMode);
 
-		JLabel lblemptyBoxesWill = new JLabel("(empty boxes will be set to default)");
+		lblemptyBoxesWill = new JLabel("(empty boxes will be set to default)");
 		lblemptyBoxesWill.setHorizontalAlignment(SwingConstants.CENTER);
-		lblemptyBoxesWill.setBounds(0, 29, 351, 14);
+		lblemptyBoxesWill.setBounds(0, 29, 411, 14);
 		contentPanel.add(lblemptyBoxesWill);
 
 		dragModeBox = new JComboBox<String>();
@@ -205,89 +207,47 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		dragModeBox.setBounds(34, 160, 123, 20);
 		contentPanel.add(dragModeBox);
 
-		JLabel lblUp = new JLabel("Up");
+		lblUp = new JLabel("Up");
 		lblUp.setHorizontalAlignment(SwingConstants.CENTER);
-		lblUp.setBounds(193, 70, 86, 14);
+		lblUp.setBounds(193, 60, 86, 14);
 		contentPanel.add(lblUp);
 
-		JLabel lblDown = new JLabel("Down");
+		lblDown = new JLabel("Down");
 		lblDown.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDown.setBounds(193, 87, 86, 14);
+		lblDown.setBounds(193, 79, 86, 14);
 		contentPanel.add(lblDown);
 
-		JLabel lblRight = new JLabel("Right");
+		lblRight = new JLabel("Right");
 		lblRight.setHorizontalAlignment(SwingConstants.CENTER);
-		lblRight.setBounds(193, 120, 86, 20);
+		lblRight.setBounds(193, 112, 86, 20);
 		contentPanel.add(lblRight);
 
-		JLabel lblLeft = new JLabel("Left");
+		lblLeft = new JLabel("Left");
 		lblLeft.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLeft.setBounds(193, 104, 86, 17);
+		lblLeft.setBounds(193, 97, 86, 14);
 		contentPanel.add(lblLeft);
 
-		String[] cmdOptions = new String[] {"Up Arrow", "Down Arrow", "Left Arrow", "Right Arrow", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-
-		upCmdBox = new JComboBox<String>();
-		upCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		upCmdBox.setBounds(279, 69, 92, 17);
-		contentPanel.add(upCmdBox);
-
-		downCmdBox = new JComboBox<String>();
-		downCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		downCmdBox.setBounds(279, 86, 92, 17);
-		contentPanel.add(downCmdBox);
-
-		leftCmdBox = new JComboBox<String>();
-		leftCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		leftCmdBox.setBounds(279, 103, 92, 17);
-		contentPanel.add(leftCmdBox);
-
-		rightCmdBox = new JComboBox<String>();
-		rightCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		rightCmdBox.setBounds(279, 120, 92, 17);
-		contentPanel.add(rightCmdBox);
-
-		rightDCmdBox = new JComboBox<String>();
-		rightDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		rightDCmdBox.setBounds(279, 195, 92, 17);
-		contentPanel.add(rightDCmdBox);
-
-		leftDCmdBox = new JComboBox<String>();
-		leftDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		leftDCmdBox.setBounds(279, 178, 92, 17);
-		contentPanel.add(leftDCmdBox);
-
-		downDCmdBox = new JComboBox<String>();
-		downDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		downDCmdBox.setBounds(279, 161, 92, 17);
-		contentPanel.add(downDCmdBox);
-
-		upDCmdBox = new JComboBox<String>();
-		upDCmdBox.setModel(new DefaultComboBoxModel<String>(cmdOptions));
-		upDCmdBox.setBounds(279, 144, 92, 17);
-		contentPanel.add(upDCmdBox);
-
-		JLabel lblFireDartRight = new JLabel("Fire Dart Right");
+		lblFireDartRight = new JLabel("Fire Dart Right");
 		lblFireDartRight.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFireDartRight.setBounds(193, 195, 86, 20);
+		lblFireDartRight.setBounds(181, 204, 98, 20);
 		contentPanel.add(lblFireDartRight);
 
-		JLabel lblFireDartLeft = new JLabel("Fire Dart Left");
+		lblFireDartLeft = new JLabel("Fire Dart Left");
 		lblFireDartLeft.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFireDartLeft.setBounds(193, 179, 86, 17);
+		lblFireDartLeft.setBounds(181, 185, 98, 17);
 		contentPanel.add(lblFireDartLeft);
 
-		JLabel lblFireDartDown = new JLabel("Fire Dart Down");
+		lblFireDartDown = new JLabel("Fire Dart Down");
 		lblFireDartDown.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFireDartDown.setBounds(193, 162, 86, 14);
+		lblFireDartDown.setBounds(181, 166, 98, 14);
 		contentPanel.add(lblFireDartDown);
 
-		JLabel lblFireDartUp = new JLabel("Fire Dart Up");
+		lblFireDartUp = new JLabel("Fire Dart Up");
 		lblFireDartUp.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFireDartUp.setBounds(193, 145, 86, 14);
+		lblFireDartUp.setBounds(181, 145, 98, 14);
 		contentPanel.add(lblFireDartUp);
 		
-		JButton btnDeleteGame = new JButton("Delete a game");
+		btnDeleteGame = new JButton("Delete a game");
 		btnDeleteGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -348,13 +308,85 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		});
 		btnDeleteGame.setBounds(34, 193, 123, 24);
 		contentPanel.add(btnDeleteGame);
+		
+		btnLeftDart = new JButton("Up Arrow");
+		btnLeftDart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				leftDart = changeButton(btnLeftDart, leftDart);
+			}
+		});
+		btnLeftDart.setBounds(277, 185, 122, 17);
+		contentPanel.add(btnLeftDart);
+		
+		btnRightDart = new JButton("Up Arrow");
+		btnRightDart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rightDart = changeButton(btnRightDart, rightDart);
+			}
+		});
+		btnRightDart.setBounds(277, 206, 122, 17);
+		contentPanel.add(btnRightDart);
+		
+		btnLeftCmd = new JButton("Up Arrow");
+		btnLeftCmd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				leftCmd = changeButton(btnLeftCmd, leftCmd);
+			}
+		});
+		btnLeftCmd.setBounds(277, 97, 122, 17);
+		contentPanel.add(btnLeftCmd);
+		
+		btnRightCmd = new JButton("Up Arrow");
+		btnRightCmd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rightCmd = changeButton(btnRightCmd, rightCmd);
+			}
+		});
+		btnRightCmd.setBounds(277, 118, 122, 17);
+		contentPanel.add(btnRightCmd);
+		
+		btnDownDart = new JButton("Up Arrow");
+		btnDownDart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				downDart = changeButton(btnDownDart, downDart);
+			}
+		});
+		btnDownDart.setBounds(277, 166, 122, 17);
+		contentPanel.add(btnDownDart);
+		
+		btnUpDart = new JButton("Up Arrow");
+		btnUpDart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				upDart = changeButton(btnUpDart, upDart);
+			}
+		});
+		btnUpDart.setBounds(277, 145, 122, 17);
+		contentPanel.add(btnUpDart);
+		
+		btnDownCmd = new JButton("Up Arrow");
+		btnDownCmd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				downCmd = changeButton(btnDownCmd, downCmd);
+			}
+		});
+		btnDownCmd.setBounds(277, 78, 122, 17);
+		contentPanel.add(btnDownCmd);
+		
+		btnUpCmd = new JButton("Up Arrow");
+		btnUpCmd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				upCmd = changeButton(btnUpCmd, upCmd);
+			}
+		});
+		btnUpCmd.setBounds(277, 57, 122, 17);
+		contentPanel.add(btnUpCmd);
 
 
-		JPanel buttonPane = new JPanel();
+		buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		JButton okButton = new JButton("OK");
+		okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -386,20 +418,20 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 					break;
 				}
 				
-				config.cmdUP = getKeyFromIndex(upCmdBox.getSelectedIndex());
-				config.cmdDOWN = getKeyFromIndex(downCmdBox.getSelectedIndex());
-				config.cmdLEFT = getKeyFromIndex(leftCmdBox.getSelectedIndex());
-				config.cmdRIGHT = getKeyFromIndex(rightCmdBox.getSelectedIndex());
-				config.dartUP = getKeyFromIndex(upDCmdBox.getSelectedIndex());
-				config.dartDOWN = getKeyFromIndex(downDCmdBox.getSelectedIndex());
-				config.dartLEFT = getKeyFromIndex(leftDCmdBox.getSelectedIndex());
-				config.dartRIGHT = getKeyFromIndex(rightDCmdBox.getSelectedIndex());
+				config.cmdUP = upCmd;
+				config.cmdDOWN = downCmd;
+				config.cmdLEFT = leftCmd;
+				config.cmdRIGHT = rightCmd;
+				config.dartUP = upDart;
+				config.dartDOWN = downDart;
+				config.dartLEFT = leftDart;
+				config.dartRIGHT = rightDart;
 
 				setVisible(false);
 			}
 		});
 
-		JButton btnDefault = new JButton("Reset");
+		btnDefault = new JButton("Reset");
 		btnDefault.setHorizontalAlignment(SwingConstants.LEFT);
 		btnDefault.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -424,14 +456,23 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 					break;
 				}
 				
-				upCmdBox.setSelectedIndex(getIndexFromKey(def_config.cmdUP));
-				downCmdBox.setSelectedIndex(getIndexFromKey(def_config.cmdDOWN));
-				leftCmdBox.setSelectedIndex(getIndexFromKey(def_config.cmdLEFT));
-				rightCmdBox.setSelectedIndex(getIndexFromKey(def_config.cmdRIGHT));
-				upDCmdBox.setSelectedIndex(getIndexFromKey(def_config.dartUP));
-				downDCmdBox.setSelectedIndex(getIndexFromKey(def_config.dartDOWN));
-				leftDCmdBox.setSelectedIndex(getIndexFromKey(def_config.dartLEFT));
-				rightDCmdBox.setSelectedIndex(getIndexFromKey(def_config.dartRIGHT));
+				upCmd = def_config.cmdUP;
+				btnUpCmd.setText(getKeyChar(upCmd));
+				downCmd = def_config.cmdDOWN;
+				btnDownCmd.setText(getKeyChar(downCmd));
+				leftCmd = def_config.cmdLEFT;
+				btnLeftCmd.setText(getKeyChar(leftCmd));
+				rightCmd = def_config.cmdRIGHT;
+				btnRightCmd.setText(getKeyChar(rightCmd));
+				
+				upDart = def_config.dartUP;
+				btnUpDart.setText(getKeyChar(upDart));
+				downDart = def_config.dartDOWN;
+				btnDownDart.setText(getKeyChar(downDart));
+				leftDart = def_config.dartLEFT;
+				btnLeftDart.setText(getKeyChar(leftDart));
+				rightDart = def_config.dartRIGHT;
+				btnRightDart.setText(getKeyChar(rightDart));
 			}
 		});
 		buttonPane.add(btnDefault);
@@ -440,7 +481,7 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		getRootPane().setDefaultButton(okButton);
 
 
-		JButton cancelButton = new JButton("Cancel");
+		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				setVisible(false);
@@ -448,12 +489,156 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		});
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
+		
+		updateArrays();
+	}
+	
+	private int changeButton(JButton button, int currCmd)
+	{
+		updateArrays();
 
+		disableAllElements();
+		
+		KeySetDialog d = new KeySetDialog();
+		int value = KeySetDialog.keyPressed;
+		
+		if(value != -1)
+		{
+			for(int i = 0; i < cmdButtons.length; i++)
+			{
+				if(cmdButtons[i] != button && values[i] == value)
+				{
+					values[i] = currCmd;
+					cmdButtons[i].setText(getKeyChar(values[i]));
+				}
+			}
+			
+			currCmd = value;
+			button.setText(getKeyChar(value));
+		}
+		
+		enableAllElements();
+		
+		return currCmd;
+	}
+	
+	private void updateArrays()
+	{
+		cmdButtons = new JButton[] {btnUpCmd, btnDownCmd, btnLeftCmd, btnRightCmd, btnUpDart, btnDownDart, btnLeftDart, btnRightDart};
+		values = new int[] {upCmd, downCmd, leftCmd, rightCmd, upDart, downDart, leftDart, rightDart};
+	}
+	
+	private void disableAllElements()
+	{
+		mazeSizeField.setEnabled(false);
+		dragNoField.setEnabled(false);
+		dragModeBox.setEnabled(false);
+		lblSettings.setEnabled(false);
+		lblNumberOfDragons.setEnabled(false);
+		lblNumberOfDragons_1.setEnabled(false);
+		lblDragonsMode.setEnabled(false);
+		lblemptyBoxesWill.setEnabled(false);
+		lblUp.setEnabled(false);
+		lblDown.setEnabled(false);
+		lblLeft.setEnabled(false);
+		lblRight.setEnabled(false);
+		lblFireDartRight.setEnabled(false);
+		lblFireDartLeft.setEnabled(false);
+		lblFireDartUp.setEnabled(false);
+		lblFireDartDown.setEnabled(false);
+		btnDeleteGame.setEnabled(false);
+		buttonPane.setEnabled(false);
+		okButton.setEnabled(false);
+		btnDefault.setEnabled(false);
+		btnDefault.setEnabled(false);
+		cancelButton.setEnabled(false);
 
+		btnUpCmd.setEnabled(false);
+		btnDownCmd.setEnabled(false);
+		btnLeftCmd.setEnabled(false);
+		btnRightCmd.setEnabled(false);
+		btnUpDart.setEnabled(false);
+		btnDownDart.setEnabled(false);
+		btnLeftDart.setEnabled(false);
+		btnRightDart.setEnabled(false);
+	}
+	
+	private void enableAllElements()
+	{
+		mazeSizeField.setEnabled(true);
+		dragNoField.setEnabled(true);
+		dragModeBox.setEnabled(true);
+		lblSettings.setEnabled(true);
+		lblNumberOfDragons.setEnabled(true);
+		lblNumberOfDragons_1.setEnabled(true);
+		lblDragonsMode.setEnabled(true);
+		lblemptyBoxesWill.setEnabled(true);
+		lblUp.setEnabled(true);
+		lblDown.setEnabled(true);
+		lblLeft.setEnabled(true);
+		lblRight.setEnabled(true);
+		lblFireDartRight.setEnabled(true);
+		lblFireDartLeft.setEnabled(true);
+		lblFireDartUp.setEnabled(true);
+		lblFireDartDown.setEnabled(true);
+		btnDeleteGame.setEnabled(true);
+		buttonPane.setEnabled(true);
+		okButton.setEnabled(true);
+		btnDefault.setEnabled(true);
+		btnDefault.setEnabled(true);
+		cancelButton.setEnabled(true);
 
-
+		btnUpCmd.setEnabled(true);
+		btnDownCmd.setEnabled(true);
+		btnLeftCmd.setEnabled(true);
+		btnRightCmd.setEnabled(true);
+		btnUpDart.setEnabled(true);
+		btnDownDart.setEnabled(true);
+		btnLeftDart.setEnabled(true);
+		btnRightDart.setEnabled(true);
 	}
 
+	private void enableKeyListen()
+	{
+		addKeyListener(this);
+	}
+	
+	private void disableKeyListen()
+	{
+		removeKeyListener(this);
+	}
+	
+	private String getKeyChar(int keyCode)
+	{
+		switch(keyCode)
+		{
+		case KeyEvent.VK_UP:
+			return "Up Arrow";
+		case KeyEvent.VK_DOWN:
+			return "Down Arrow";
+		case KeyEvent.VK_LEFT:
+			return "Left Arrow";
+		case KeyEvent.VK_RIGHT:
+			return "Right Arrow";
+		case KeyEvent.VK_TAB:
+			return "Tab";
+		case KeyEvent.VK_SHIFT:
+			return "Shift";
+		case KeyEvent.VK_CAPS_LOCK:
+			return "Caps Lock";
+		case KeyEvent.VK_PLUS:
+			return "+";
+		case KeyEvent.VK_MINUS:
+			return "-";
+		case KeyEvent.VK_PERIOD:
+			return ".";
+		case KeyEvent.VK_ENTER:
+			return "Enter";
+		}
+		
+		return "" + (char)keyCode;
+	}
+	
 	public void propertyChange(PropertyChangeEvent e) {
 		Object source = e.getSource();
 		Number x = 0;
@@ -499,4 +684,20 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 		repaint();
 	}
+
+	
+	public void keyPressed(java.awt.event.KeyEvent arg0) {
+
+		if(keyListen)
+		{
+			typedKey = arg0.getKeyCode();
+			keyListen = false;
+		}
+	}
+
+	
+	public void keyReleased(java.awt.event.KeyEvent arg0) {}
+
+	
+	public void keyTyped(java.awt.event.KeyEvent arg0) {}
 }

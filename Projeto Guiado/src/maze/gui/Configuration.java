@@ -11,7 +11,7 @@ public class Configuration implements Serializable {
 	// Default configuration
 	
 	public int side = 15;
-	public int dragonNumber = 3;
+	public int dragonNumber = 5;
 	public Dragon.Dragon_mode dragonMode = Dragon.Dragon_mode.DGN_RAND_SLP;
 	
 	public int cmdUP = KeyEvent.VK_UP;

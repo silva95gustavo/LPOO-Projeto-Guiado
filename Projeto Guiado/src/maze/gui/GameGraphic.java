@@ -613,7 +613,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	public void keyPressed(KeyEvent arg0)
 	{
-
 		if(!paused)
 		{
 			Game.event ret = Game.event.NONE;
