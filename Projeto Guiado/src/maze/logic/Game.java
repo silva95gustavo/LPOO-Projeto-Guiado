@@ -415,22 +415,13 @@ public class Game {
 	 */
 	public static Game load()
 	{
-		try
-		{
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("./data/game")));
-			GameData data = (GameData) ois.readObject();
-			ois.close();
-
-			return new Game(data);
-		}
-		catch(Exception exc)
-		{	
-			exc.printStackTrace();
-			System.exit(1);
-			return null;
-		}
+		return loadFromFile("./data/game");
 	}
 	
+	/**
+	 * Loads a game from the file given
+	 * @return The loaded game in case of success or null otherwise.
+	 */
 	public static Game loadFromFile(String filename)
 	{
 		try
