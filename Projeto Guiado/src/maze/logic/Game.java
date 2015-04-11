@@ -430,6 +430,24 @@ public class Game {
 			return null;
 		}
 	}
+	
+	public static Game loadFromFile(String filename)
+	{
+		try
+		{
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(filename)));
+			GameData data = (GameData) ois.readObject();
+			ois.close();
+
+			return new Game(data);
+		}
+		catch(Exception exc)
+		{	
+			exc.printStackTrace();
+			System.exit(1);
+			return null;
+		}
+	}
 
 	public int numDragoes()
 	{

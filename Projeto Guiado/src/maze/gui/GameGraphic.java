@@ -23,6 +23,8 @@ import maze.logic.Game.event;
 @SuppressWarnings("serial")
 public class GameGraphic extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 
+	public static final String gamesDir = "./games";
+
 	private GameFrame frame;
 
 	// Default window sizes. "Minimized" represents the window when there is no running game
@@ -228,28 +230,59 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnLoadGame = new JButton("Load Saved Game");
 		btnLoadGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int n = JOptionPane.showConfirmDialog(null, "Are you sure you want to load the previous game? Doing this will finish the current game.", "Load Game", JOptionPane.YES_NO_OPTION);
+				
+				pauseGame();
 
-				if(n == 0)
-				{
-					try
+				File folder = new File(gamesDir);
+				File[] listOfFiles = folder.listFiles();
+
+				ArrayList<String> games = new ArrayList<String>();
+
+				String extension = "";
+
+				for (int i = 0; i < listOfFiles.length; i++) {
+
+					String fileName = listOfFiles[i].getName();
+					int index_ext = fileName.lastIndexOf('.');
+					if(index_ext>0) extension = fileName.substring(index_ext);
+
+					if (listOfFiles[i].isFile() && extension.equals(Game.gameFileExtension))
 					{
-						game = Game.load();
-						startThreads();
+						fileName = fileName.substring(0, index_ext);
+						games.add(fileName);
 					}
-					catch(Exception exc)
-					{	
-						n = JOptionPane.showConfirmDialog(null, "An error occurred loading the game. Do you wish to start a new game with the current settings? (accepting will finish the current game)", "Load Game", JOptionPane.YES_NO_OPTION);
-
-						if(n == 0)
-						{
-							game = new Game(config.side, config.dragonNumber, config.dragonMode);
-							startThreads();
-							repaint();
-						}
-					}
-					repaint();
 				}
+
+				if(games.isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "There are no saved games.", "Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				String files[] = new String[0];
+
+				files = games.toArray(new String[games.size()]);
+
+				String s = (String)JOptionPane.showInputDialog(null, "Please choose a game to load:", "Load Game", JOptionPane.PLAIN_MESSAGE, null, files, "files[0]");
+
+				if ((s != null) && (s.length() > 0)) {
+
+					String loadName = gamesDir + "/" + s + Game.gameFileExtension;
+					Game newGame = Game.loadFromFile(loadName);
+					if(newGame != null)
+					{
+						game = newGame;
+						startThreads();
+						pauseGame();
+						repaint();
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "An error has occurred loading the game. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+
 				requestFocus();
 			}
 		});
@@ -258,6 +291,8 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnSaveGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				pauseGame();
+				
 				String file = new String();						
 
 				while(file.isEmpty())
@@ -317,23 +352,34 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		btnPauseGame = new JButton("Pause Game");
 		btnPauseGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(paused)
-				{
-					paused = false;
-					btnPauseGame.setText(btnPauseText);
-					startThreads();
-				}
-				else
-				{
-					paused = true;
-					btnPauseGame.setText(btnResumeText);
-					stopThreads();
-				}
+				togglePauseGame();
 			}
 		});
 		btnPauseGame.setVisible(false);
 	}
+	
+	private void togglePauseGame()
+	{
+		if(paused)
+			resumeGame();
+		else
+			pauseGame();
+	}
 
+	private void pauseGame()
+	{
+		paused = true;
+		btnPauseGame.setText(btnResumeText);
+		stopThreads();
+	}
+	
+	private void resumeGame()
+	{
+		paused = false;
+		btnPauseGame.setText(btnPauseText);
+		startThreads();
+	}
+	
 	private void loadGameFromMap(String file)
 	{
 		char[][] matrix;

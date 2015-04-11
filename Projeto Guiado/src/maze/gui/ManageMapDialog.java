@@ -118,7 +118,7 @@ public class ManageMapDialog extends JDialog implements MouseListener, MouseMoti
 			
 			String fileName = listOfFiles[i].getName();
 			int index_ext = fileName.lastIndexOf('.');
-			if(i>0) extension = fileName.substring(index_ext);
+			if(index_ext>0) extension = fileName.substring(index_ext);
 			
 			if (listOfFiles[i].isFile() && extension.equals(Game.mapFileExtension))
 			{

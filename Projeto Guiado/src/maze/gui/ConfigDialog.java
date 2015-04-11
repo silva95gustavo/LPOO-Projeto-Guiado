@@ -1,7 +1,9 @@
 package maze.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -11,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
 import maze.logic.Dragon;
+import maze.logic.Game;
 import maze.logic.MazeBuilder;
 
 import java.awt.event.ActionListener;
@@ -20,11 +23,15 @@ import javax.swing.SwingConstants;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 
 import javax.swing.JFormattedTextField;
 
 import java.text.Format;
+import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -35,6 +42,9 @@ import com.sun.glass.events.KeyEvent;
 public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 	private final JPanel contentPanel = new JPanel();
+	
+	private static final int width = 387;
+	private static final int height = 300;
 
 	private Configuration config;
 	private JFormattedTextField mazeSizeField;
@@ -140,7 +150,11 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		setModal(true);
 		setType(Type.POPUP);
 		setTitle("Game Configuration");
-		setBounds(100, 100, 387, 300);
+		
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		int windowX = dim.width/2-width/2;
+		int windowY = dim.height/2-height/2;
+		setBounds(windowX, windowY, width, height);
 
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -272,6 +286,68 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 		lblFireDartUp.setHorizontalAlignment(SwingConstants.CENTER);
 		lblFireDartUp.setBounds(193, 145, 86, 14);
 		contentPanel.add(lblFireDartUp);
+		
+		JButton btnDeleteGame = new JButton("Delete a game");
+		btnDeleteGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				File folder = new File(GameGraphic.gamesDir);
+				File[] listOfFiles = folder.listFiles();
+
+				ArrayList<String> games = new ArrayList<String>();
+
+				String extension = "";
+
+				for (int i = 0; i < listOfFiles.length; i++) {
+
+					String fileName = listOfFiles[i].getName();
+					int index_ext = fileName.lastIndexOf('.');
+					if(index_ext>0) extension = fileName.substring(index_ext);
+
+					if (listOfFiles[i].isFile() && extension.equals(Game.gameFileExtension))
+					{
+						fileName = fileName.substring(0, index_ext);
+						games.add(fileName);
+					}
+				}
+
+				if(games.isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "There are no saved games.", "Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				String files[] = new String[0];
+
+				files = games.toArray(new String[games.size()]);
+
+				String s = (String)JOptionPane.showInputDialog(null, "Please choose a game to delete:", "Delete Game", JOptionPane.PLAIN_MESSAGE, null, files, "files[0]");
+
+				if ((s != null) && (s.length() > 0)) {
+
+					String fileName = GameGraphic.gamesDir + "/" + s + Game.gameFileExtension;
+					
+					int n = JOptionPane.showConfirmDialog(null, "Are you sure you wish to delete " + s + " ?", "Confirm action", JOptionPane.YES_NO_OPTION);
+					
+					if(n == JOptionPane.YES_OPTION)
+					{
+						File deleteFile = new File(fileName);
+						
+						if(!deleteFile.delete())
+						{
+							JOptionPane.showMessageDialog(null, "An error has occurred. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					}
+					
+				}
+				
+				repaint();
+				requestFocus();
+			}
+		});
+		btnDeleteGame.setBounds(34, 193, 123, 24);
+		contentPanel.add(btnDeleteGame);
 
 
 		JPanel buttonPane = new JPanel();
