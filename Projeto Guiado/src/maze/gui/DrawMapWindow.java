@@ -4,17 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -86,14 +83,6 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 	private static final int MAX_SIDE = 25;
 
 	char[][] matrix;
-
-	private static BufferedImage hero;
-	private static BufferedImage dragon;
-	private static BufferedImage sword;
-	private static BufferedImage wall;
-	private static BufferedImage pavement;
-	private static BufferedImage shield;
-	private static BufferedImage dart;
 
 	private int border = 10;
 
@@ -823,8 +812,8 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 		ArrayList<Dart> darts = new ArrayList<Dart>();
 		Shield shield = null;
 		
-		int dr = 0;
-		int da = 0;
+		//int dr = 0;
+		//int da = 0;
 		
 		for (int x = 0; x < matrix.length; ++x)
 		{

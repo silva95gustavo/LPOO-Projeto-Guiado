@@ -123,7 +123,7 @@ public class TestMapGeneration {
 		}
 
 		// Checks if all the arguments (in the variable arguments list) are not null and distinct
-		private <T> boolean notNullAndDistinct(T ... args) {
+		private <T> boolean notNullAndDistinct(@SuppressWarnings("unchecked") T ... args) {
 			for (int i = 0; i < args.length - 1; i++)
 				for (int j = i + 1; j < args.length ; j++)
 					if (args[i] == null || args[j] == null || args[i].equals(args[j]))

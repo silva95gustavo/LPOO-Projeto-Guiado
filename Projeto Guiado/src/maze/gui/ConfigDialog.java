@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,15 +18,12 @@ import maze.logic.MazeBuilder;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.SwingConstants;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.NumberFormat;
 
 import javax.swing.JFormattedTextField;
@@ -38,11 +34,10 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
-import com.sun.glass.events.KeyEvent;
-import javax.swing.JTextPane;
+import java.awt.event.KeyEvent;
 
 @SuppressWarnings("serial")
-public class ConfigDialog extends JDialog implements PropertyChangeListener, KeyListener  {
+public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 	private final JPanel contentPanel = new JPanel();
 	
@@ -50,6 +45,7 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener, Key
 	private static final int height = 300;
 	
 	private boolean keyListen = false;
+	@SuppressWarnings("unused")
 	private int typedKey;
 
 	private Configuration config;
@@ -92,6 +88,7 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener, Key
 	private int leftDart;
 	private JButton btnRightDart;
 	private int rightDart;
+	
 	private JButton cmdButtons[];
 	private int values[];
 
@@ -499,6 +496,7 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener, Key
 
 		disableAllElements();
 		
+		@SuppressWarnings("unused")
 		KeySetDialog d = new KeySetDialog();
 		int value = KeySetDialog.keyPressed;
 		
@@ -597,46 +595,10 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener, Key
 		btnLeftDart.setEnabled(true);
 		btnRightDart.setEnabled(true);
 	}
-
-	private void enableKeyListen()
-	{
-		addKeyListener(this);
-	}
-	
-	private void disableKeyListen()
-	{
-		removeKeyListener(this);
-	}
 	
 	private String getKeyChar(int keyCode)
 	{
-		switch(keyCode)
-		{
-		case KeyEvent.VK_UP:
-			return "Up Arrow";
-		case KeyEvent.VK_DOWN:
-			return "Down Arrow";
-		case KeyEvent.VK_LEFT:
-			return "Left Arrow";
-		case KeyEvent.VK_RIGHT:
-			return "Right Arrow";
-		case KeyEvent.VK_TAB:
-			return "Tab";
-		case KeyEvent.VK_SHIFT:
-			return "Shift";
-		case KeyEvent.VK_CAPS_LOCK:
-			return "Caps Lock";
-		case KeyEvent.VK_PLUS:
-			return "+";
-		case KeyEvent.VK_MINUS:
-			return "-";
-		case KeyEvent.VK_PERIOD:
-			return ".";
-		case KeyEvent.VK_ENTER:
-			return "Enter";
-		}
-		
-		return "" + (char)keyCode;
+		return KeyEvent.getKeyText(keyCode);
 	}
 	
 	public void propertyChange(PropertyChangeEvent e) {

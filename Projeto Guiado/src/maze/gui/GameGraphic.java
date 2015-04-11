@@ -3,7 +3,6 @@ package maze.gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +17,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import maze.logic.*;
-import maze.logic.Game.event;
 
 @SuppressWarnings("serial")
 public class GameGraphic extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
@@ -34,19 +32,33 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static final int default_height_minimized = 100;
 
 	// Game images
+	@SuppressWarnings("unused")
 	private static BufferedImage hero;
+	@SuppressWarnings("unused")
 	private static BufferedImage hero_shielded;
+	@SuppressWarnings("unused")
 	private static BufferedImage hero_armed;
+	@SuppressWarnings("unused")
 	private static BufferedImage hero_armed_shielded;
+	@SuppressWarnings("unused")
 	private static BufferedImage dragon;
+	@SuppressWarnings("unused")
 	private static BufferedImage dragon_sleeping;
+	@SuppressWarnings("unused")
 	private static BufferedImage sword;
+	@SuppressWarnings("unused")
 	private static BufferedImage wall;
+	@SuppressWarnings("unused")
 	private static BufferedImage pavement_wall;
+	@SuppressWarnings("unused")
 	private static BufferedImage pavement;
+	@SuppressWarnings("unused")
 	private static BufferedImage shield;
+	@SuppressWarnings("unused")
 	private static BufferedImage dart;
+	@SuppressWarnings("unused")
 	private static BufferedImage exit_open;
+	@SuppressWarnings("unused")
 	private static BufferedImage exit_closed;
 
 	private int border = 10;	// Minimum border (distance to frame limits)
@@ -612,7 +624,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	public void keyPressed(KeyEvent arg0)
-	{
+	{		
 		if(!paused)
 		{
 			Game.event ret = Game.event.NONE;

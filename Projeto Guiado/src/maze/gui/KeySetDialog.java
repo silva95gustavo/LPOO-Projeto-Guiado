@@ -2,21 +2,17 @@ package maze.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Toolkit;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
-import java.awt.Window.Type;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+@SuppressWarnings("serial")
 public class KeySetDialog extends JDialog implements KeyListener {
 	
 	public static int keyPressed;
@@ -43,7 +39,6 @@ public class KeySetDialog extends JDialog implements KeyListener {
 		addKeyListener(this);
 		requestFocus();
 		keyPressed = -1;
-		setVisible(true);
 	}
 
 	public void keyPressed(KeyEvent arg0) {

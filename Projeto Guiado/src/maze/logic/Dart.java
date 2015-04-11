@@ -1,5 +1,6 @@
 package maze.logic;
 
+@SuppressWarnings("serial")
 public class Dart extends Element{
 	private boolean dropped = true;
 
