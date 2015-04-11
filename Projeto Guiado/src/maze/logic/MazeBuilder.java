@@ -17,6 +17,10 @@ public class MazeBuilder implements Builder{
 		matrix = new char[side][side];
 	}
 	
+	/**
+	 * Builds a new maze.
+	 * @return the new {@link Maze}
+	 */
 	public Maze build() {
 		generateMatrix();
 		return new Maze(matrix, exit);
