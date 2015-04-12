@@ -63,24 +63,23 @@ public class Dragon extends Element{
 	}
 
 	/**
-	 * Sets the dragon as dead or alive
-	 * @param alive true if alive, false otherwise
+	 * Sets the Dragon as dead or alive.
+	 * @param alive true to set as alive, false to set as dead
 	 */
 	public void setAlive(boolean alive) {
 		this.alive = alive;
 	}
 
 	/**
-	 * 
-	 * @return whether the dragon is sleeping or not
+	 * @return true if the Dragon is sleeping, false otherwise
 	 */
 	public boolean isSleeping() {
 		return sleeping;
 	}
 
 	/**
-	 * Sets the dragon as sleeping or awake
-	 * @param sleeping true if sleeping, false otherwise
+	 * Sets the Dragon as sleeping or not.
+	 * @param sleeping true to set as sleeping, false otherwise
 	 */
 	public void setSleeping(boolean sleeping) {
 		this.sleeping = sleeping;
@@ -95,7 +94,7 @@ public class Dragon extends Element{
 	}
 
 	/**
-	 * Updates current {@link Dragon_mode}
+	 * Changes the current {@link Dragon_mode}.
 	 * @param mode new {@link Dragon_mode}
 	 */
 	public void setMode(Dragon_mode mode) {
@@ -103,7 +102,6 @@ public class Dragon extends Element{
 	}
 	
 	/**
-	 * Updates dragon's position
 	 * @param x new x coordinate
 	 * @param y new y coordinate
 	 */
@@ -114,16 +112,15 @@ public class Dragon extends Element{
 	}
 
 	/**
-	 * 
-	 * @return true if the dragon is able to throw fire, false otherwise
+	 * @return whether the Dragon can throw fire to the hero or not.
 	 */
 	public boolean canFire() {
 		return canFire;
 	}
 
 	/**
-	 * Makes the dragon able to throw fire or not
-	 * @param canFire true if able to throw fire, false otherwise
+	 * Sets whether the Dragon can throw fire to the hero or not.
+	 * @param canFire true means the Dragon is able to throw fire, false means it isn't
 	 */
 	public void setFireAbility(boolean canFire) {
 		this.canFire = canFire;

@@ -8,10 +8,18 @@ public class Exit extends Element{
 		super(x, y);
 	}
 	
+	/**
+	 * 
+	 * @return whether the Exit is visible/open or not
+	 */
 	public boolean isVisible() {
 		return visible;
 	}
 
+	/**
+	 * Changes Exit visibility
+	 * @param visible new visibility
+	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
