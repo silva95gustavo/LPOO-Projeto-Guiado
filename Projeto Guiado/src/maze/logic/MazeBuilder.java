@@ -5,12 +5,23 @@ import java.util.Random;
 public class MazeBuilder implements Builder{	
 	private static final double MULTIPLE_PATHS_FACTOR = 0.25;
 
+	/**
+	 * Minimum size allowed for map generation.
+	 */
 	public static final int MIN_REC_SIDE = 8;
+	
+	/**
+	 * Minimum number of dragons.
+	 */
 	public static final int MIN_DRAGS = 1;
+	
+	/**
+	 * Maximum number of dragons.
+	 */
 	public static final int MAX_DRAGS = 5;
 	
-	public char[][] matrix;
-	public Exit exit;
+	private char[][] matrix;
+	private Exit exit;
 	
 	/**
 	 * Constructor.
