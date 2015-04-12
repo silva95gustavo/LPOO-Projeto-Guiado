@@ -12,6 +12,10 @@ public class MazeBuilder implements Builder{
 	public char[][] matrix;
 	public Exit exit;
 	
+	/**
+	 * Constructor.
+	 * @param side size of the map to be built
+	 */
 	public MazeBuilder(int side)
 	{
 		matrix = new char[side][side];
