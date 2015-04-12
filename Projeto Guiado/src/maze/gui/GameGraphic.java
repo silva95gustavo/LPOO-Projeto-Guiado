@@ -557,11 +557,12 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 	private void resetGame()
 	{
+		stopThreads();
 		game = null;
 		paused = false;
 		btnPauseGame.setText(btnPauseText);
-		stopThreads();
 		lblDarts.setText("Darts : 0");
+		repaint();
 	}
 
 	public void actOnEvent(Game.event event)
