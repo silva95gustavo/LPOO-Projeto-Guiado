@@ -40,8 +40,10 @@ public class DragonMoveThread extends Thread implements Runnable {
 		{
 			try {
 				game.turnDragao(drag_index);
-				Game.event battle = game.combateDragao();
+				Game.event battle = game.combateDragaoIndex(drag_index);
 				caller.actOnEvent(battle);
+				if(battle == Game.event.LOSE || battle == Game.event.LOSE_FIRE)
+					this.end();
 
 				timer = rand.nextInt(GameGraphic.dragon_timer_max - GameGraphic.dragon_timer_min) + GameGraphic.dragon_timer_min;
 

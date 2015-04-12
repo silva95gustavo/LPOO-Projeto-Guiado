@@ -625,6 +625,36 @@ public class Game {
 		return true;
 	}
 
+	public event combateDragaoIndex(int index)
+	{
+		if(dragons[index].isAlive())
+		{
+			if(Maze.areAdjacent(hero.getX(), hero.getY(), dragons[index].getX(), dragons[index].getY()))
+			{
+				if(hero.isArmed())
+				{
+					// Dragão morreu
+					dragons[index].setAlive(false);
+					if(allDragonsDead())
+						map.setExitVisible(true);
+				}
+				else if (!dragons[index].isSleeping())
+				{	
+					hero.setAlive(false);
+					return event.LOSE;
+				}
+			}
+
+			if(dragonFire(dragons[index]))
+			{
+				hero.setAlive(false);
+				return event.LOSE_FIRE;
+			}
+		}
+		
+		return event.NONE;
+	}
+	
 	public event combateDragao()
 	{
 		for(int i = 0; i < dragons.length; i++)
