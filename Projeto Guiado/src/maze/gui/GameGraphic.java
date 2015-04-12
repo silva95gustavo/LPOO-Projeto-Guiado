@@ -3,7 +3,6 @@ package maze.gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,7 +12,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import maze.logic.*;
@@ -30,36 +28,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private static final int default_width_minimized = 370;
 	private static final int default_height = 940;
 	private static final int default_height_minimized = 100;
-
-	// Game images
-	@SuppressWarnings("unused")
-	private static BufferedImage hero;
-	@SuppressWarnings("unused")
-	private static BufferedImage hero_shielded;
-	@SuppressWarnings("unused")
-	private static BufferedImage hero_armed;
-	@SuppressWarnings("unused")
-	private static BufferedImage hero_armed_shielded;
-	@SuppressWarnings("unused")
-	private static BufferedImage dragon;
-	@SuppressWarnings("unused")
-	private static BufferedImage dragon_sleeping;
-	@SuppressWarnings("unused")
-	private static BufferedImage sword;
-	@SuppressWarnings("unused")
-	private static BufferedImage wall;
-	@SuppressWarnings("unused")
-	private static BufferedImage pavement_wall;
-	@SuppressWarnings("unused")
-	private static BufferedImage pavement;
-	@SuppressWarnings("unused")
-	private static BufferedImage shield;
-	@SuppressWarnings("unused")
-	private static BufferedImage dart;
-	@SuppressWarnings("unused")
-	private static BufferedImage exit_open;
-	@SuppressWarnings("unused")
-	private static BufferedImage exit_closed;
 
 	private int border = 10;	// Minimum border (distance to frame limits)
 
@@ -111,16 +79,6 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 		Images.load();
 
-		try
-		{
-			initializeImages();
-		}
-		catch(IOException e)
-		{
-			System.err.println("Error: " + e.getMessage());
-			System.exit(1);
-		}
-
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
@@ -137,25 +95,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		add(btnDrawMaze);
 		add(btnPauseGame);
 	}
-
-	private void initializeImages() throws IOException
-	{
-		wall = ImageIO.read(new File("./res/wall.jpg"));
-		pavement_wall = ImageIO.read(new File("./res/pavement_wall.jpg"));
-		dragon = ImageIO.read(new File("./res/dragon.png"));
-		dragon_sleeping = ImageIO.read(new File("./res/dragon_sleeping.png"));
-		hero = ImageIO.read(new File("./res/hero.png"));
-		hero_shielded = ImageIO.read(new File("./res/hero_shielded.png"));
-		hero_armed = ImageIO.read(new File("./res/hero_armed.png"));
-		hero_armed_shielded = ImageIO.read(new File("./res/hero_armed_shielded.png"));
-		sword = ImageIO.read(new File("./res/sword.png"));
-		pavement = ImageIO.read(new File("./res/pavement.jpg"));
-		shield = ImageIO.read(new File("./res/shield.png"));
-		dart = ImageIO.read(new File("./res/dart.png"));
-		exit_open = ImageIO.read(new File("./res/exit_open.png"));
-		exit_closed = ImageIO.read(new File("./res/exit_closed.png"));
-	}
-
+	
 	private void initializeWindowElements()
 	{
 		btnCloseGame = new JButton("Close Game");
@@ -369,7 +309,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		});
 		btnPauseGame.setVisible(false);
 	}
-	
+		
 	private void togglePauseGame()
 	{
 		if(paused)
@@ -377,21 +317,21 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		else
 			pauseGame();
 	}
-
+	
 	private void pauseGame()
 	{
 		paused = true;
 		btnPauseGame.setText(btnResumeText);
 		stopThreads();
 	}
-	
+		
 	private void resumeGame()
 	{
 		paused = false;
 		btnPauseGame.setText(btnPauseText);
 		startThreads();
 	}
-	
+		
 	private void loadGameFromMap(String file)
 	{
 		char[][] matrix;
@@ -487,7 +427,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		repaint();
 		requestFocus();
 	}
-
+	
 	public void saveSettings()
 	{
 		try
@@ -499,7 +439,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		}
 		catch(Exception exc) {}
 	}
-
+	
 	public void loadSettings()
 	{
 		try
@@ -530,9 +470,16 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 				frame.setBounds(windowX, windowY, default_width, default_height);
 
 			}
+			
 			btnSaveGame.setEnabled(true);
 			btnPauseGame.setVisible(true);
 			showGame(game.getGameData(), g);
+			
+			if(paused) {
+				int y = (int)frame.getHeight()/2 - (int)Images.game_paused.getHeight()/2;
+				g.drawImage(Images.game_paused, 0, (int)y, (int)frame.getWidth(), (int)(y + Images.game_paused.getHeight()), 0, 0, Images.game_paused.getWidth(), Images.game_paused.getHeight(), null);
+				repaint();
+			}
 		}
 		else
 		{
@@ -549,7 +496,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			btnPauseGame.setVisible(false);
 		}
 	}
-
+	
 	public boolean isPaused()
 	{
 		return paused;
@@ -558,10 +505,11 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	private void resetGame()
 	{
 		game = null;
+		stopThreads();
 		paused = false;
 		btnPauseGame.setText(btnPauseText);
-		stopThreads();
 		lblDarts.setText("Darts : 0");
+		repaint();
 	}
 
 	public void actOnEvent(Game.event event)
@@ -569,16 +517,16 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 		switch(event)
 		{
 		case LOSE:
-			JOptionPane.showMessageDialog(null, "Ups... A dragon killed you...\nTry picking up a sword next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			resetGame();
+			JOptionPane.showMessageDialog(null, "Ups... A dragon killed you...\nTry picking up a sword next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case LOSE_FIRE:
-			JOptionPane.showMessageDialog(null, "Ups... You were killed by dragon fire...\nTry protecting yourself with a shield next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			resetGame();
+			JOptionPane.showMessageDialog(null, "Ups... You were killed by dragon fire...\nTry protecting yourself with a shield next time!", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case WIN:
-			JOptionPane.showMessageDialog(null, "CONGRATULATIONS! You escaped the maze!\nCome back and try again!", "Game won!", JOptionPane.PLAIN_MESSAGE);;
 			resetGame();
+			JOptionPane.showMessageDialog(null, "CONGRATULATIONS! You escaped the maze!\nCome back and try again!", "Game won!", JOptionPane.PLAIN_MESSAGE);
 			break;
 		default:
 			break;
@@ -586,12 +534,12 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 
 		repaint();
 	}
-
+	
 	public boolean isGameRunning()
 	{
 		return game != null;
 	}
-
+	
 	private void stopThreads()
 	{
 		while(!running_threads.isEmpty()){
@@ -599,7 +547,7 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			running_threads.remove(0);
 		}
 	}
-
+	
 	private void startThreads()
 	{
 		int dragons = game.numDragoes();
@@ -616,13 +564,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			repaint();
 		}
 	}
-
+	
 	public void showGame(GameData gameData, Graphics g)
 	{
 		MapDrawer md = new MapDrawer(gameData.getMap());
 		md.draw(gameData, hero_direction, g, border, border + btnPauseGame.getY() + btnPauseGame.getHeight(), this.getWidth() - 2 * border, this.getHeight() - (2 * border + btnPauseGame.getY() + btnPauseGame.getHeight()));
 	}
-
+	
 	public void keyPressed(KeyEvent arg0)
 	{		
 		if(!paused)
@@ -664,59 +612,23 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			actOnEvent(ret);
 		}
 	}
+	
+	public void mouseDragged(MouseEvent arg0) {}
 
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
+	public void mouseMoved(MouseEvent arg0) {}
+	
+	public void mouseClicked(MouseEvent arg0) {}
+	
+	public void mouseEntered(MouseEvent arg0) {}
+	
+	public void mouseExited(MouseEvent arg0) {}
+	
+	public void mousePressed(MouseEvent arg0) {}
+	
+	public void mouseReleased(MouseEvent arg0) {}
+	
+	public void keyReleased(KeyEvent e) {}
+	
+	public void keyTyped(KeyEvent e) {}
 
 }

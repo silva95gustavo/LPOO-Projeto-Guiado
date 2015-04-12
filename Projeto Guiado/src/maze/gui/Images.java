@@ -21,6 +21,7 @@ public class Images {
 	public static BufferedImage dart;
 	public static BufferedImage exit_open;
 	public static BufferedImage exit_closed;
+	public static BufferedImage game_paused;
 	
 	public static void load()
 	{
@@ -40,6 +41,7 @@ public class Images {
 			dart = ImageIO.read(new File("./res/dart.png"));
 			exit_open = ImageIO.read(new File("./res/exit_open.png"));
 			exit_closed = ImageIO.read(new File("./res/exit_closed.png"));
+			game_paused = ImageIO.read(new File("./res/game_paused.jpg"));
 		}
 		catch(IOException e)
 		{

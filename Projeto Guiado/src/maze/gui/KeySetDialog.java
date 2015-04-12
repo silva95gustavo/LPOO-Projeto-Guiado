@@ -39,6 +39,7 @@ public class KeySetDialog extends JDialog implements KeyListener {
 		addKeyListener(this);
 		requestFocus();
 		keyPressed = -1;
+		setVisible(true);
 	}
 
 	public void keyPressed(KeyEvent arg0) {

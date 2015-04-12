@@ -496,7 +496,7 @@ public class ConfigDialog extends JDialog implements PropertyChangeListener  {
 
 		disableAllElements();
 		
-		@SuppressWarnings("unused")
+		//@SuppressWarnings("unused")
 		KeySetDialog d = new KeySetDialog();
 		int value = KeySetDialog.keyPressed;
 		
