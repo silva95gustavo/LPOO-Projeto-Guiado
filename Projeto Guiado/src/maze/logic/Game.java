@@ -219,7 +219,6 @@ public class Game {
 
 			if(defaultGame)
 			{
-				shield.setDropped(false);
 				darts = new Dart[0];
 				dragons[0].setFireAbility(false);
 			}
@@ -282,12 +281,13 @@ public class Game {
 			hero.setArmed(true);
 		}
 		boolean caughtShield = false;
-		if(hero.getX() == shield.getX() && hero.getY() == shield.getY() && shield.isDropped())
-		{
-			caughtShield = true;
-			shield.setDropped(false);
-			hero.catchShield();
-		}
+		if (shield != null)
+			if(hero.getX() == shield.getX() && hero.getY() == shield.getY() && shield.isDropped())
+			{
+				caughtShield = true;
+				shield.setDropped(false);
+				hero.catchShield();
+			}
 
 		for(int i = 0; i < darts.length; i++)
 		{
