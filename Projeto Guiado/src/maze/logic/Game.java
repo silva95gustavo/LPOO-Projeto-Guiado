@@ -57,7 +57,7 @@ public class Game {
 	};
 
 	/**
-	 * {@link command.MOVE} direction
+	 * Move direction
 	 */
 	public enum Direction {
 		/**
@@ -128,7 +128,7 @@ public class Game {
 	/**
 	 * Creates a game with custom settings
 	 * 
-	 * @param data
+	 * @param data {@link GameData}
 	 */
 	public Game(GameData data)
 	{
@@ -148,7 +148,7 @@ public class Game {
 	 * Shield and darts position: random
 	 * 
 	 * @param side size of the map to be generated
-	 * @param dragon_mode
+	 * @param dragon_mode {@link Dragon.Dragon_mode}
 	 */
 	public Game(int side, Dragon.Dragon_mode dragon_mode)
 	{
@@ -162,8 +162,8 @@ public class Game {
 	 * Shield and darts position: random
 	 * 
 	 * @param side size of the map to be generated
-	 * @param dragon_number
-	 * @param dragon_mode
+	 * @param dragon_number number of dragons to generate
+	 * @param dragon_mode {@link Dragon.Dragon_mode}
 	 */
 	public Game(int side, int dragon_number, Dragon.Dragon_mode dragon_mode)
 	{
@@ -174,7 +174,7 @@ public class Game {
 	 * Creates a game with the following settings:
 	 * Map generation: default map
 	 * Hero, sword and dragons position: default positions
-	 * @param dragon_mode
+	 * @param dragon_mode {@link Dragon.Dragon_mode}
 	 * @param defaultGame if false a shield and darts will be generated, otherwise they won't be created
 	 */
 	public Game(Dragon.Dragon_mode dragon_mode, boolean defaultGame)
@@ -185,9 +185,9 @@ public class Game {
 	/**
 	 * Creates a game with custom settings
 	 * @param side size of the map to be generated (this field will be ignored if the random param is set to false)
-	 * @param dragon_number
-	 * @param dragon_mode
-	 * @param random
+	 * @param dragon_number number of dragons to generate
+	 * @param dragon_mode {@link Dragon.Dragon_mode}
+	 * @param random whether or not the map should be randomly generated
 	 * @param defaultGame if false a shield and darts will be generated, otherwise they won't be created (this field will be ignored if the random param is set to true)
 	 */
 	public Game(int side,int dragon_number, Dragon.Dragon_mode dragon_mode, boolean random, boolean defaultGame)
@@ -420,6 +420,7 @@ public class Game {
 	
 	/**
 	 * Loads a game from the file given
+	 * @param filename name of the file that contains the game information
 	 * @return The loaded game in case of success or null otherwise.
 	 */
 	public static Game loadFromFile(String filename)
@@ -524,7 +525,7 @@ public class Game {
 	 * @param x x coordinate of the position to move the dragon to
 	 * @param y y coordinate of the position to move the dragon to
 	 * @param index number of the dragon to be moved
-	 * @return
+	 * @return true on success, false otherwise
 	 */
 	public boolean moverDragao(int x, int y, int index) {
 		if (!map.isWall(x, y))
