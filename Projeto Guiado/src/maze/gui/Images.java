@@ -41,7 +41,7 @@ public class Images {
 			dart = ImageIO.read(new File("./res/dart.png"));
 			exit_open = ImageIO.read(new File("./res/exit_open.png"));
 			exit_closed = ImageIO.read(new File("./res/exit_closed.png"));
-			game_paused = ImageIO.read(new File("./res/game_paused.jpg"));
+			game_paused = ImageIO.read(new File("./res/game_paused.png"));
 		}
 		catch(IOException e)
 		{

@@ -454,11 +454,13 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	public void paintComponent(Graphics g) {
-
+		
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
 		if(game != null)
 		{
+			frame.setMinimumSize(new Dimension(468, 555));
+			
 			lblDarts.setVisible(true);
 			lblDarts.setText("Darts : " + game.numDartsHero());
 			if(!frame.isResizable())
@@ -476,13 +478,19 @@ public class GameGraphic extends JPanel implements MouseListener, MouseMotionLis
 			showGame(game.getGameData(), g);
 			
 			if(paused) {
-				int y = (int)frame.getHeight()/2 - (int)Images.game_paused.getHeight()/2;
-				g.drawImage(Images.game_paused, 0, (int)y, (int)frame.getWidth(), (int)(y + Images.game_paused.getHeight()), 0, 0, Images.game_paused.getWidth(), Images.game_paused.getHeight(), null);
+				int img_height = (int)((frame.getWidth()/Images.game_paused.getWidth())*Images.game_paused.getHeight());
+				img_height = Images.game_paused.getHeight()*frame.getWidth()/Images.game_paused.getWidth();
+				int y = (int)frame.getHeight()/2 - (int)img_height/2;
+				g.drawImage(Images.game_paused, 0, (int)y,
+						(int)frame.getWidth(), (int)(y + img_height), 
+						0, 0, Images.game_paused.getWidth(), Images.game_paused.getHeight(), null);
 				repaint();
 			}
 		}
 		else
 		{
+			frame.setMinimumSize(new Dimension(370, 100));
+			
 			lblDarts.setVisible(false);
 			if(frame.isResizable())
 			{
