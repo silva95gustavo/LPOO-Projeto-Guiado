@@ -29,6 +29,8 @@ public class GameFrame extends JFrame {
 
 					frame.getContentPane().add(panel);
 					frame.setVisible(true);
+					frame.setAlwaysOnTop(true);
+					frame.setAlwaysOnTop(false);
 					panel.requestFocus();
 
 				} catch (Exception e) {

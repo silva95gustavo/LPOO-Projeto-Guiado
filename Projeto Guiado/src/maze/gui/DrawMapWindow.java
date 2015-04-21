@@ -572,13 +572,14 @@ public class DrawMapWindow extends JPanel implements MouseListener, MouseMotionL
 
 	private void updateDrawMouse(MouseEvent e)
 	{
-		int xBorder = border;
 		int yBorder = border+btnSet.getY() + btnSet.getHeight();
 
 		int minY = btnSet.getY() + btnSet.getHeight();
 
 		int maxSide = Math.min(this.getHeight() - minY , this.getWidth());
 		int cellSide = (maxSide-(2*border))/mapSide();
+
+		int xBorder = 0 + (this.getWidth() - cellSide*mapSide() - border)/2;
 
 		if(e.getX() <= xBorder || e.getY() <= yBorder || e.getX() >= xBorder+mapSide()*cellSide || e.getY() >= yBorder+mapSide()*cellSide)
 			return;
